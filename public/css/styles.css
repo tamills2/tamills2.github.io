@@ -1277,3 +1277,21 @@ body.search-open .site-search {
     width: auto;
   }
 }
+
+
+.dropdown-category {
+  display: block;
+  padding: 0.55rem 0.75rem 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.dropdown-empty {
+  display: block;
+  padding: 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}

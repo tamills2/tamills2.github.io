@@ -1,11 +1,11 @@
 [
   {
-    "type": "directory",
+    "type": "folder",
     "name": "Examples",
     "children": [
       {
         "type": "file",
-        "name": "hello-world",
+        "name": "hello world",
         "path": "Examples/hello-world.sh"
       }
     ]

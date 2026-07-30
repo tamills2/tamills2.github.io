@@ -1,9 +1,14 @@
-# Creating a new tool
+# Tool template
 
-1. Duplicate this `template` folder.
-2. Rename the copied folder using lowercase words and hyphens.
-3. Change the page title, heading, description, interface, and `tool.js`.
-4. Add the new tool to the Tools menus in `public/index.html` and each tool page.
-5. Add `data-search-*` attributes to the homepage Tools link so global search can find it.
+1. Copy this folder and rename it.
+2. Edit `tool.json`.
+3. Build the tool in `index.html`, `tool.css`, and `tool.js`.
+4. Run `python3 scripts/generate_notes_manifest.py`.
 
-The shared theme is supplied by `../../js/theme.js`. The theme choice is stored under `repo-theme`, so it follows users between the homepage and every tool.
+The build automatically:
+- adds the tool to the Tools menus;
+- adds homepage cards when `"homepage": true`;
+- indexes the title, description, keywords, headings, labels, buttons,
+  options, list items, placeholders, aria-labels, and other user-facing text.
+
+Implementation details from CSS and JavaScript are intentionally not indexed.

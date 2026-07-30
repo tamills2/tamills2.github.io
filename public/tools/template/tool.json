@@ -1,0 +1,12 @@
+{
+  "title": "Tool Template",
+  "description": "Copy this folder when creating a new local tool.",
+  "category": "Development",
+  "keywords": [
+    "template",
+    "starter"
+  ],
+  "homepage": false,
+  "hidden": true,
+  "order": 999
+}

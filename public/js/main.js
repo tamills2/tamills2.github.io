@@ -3,6 +3,7 @@
 const state = {
   manifest: [],
   searchIndex: [],
+  toolsManifest: [],
   selectedPath: null,
   currentNoteContent: "",
   noteMatches: [],
@@ -21,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initialiseNoteSearch();
   loadNotesManifest();
   loadSearchIndex();
+  loadToolsManifest();
 });
 
 function cacheElements() {
@@ -164,6 +166,90 @@ function initialiseSiteSearch() {
       closeSiteSearchResults();
     }
   });
+}
+
+
+async function loadToolsManifest() {
+  try {
+    const response = await fetch("./data/tools-manifest.json", {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Tools manifest request failed with ${response.status}.`);
+    }
+
+    state.toolsManifest = await response.json();
+    renderToolsMenu();
+    renderHomepageTools();
+  } catch (error) {
+    console.error(error);
+    state.toolsManifest = [];
+  }
+}
+
+function renderToolsMenu() {
+  if (!elements.toolsMenu) {
+    return;
+  }
+
+  elements.toolsMenu.replaceChildren();
+
+  if (!state.toolsManifest.length) {
+    const empty = document.createElement("span");
+    empty.className = "dropdown-empty";
+    empty.textContent = "No tools available";
+    elements.toolsMenu.append(empty);
+    return;
+  }
+
+  let previousCategory = null;
+
+  for (const tool of state.toolsManifest) {
+    if (tool.category !== previousCategory) {
+      const heading = document.createElement("span");
+      heading.className = "dropdown-category";
+      heading.textContent = tool.category;
+      elements.toolsMenu.append(heading);
+      previousCategory = tool.category;
+    }
+
+    const link = document.createElement("a");
+    link.href = tool.url;
+    link.role = "menuitem";
+    link.textContent = tool.title;
+    elements.toolsMenu.append(link);
+  }
+}
+
+function renderHomepageTools() {
+  if (!elements.quickLinks) {
+    return;
+  }
+
+  const homepageTools = state.toolsManifest.filter((tool) => tool.homepage);
+  if (!homepageTools.length) {
+    return;
+  }
+
+  const existingGenerated = elements.quickLinks.querySelectorAll("[data-generated-tool]");
+  existingGenerated.forEach((element) => element.remove());
+
+  for (const tool of homepageTools) {
+    const link = document.createElement("a");
+    link.className = "quick-link-card";
+    link.href = tool.url;
+    link.dataset.generatedTool = "true";
+
+    const title = document.createElement("strong");
+    title.textContent = tool.title;
+
+    const description = document.createElement("span");
+    description.textContent = tool.description || tool.category;
+
+    link.append(title, description);
+    elements.quickLinks.append(link);
+  }
 }
 
 async function loadSearchIndex() {

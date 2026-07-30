@@ -1,0 +1,12 @@
+{
+  "title": "Regex Generator",
+  "description": "Generate generalized regular expressions from multiline examples and browse common patterns.",
+  "category": "Text",
+  "keywords": [
+    "regex",
+    "regular expression",
+    "pattern generator"
+  ],
+  "homepage": true,
+  "order": 10
+}
