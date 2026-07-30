@@ -1,0 +1,17 @@
+{
+  "title": "Subnet Calculator",
+  "description": "Calculate IPv4 network ranges, masks, broadcast addresses, usable hosts, and binary details from an address and CIDR prefix.",
+  "category": "Networking",
+  "keywords": [
+    "subnet",
+    "CIDR",
+    "IPv4",
+    "network address",
+    "broadcast address",
+    "subnet mask",
+    "wildcard mask",
+    "host range"
+  ],
+  "homepage": true,
+  "order": 20
+}

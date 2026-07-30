@@ -1,6 +1,28 @@
 [
   {
     "type": "tool",
+    "slug": "subnet-calculator",
+    "title": "Subnet Calculator",
+    "description": "Calculate IPv4 network ranges, masks, broadcast addresses, usable hosts, and binary details from an address and CIDR prefix.",
+    "category": "Networking",
+    "keywords": [
+      "subnet",
+      "CIDR",
+      "IPv4",
+      "network address",
+      "broadcast address",
+      "subnet mask",
+      "wildcard mask",
+      "host range"
+    ],
+    "homepage": true,
+    "order": 20,
+    "path": "tools/subnet-calculator/",
+    "url": "./tools/subnet-calculator/",
+    "content": "Calculate IPv4 network ranges, masks, broadcast addresses, usable hosts, and binary details from an address and CIDR prefix. Subnet Calculator | Repo Open Notes homepage Notes Repo Search the entire site Search site Tools Use dark mode Repo tool Subnet Calculator Enter an IPv4 address and CIDR prefix to calculate its network, broadcast address, usable host range, masks, and binary representation. IPv4 network Use CIDR notation in the address field, or choose the prefix separately. IPv4 address or CIDR 192.168.1.25/24 Prefix length Common subnet sizes /8 /16 /24 /30 /31 /32 Calculate subnet Clear Load example Calculated block Results Copy results Address range Masks and prefix Binary breakdown Each octet is padded to eight bits. Network and host portions are separated visually. Value Dotted decimal Binary Address — Network Mask"
+  },
+  {
+    "type": "tool",
     "slug": "regex-generator",
     "title": "Regex Generator",
     "description": "Generate generalized regular expressions from multiline examples and browse common patterns.",
@@ -14,6 +36,6 @@
     "order": 10,
     "path": "tools/regex-generator/",
     "url": "./tools/regex-generator/",
-    "content": "Generate generalized regular expressions from multiline examples and browse common patterns. Regex Generator | Repo Open Notes homepage Notes Repo Search the entire site Search site Tools Regex Generator Tool Template Use dark mode Repo tool Paste examples to generate a structural regular expression, or choose a common ready-made pattern. Generate from examples Each non-empty line is treated as one example value. Load example Example text 12345\n67890\n24680 Generation mode One regex for all lines Generalises matching examples into one reusable pattern. One regex per line Produces a separate pattern for every example. Anchor full value with ^ and $ Case-insensitive flag Generate regex Clear Generated regex Copy Common regexes Select one to place it in the result panel. Test the current regex Enter values below to see which complete lines match. Test text Paste test values, one per line"
+    "content": "Generate generalized regular expressions from multiline examples and browse common patterns. Regex Generator | Repo Open Notes homepage Notes Repo Search the entire site Search site Tools Regex Generator Use dark mode Repo tool Paste examples to generate a structural regular expression, or choose a common ready-made pattern. Generate from examples Each non-empty line is treated as one example value. Load example Example text 12345\n67890\n24680 Generation mode One regex for all lines Generalises matching examples into one reusable pattern. One regex per line Produces a separate pattern for every example. Anchor full value with ^ and $ Case-insensitive flag Generate regex Clear Generated regex Copy Common regexes Select one to place it in the result panel. Test the current regex Enter values below to see which complete lines match. Test text Paste test values, one per line"
   }
 ]

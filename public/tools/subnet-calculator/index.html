@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Subnet Calculator | Repo</title>
+  <meta name="description" content="Calculate IPv4 subnet ranges, masks, broadcast addresses, usable hosts, and binary details.">
+
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <header class="site-header">
+    <div class="header-left">
+      <a class="tool-header-home" href="../../" aria-label="Open Notes homepage">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        <span>Notes</span>
+      </a>
+    </div>
+
+    <a class="site-title" href="../../">Repo</a>
+
+    <div class="header-right">
+      <div class="site-search">
+        <label class="visually-hidden" for="site-search-input">Search the entire site</label>
+        <div class="search-input-shell">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+          <input id="site-search-input" type="search" placeholder="Search site" autocomplete="off" spellcheck="false">
+          <kbd>⌘K</kbd>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="tools-button" id="tools-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="tools-menu">
+          Tools
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"></path></svg>
+        </button>
+        <div class="tools-menu" id="tools-menu" role="menu" hidden>
+          <span class="dropdown-empty">Loading tools…</span>
+        </div>
+      </div>
+
+      <div class="theme-switch-wrapper">
+        <span class="theme-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
+        </span>
+        <button class="theme-switch" id="theme-switch" data-theme-switch type="button" role="switch" aria-label="Use dark mode" aria-checked="false"><span class="theme-switch-thumb"></span></button>
+        <span class="theme-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path></svg></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="tool-main subnet-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>Subnet Calculator</h1>
+      <p>Enter an IPv4 address and CIDR prefix to calculate its network, broadcast address, usable host range, masks, and binary representation.</p>
+    </div>
+
+    <section class="tool-card calculator-card" aria-labelledby="calculator-title">
+      <div class="section-title-row">
+        <div>
+          <h2 id="calculator-title">IPv4 network</h2>
+          <p>Use CIDR notation in the address field, or choose the prefix separately.</p>
+        </div>
+      </div>
+
+      <form id="subnet-form" novalidate>
+        <div class="input-grid">
+          <div class="tool-field address-field">
+            <label for="ip-input">IPv4 address or CIDR</label>
+            <input class="tool-input mono-input" id="ip-input" type="text" value="192.168.1.25/24" placeholder="192.168.1.25/24" autocomplete="off" spellcheck="false" inputmode="decimal">
+          </div>
+          <div class="tool-field prefix-field">
+            <label for="prefix-input">Prefix length</label>
+            <div class="prefix-control">
+              <span aria-hidden="true">/</span>
+              <input class="tool-input mono-input" id="prefix-input" type="number" min="0" max="32" value="24" inputmode="numeric" aria-describedby="prefix-help">
+            </div>
+            <small id="prefix-help">Used when the address does not already include a prefix.</small>
+          </div>
+        </div>
+
+        <div class="preset-row" aria-label="Common subnet sizes">
+          <span>Common sizes</span>
+          <button type="button" data-prefix="8">/8</button>
+          <button type="button" data-prefix="16">/16</button>
+          <button type="button" data-prefix="24">/24</button>
+          <button type="button" data-prefix="30">/30</button>
+          <button type="button" data-prefix="31">/31</button>
+          <button type="button" data-prefix="32">/32</button>
+        </div>
+
+        <div class="tool-button-row">
+          <button class="tool-primary-button" type="submit">Calculate subnet</button>
+          <button class="tool-secondary-button" id="clear-button" type="button">Clear</button>
+          <button class="tool-secondary-button" id="example-button" type="button">Load example</button>
+        </div>
+        <p class="form-error" id="form-error" role="alert" hidden></p>
+      </form>
+    </section>
+
+    <section class="results-section" id="results-section" aria-labelledby="results-title" hidden>
+      <div class="results-heading">
+        <div>
+          <p class="eyebrow">Calculated block</p>
+          <h2 id="results-title">Results</h2>
+        </div>
+        <button class="tool-secondary-button compact-button" id="copy-button" type="button">Copy results</button>
+      </div>
+
+      <div class="summary-grid">
+        <article class="result-card featured-result">
+          <span>Network</span>
+          <strong id="network-cidr">—</strong>
+          <small id="network-classification">—</small>
+        </article>
+        <article class="result-card">
+          <span>Broadcast</span>
+          <strong id="broadcast-address">—</strong>
+          <small>Last address in the block</small>
+        </article>
+        <article class="result-card">
+          <span>Usable hosts</span>
+          <strong id="usable-host-count">—</strong>
+          <small id="usable-host-note">—</small>
+        </article>
+        <article class="result-card">
+          <span>Total addresses</span>
+          <strong id="total-address-count">—</strong>
+          <small id="address-block-size">—</small>
+        </article>
+      </div>
+
+      <div class="details-grid">
+        <section class="tool-card details-card" aria-labelledby="range-title">
+          <h3 id="range-title">Address range</h3>
+          <dl class="result-list">
+            <div><dt>Entered address</dt><dd id="entered-address">—</dd></div>
+            <div><dt>First address</dt><dd id="first-address">—</dd></div>
+            <div><dt>Last address</dt><dd id="last-address">—</dd></div>
+            <div><dt>First usable</dt><dd id="first-usable">—</dd></div>
+            <div><dt>Last usable</dt><dd id="last-usable">—</dd></div>
+          </dl>
+        </section>
+
+        <section class="tool-card details-card" aria-labelledby="mask-title">
+          <h3 id="mask-title">Masks and prefix</h3>
+          <dl class="result-list">
+            <div><dt>CIDR prefix</dt><dd id="cidr-prefix">—</dd></div>
+            <div><dt>Subnet mask</dt><dd id="subnet-mask">—</dd></div>
+            <div><dt>Wildcard mask</dt><dd id="wildcard-mask">—</dd></div>
+            <div><dt>Network bits</dt><dd id="network-bits">—</dd></div>
+            <div><dt>Host bits</dt><dd id="host-bits">—</dd></div>
+          </dl>
+        </section>
+      </div>
+
+      <section class="tool-card binary-card" aria-labelledby="binary-title">
+        <div class="section-title-row">
+          <div>
+            <h3 id="binary-title">Binary breakdown</h3>
+            <p>Each octet is padded to eight bits. Network and host portions are separated visually.</p>
+          </div>
+        </div>
+        <div class="binary-table-wrap">
+          <table class="binary-table">
+            <thead><tr><th>Value</th><th>Dotted decimal</th><th>Binary</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Address</th><td id="binary-address-decimal">—</td><td id="binary-address">—</td></tr>
+              <tr><th scope="row">Network</th><td id="binary-network-decimal">—</td><td id="binary-network">—</td></tr>
+              <tr><th scope="row">Mask</th><td id="binary-mask-decimal">—</td><td id="binary-mask">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="binary-legend"><span><i class="network-key"></i>Network bits</span><span><i class="host-key"></i>Host bits</span></div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
