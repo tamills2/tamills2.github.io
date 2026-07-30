@@ -210,3 +210,19 @@ html[data-theme="dark"] .tooltip-details {
     left: 1rem;
   }
 }
+
+
+/* Keep tooltips for the first few boxes inside the viewport. */
+.character-box:nth-child(-n + 4) .character-tooltip {
+  left: 0;
+  transform: translate(0, 0.2rem);
+}
+
+.character-box:nth-child(-n + 4):hover .character-tooltip,
+.character-box:nth-child(-n + 4):focus-visible .character-tooltip {
+  transform: translate(0, 0);
+}
+
+.character-box:nth-child(-n + 4) .character-tooltip::after {
+  left: 1rem;
+}
