@@ -1,0 +1,20 @@
+{
+  "title": "Note Builder",
+  "description": "Choose site notes, add any note multiple times, arrange them in order, preview the combined text, and download a UTF-8 text file with Linux LF line endings.",
+  "category": "Notes",
+  "keywords": [
+    "notes",
+    "note builder",
+    "combine notes",
+    "merge notes",
+    "text file",
+    "download notes",
+    "linux lf",
+    "line endings",
+    "note organizer",
+    "note exporter"
+  ],
+  "homepage": true,
+  "order": 1,
+  "hidden": false
+}

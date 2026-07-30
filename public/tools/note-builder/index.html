@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Note Builder | Repo</title>
+  <meta name="description" content="Choose site notes, arrange them, combine their contents, and download a Linux LF text file.">
+
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+
+  <main class="tool-main note-builder-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>Note Builder</h1>
+      <p>Select notes from the site, arrange them in any order, and download one combined UTF-8 text file with Linux LF line endings.</p>
+    </div>
+
+    <section class="builder-toolbar" aria-label="Note builder controls">
+      <label class="tool-field search-field">
+        <span>Find notes</span>
+        <input id="note-search" class="tool-input" type="search" placeholder="Search note titles and paths…" autocomplete="off">
+      </label>
+
+      <label class="tool-field filename-field">
+        <span>File name</span>
+        <input id="filename-input" class="tool-input" type="text" value="combined-notes.txt" autocomplete="off" spellcheck="false">
+      </label>
+
+      <button id="download-button" class="tool-primary-button" type="button" disabled>Download LF text</button>
+    </section>
+
+    <p id="status-message" class="status-message" role="status">Loading notes…</p>
+
+    <div class="builder-layout">
+      <section class="builder-panel" aria-labelledby="available-heading">
+        <div class="panel-header">
+          <div>
+            <h2 id="available-heading">Available notes</h2>
+            <p id="available-count">0 notes</p>
+          </div>
+        </div>
+
+        <div id="available-notes" class="available-notes" aria-live="polite"></div>
+      </section>
+
+      <section class="builder-panel" aria-labelledby="selected-heading">
+        <div class="panel-header selected-header">
+          <div>
+            <h2 id="selected-heading">Selected order</h2>
+            <p id="selected-count">0 items</p>
+          </div>
+          <button id="clear-selection" class="tool-secondary-button" type="button" disabled>Clear</button>
+        </div>
+
+        <div id="selected-empty" class="empty-state">
+          Add notes from the left. The same note can be added more than once.
+        </div>
+
+        <ol id="selected-notes" class="selected-notes"></ol>
+      </section>
+    </div>
+
+    <section class="preview-panel" aria-labelledby="preview-heading">
+      <div class="panel-header preview-header">
+        <div>
+          <h2 id="preview-heading">Combined preview</h2>
+          <p>One blank line is inserted between each selected note.</p>
+        </div>
+        <button id="copy-button" class="tool-secondary-button" type="button" disabled>Copy text</button>
+      </div>
+
+      <textarea id="combined-preview" class="tool-input preview-text" readonly spellcheck="false" placeholder="Your combined notes will appear here…"></textarea>
+    </section>
+  </main>
+</body>
+</html>
