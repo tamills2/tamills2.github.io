@@ -7,12 +7,7 @@
   const inspectButton = document.querySelector("#inspect-button");
   const exampleButton = document.querySelector("#example-button");
   const clearButton = document.querySelector("#clear-button");
-  const copyButton = document.querySelector("#copy-button");
-
   const characterCount = document.querySelector("#character-count");
-  const utf16Count = document.querySelector("#utf16-count");
-  const byteCount = document.querySelector("#byte-count");
-  const lineCount = document.querySelector("#line-count");
 
   const ASCII_PUNCTUATION = {
     " ": "SPACE",
@@ -52,36 +47,17 @@
 
   const SPECIAL_NAMES = new Map([
     ["\u0000", "NULL"],
-    ["\u0008", "BACKSPACE"],
     ["\t", "CHARACTER TABULATION"],
     ["\n", "LINE FEED"],
-    ["\u000b", "LINE TABULATION"],
-    ["\f", "FORM FEED"],
     ["\r", "CARRIAGE RETURN"],
-    ["\u001b", "ESCAPE"],
-    ["\u007f", "DELETE"],
     ["\u00a0", "NO-BREAK SPACE"],
-    ["\u1680", "OGHAM SPACE MARK"],
-    ["\u2000", "EN QUAD"],
-    ["\u2001", "EM QUAD"],
-    ["\u2002", "EN SPACE"],
-    ["\u2003", "EM SPACE"],
-    ["\u2004", "THREE-PER-EM SPACE"],
-    ["\u2005", "FOUR-PER-EM SPACE"],
-    ["\u2006", "SIX-PER-EM SPACE"],
-    ["\u2007", "FIGURE SPACE"],
-    ["\u2008", "PUNCTUATION SPACE"],
-    ["\u2009", "THIN SPACE"],
-    ["\u200a", "HAIR SPACE"],
     ["\u200b", "ZERO WIDTH SPACE"],
     ["\u200c", "ZERO WIDTH NON-JOINER"],
     ["\u200d", "ZERO WIDTH JOINER"],
     ["\u2028", "LINE SEPARATOR"],
     ["\u2029", "PARAGRAPH SEPARATOR"],
     ["\u202f", "NARROW NO-BREAK SPACE"],
-    ["\u205f", "MEDIUM MATHEMATICAL SPACE"],
     ["\u2060", "WORD JOINER"],
-    ["\u3000", "IDEOGRAPHIC SPACE"],
     ["\ufeff", "ZERO WIDTH NO-BREAK SPACE / BYTE ORDER MARK"],
     ["\u2010", "HYPHEN"],
     ["\u2011", "NON-BREAKING HYPHEN"],
@@ -94,21 +70,6 @@
     ["\u201d", "RIGHT DOUBLE QUOTATION MARK"],
     ["\u2212", "MINUS SIGN"]
   ]);
-
-  const LOOKALIKE_GROUPS = [
-    ["0", "O", "o", "Ο", "О"],
-    ["1", "I", "l", "|", "!", "Ⅰ"],
-    ["2", "Z", "z"],
-    ["5", "S", "s"],
-    ["6", "G"],
-    ["8", "B"],
-    ["9", "g", "q"],
-    ["-", "‐", "‑", "–", "—", "−"],
-    ["'", "’", "‘", "`"],
-    ["\"", "“", "”"]
-  ];
-
-  const encoder = new TextEncoder();
 
   function unicodeName(character) {
     if (SPECIAL_NAMES.has(character)) return SPECIAL_NAMES.get(character);
@@ -124,12 +85,11 @@
     }
 
     if (codePoint >= 0x30 && codePoint <= 0x39) {
-      const digitNames = ["ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"];
-      return `DIGIT ${digitNames[codePoint - 0x30]}`;
+      const names = ["ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"];
+      return `DIGIT ${names[codePoint - 0x30]}`;
     }
 
     if (ASCII_PUNCTUATION[character]) return ASCII_PUNCTUATION[character];
-
     if (/\p{Emoji_Presentation}/u.test(character)) return "EMOJI CHARACTER";
     if (/\p{Mark}/u.test(character)) return "COMBINING MARK";
     if (/\p{Letter}/u.test(character)) return "UNICODE LETTER";
@@ -142,20 +102,13 @@
     return "UNICODE CHARACTER";
   }
 
-  function characterCategory(character) {
-    if (/\p{Letter}/u.test(character)) return "Letter";
-    if (/\p{Number}/u.test(character)) return "Number";
-    if (/\p{Mark}/u.test(character)) return "Combining mark";
-    if (/\p{Punctuation}/u.test(character)) return "Punctuation";
-    if (/\p{Symbol}/u.test(character)) return "Symbol";
-    if (/\p{Separator}/u.test(character)) return "Separator";
-    if (/\p{Control}/u.test(character)) return "Control";
-    return "Other";
+  function codePointLabel(character) {
+    return `U+${character.codePointAt(0).toString(16).toUpperCase().padStart(4, "0")}`;
   }
 
   function displayCharacter(character) {
     const labels = new Map([
-      [" ", "SPACE"],
+      [" ", "SP"],
       ["\t", "TAB"],
       ["\n", "LF"],
       ["\r", "CR"],
@@ -171,157 +124,71 @@
     }
 
     if (/\p{Control}/u.test(character) || /\p{Separator}/u.test(character)) {
-      return { text: `U+${character.codePointAt(0).toString(16).toUpperCase().padStart(4, "0")}`, invisible: true };
+      return { text: codePointLabel(character), invisible: true };
     }
 
     return { text: character, invisible: false };
   }
 
-  function escapeRepresentation(character) {
-    const escapes = new Map([
-      ["\0", "\\0"],
-      ["\t", "\\t"],
-      ["\n", "\\n"],
-      ["\r", "\\r"],
-      ["\b", "\\b"],
-      ["\f", "\\f"],
-      ["\v", "\\v"],
-      ["\\", "\\\\"],
-      ["\"", "\\\""],
-      ["'", "\\'"]
-    ]);
+  function createCharacterBox(character, index) {
+    const box = document.createElement("div");
+    const display = displayCharacter(character);
+    const name = unicodeName(character);
+    const codePoint = codePointLabel(character);
 
-    if (escapes.has(character)) return escapes.get(character);
-
-    const codePoint = character.codePointAt(0);
-    if (codePoint < 0x20 || codePoint === 0x7f || SPECIAL_NAMES.has(character) && /\s/u.test(character)) {
-      return `\\u{${codePoint.toString(16).toUpperCase()}}`;
-    }
-
-    return character;
-  }
-
-  function lookalikeGroup(character) {
-    return LOOKALIKE_GROUPS.find((group) => group.includes(character)) || null;
-  }
-
-  function codePointLabel(character) {
-    return `U+${character.codePointAt(0).toString(16).toUpperCase().padStart(4, "0")}`;
-  }
-
-  function utf8Hex(character) {
-    return Array.from(encoder.encode(character), byte => byte.toString(16).toUpperCase().padStart(2, "0")).join(" ");
-  }
-
-  function createMeta(label, value) {
-    const row = document.createElement("div");
-    const term = document.createElement("dt");
-    const description = document.createElement("dd");
-    term.textContent = label;
-    description.textContent = value;
-    row.append(term, description);
-    return row;
-  }
-
-  function createTile(character, index) {
-    const tile = document.createElement("article");
-    const group = lookalikeGroup(character);
-    tile.className = "character-tile";
-    tile.setAttribute("role", "listitem");
-    tile.tabIndex = 0;
-
-    const glyphData = displayCharacter(character);
-    const glyph = document.createElement("span");
-    glyph.className = `character-glyph${glyphData.invisible ? " invisible" : ""}`;
-    glyph.textContent = glyphData.text;
-    glyph.setAttribute("aria-hidden", "true");
-
-    const summary = document.createElement("span");
-    summary.className = "character-summary-label";
-
-    const name = document.createElement("strong");
-    name.textContent = unicodeName(character);
-
-    const position = document.createElement("span");
-    position.textContent = `#${index + 1} · ${codePointLabel(character)}`;
-
-    summary.append(name, position);
+    box.className = `character-box${display.invisible ? " invisible-character" : ""}`;
+    box.setAttribute("role", "listitem");
+    box.tabIndex = 0;
+    box.textContent = display.text;
+    box.setAttribute("aria-label", `${name}, character ${index + 1}, ${codePoint}`);
 
     const tooltip = document.createElement("div");
     tooltip.className = "character-tooltip";
     tooltip.setAttribute("role", "tooltip");
 
-    const meta = document.createElement("dl");
-    meta.append(
-      createMeta("Character", `"${escapeRepresentation(character)}"`),
-      createMeta("Position", String(index + 1)),
-      createMeta("Code point", codePointLabel(character)),
-      createMeta("Decimal", String(character.codePointAt(0))),
-      createMeta("Category", characterCategory(character)),
-      createMeta("UTF-8", utf8Hex(character)),
-      createMeta("UTF-16", Array.from({ length: character.length }, (_, i) =>
-        character.charCodeAt(i).toString(16).toUpperCase().padStart(4, "0")
-      ).join(" "))
-    );
+    const tooltipName = document.createElement("strong");
+    tooltipName.className = "tooltip-name";
+    tooltipName.textContent = name;
 
-    tooltip.append(meta);
+    const details = document.createElement("span");
+    details.className = "tooltip-details";
 
-    if (group) {
-      const note = document.createElement("p");
-      note.className = "lookalike-note";
-      const strong = document.createElement("strong");
-      strong.textContent = "Common lookalikes: ";
-      note.append(strong, document.createTextNode(group.join(" · ")));
-      tooltip.append(note);
-    }
+    const position = document.createElement("span");
+    position.textContent = `Position: ${index + 1}`;
 
-    tile.setAttribute(
-      "aria-label",
-      `${unicodeName(character)}, position ${index + 1}, ${codePointLabel(character)}`
-    );
+    const point = document.createElement("span");
+    point.textContent = `Code point: ${codePoint}`;
 
-    tile.append(glyph, summary, tooltip);
-    return tile;
-  }
+    const decimal = document.createElement("span");
+    decimal.textContent = `Decimal: ${character.codePointAt(0)}`;
 
-  function buildAnalysisText(characters) {
-    return characters.map((character, index) => {
-      return [
-        `#${index + 1}`,
-        `Character: "${escapeRepresentation(character)}"`,
-        `Name: ${unicodeName(character)}`,
-        `Code point: ${codePointLabel(character)}`,
-        `Decimal: ${character.codePointAt(0)}`,
-        `Category: ${characterCategory(character)}`,
-        `UTF-8: ${utf8Hex(character)}`
-      ].join("\n");
-    }).join("\n\n");
+    details.append(position, point, decimal);
+    tooltip.append(tooltipName, details);
+    box.append(tooltip);
+
+    return box;
   }
 
   function render() {
-    const text = input.value;
-    const characters = Array.from(text);
-
-    characterCount.textContent = String(characters.length);
-    utf16Count.textContent = String(text.length);
-    byteCount.textContent = String(encoder.encode(text).length);
-    lineCount.textContent = text ? String(text.split(/\r\n|\r|\n/).length) : "0";
-
+    const characters = Array.from(input.value);
     grid.replaceChildren();
+
+    characterCount.textContent = `${characters.length} ${characters.length === 1 ? "character" : "characters"}`;
     emptyState.hidden = characters.length > 0;
     grid.hidden = characters.length === 0;
-    copyButton.disabled = characters.length === 0;
 
     const fragment = document.createDocumentFragment();
-    characters.forEach((character, index) => fragment.append(createTile(character, index)));
+    characters.forEach((character, index) => {
+      fragment.append(createCharacterBox(character, index));
+    });
     grid.append(fragment);
   }
 
-  inspectButton.addEventListener("click", render);
   input.addEventListener("input", render);
+  inspectButton.addEventListener("click", render);
 
   exampleButton.addEventListener("click", () => {
-    input.value = "Il1 | O0o\nspace:\t end\u00A0";
+    input.value = "Il1 O0o";
     render();
     input.focus();
   });
@@ -330,22 +197,6 @@
     input.value = "";
     render();
     input.focus();
-  });
-
-  copyButton.addEventListener("click", async () => {
-    const characters = Array.from(input.value);
-    if (!characters.length) return;
-
-    try {
-      await navigator.clipboard.writeText(buildAnalysisText(characters));
-      const original = copyButton.textContent;
-      copyButton.textContent = "Copied";
-      setTimeout(() => {
-        copyButton.textContent = original;
-      }, 1400);
-    } catch {
-      copyButton.textContent = "Copy failed";
-    }
   });
 
   render();

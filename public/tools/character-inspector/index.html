@@ -36,7 +36,7 @@
       <div class="section-title-row">
         <div>
           <h2 id="input-title">String to inspect</h2>
-          <p>Each character appears in a compact labeled tile. Hover or focus a tile for technical details.</p>
+          <p>Each character appears in its own outlined box directly below. Hover or focus a box to identify it.</p>
         </div>
       </div>
 
@@ -59,44 +59,23 @@
       </div>
     </section>
 
-    <section class="inspection-section" aria-labelledby="results-title">
-      <div class="results-heading inspector-heading">
-        <div>
-          <p class="eyebrow">Character-by-character view</p>
-          <h2 id="results-title">Inspection</h2>
-        </div>
-        <button class="tool-secondary-button compact-button" id="copy-button" type="button" disabled>Copy analysis</button>
-      </div>
-
-      <div class="summary-grid character-summary" aria-live="polite">
-        <article class="result-card featured-result">
-          <span>Characters</span>
-          <strong id="character-count">0</strong>
-          <small>Unicode code points</small>
-        </article>
-        <article class="result-card">
-          <span>UTF-16 units</span>
-          <strong id="utf16-count">0</strong>
-          <small>JavaScript string length</small>
-        </article>
-        <article class="result-card">
-          <span>UTF-8 bytes</span>
-          <strong id="byte-count">0</strong>
-          <small>Encoded size</small>
-        </article>
-        <article class="result-card">
-          <span>Lines</span>
-          <strong id="line-count">0</strong>
-          <small>Including blank lines</small>
-        </article>
+    <section class="character-output-section" aria-labelledby="results-title">
+      <div class="output-label-row">
+        <h2 id="results-title">Characters</h2>
+        <span id="character-count" aria-live="polite">0 characters</span>
       </div>
 
       <div class="empty-state" id="empty-state">
-        <strong>No characters yet</strong>
-        <span>Paste a string above and every character will appear here in its own labeled box.</span>
+        Paste or type a string above.
       </div>
 
-      <div class="character-grid" id="character-grid" role="list" aria-label="Inspected characters"></div>
+      <div
+        class="character-box-row"
+        id="character-grid"
+        role="list"
+        aria-label="Inspected characters"
+        hidden
+      ></div>
     </section>
   </main>
 </body>
