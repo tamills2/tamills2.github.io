@@ -23,45 +23,7 @@
   <script src="./tool.js" defer></script>
 </head>
 <body class="tool-page-shell">
-  <header class="site-header">
-    <div class="header-left">
-      <a class="tool-header-home" href="../../" aria-label="Open Notes homepage">
-        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
-        <span>Notes</span>
-      </a>
-    </div>
-
-    <a class="site-title" href="../../">Repo</a>
-
-    <div class="header-right">
-      <div class="site-search">
-        <label class="visually-hidden" for="site-search-input">Search the entire site</label>
-        <div class="search-input-shell">
-          <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-          <input id="site-search-input" type="search" placeholder="Search site" autocomplete="off" spellcheck="false">
-          <kbd>⌘K</kbd>
-        </div>
-      </div>
-
-      <div class="dropdown">
-        <button class="tools-button" id="tools-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="tools-menu">
-          Tools
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"></path></svg>
-        </button>
-        <div class="tools-menu" id="tools-menu" role="menu" hidden>
-          <span class="dropdown-empty">Loading tools…</span>
-        </div>
-      </div>
-
-      <div class="theme-switch-wrapper">
-        <span class="theme-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
-        </span>
-        <button class="theme-switch" id="theme-switch" data-theme-switch type="button" role="switch" aria-label="Use dark mode" aria-checked="false"><span class="theme-switch-thumb"></span></button>
-        <span class="theme-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path></svg></span>
-      </div>
-    </div>
-  </header>
+  <div id="shared-tool-header"></div>
 
   <main class="tool-main subnet-main">
     <div class="tool-heading">

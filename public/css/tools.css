@@ -125,9 +125,26 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid transparent;
+  border-radius: 0.45rem;
+  background: transparent;
   color: var(--text);
   text-decoration: none;
+  font: inherit;
   font-weight: 650;
+  cursor: pointer;
+}
+
+.tool-header-home:hover,
+.tool-header-home:focus-visible {
+  border-color: var(--border);
+  background: var(--surface-hover);
+}
+
+.tool-header-home:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .tool-header-home svg {
@@ -189,4 +206,27 @@
 
 body.tool-notes-open {
   overflow: hidden;
+}
+
+
+/* Keep each header control in its own click area. */
+.tool-page-shell .site-header {
+  isolation: isolate;
+}
+
+.tool-page-shell .site-title {
+  position: relative;
+  z-index: 1;
+  width: max-content;
+}
+
+.tool-page-shell .header-left,
+.tool-page-shell .header-right {
+  position: relative;
+  z-index: 2;
+}
+
+/* The shared header is injected into this mount by tool-base.js. */
+#shared-tool-header {
+  display: contents;
 }
