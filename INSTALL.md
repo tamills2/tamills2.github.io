@@ -1,8 +1,5 @@
-# Tool sidebar homepage-match fix
-
 Replace:
 
-- `public/js/tool-base.js`
-- `public/css/tools.css`
+public/css/tools.css
 
-This changes tool pages to use the same desktop sidebar behavior and notes-tree row structure as the homepage.
+This removes the default/selected-looking background from directory rows. A folder row is now highlighted only on mouse hover; keyboard focus uses an outline instead of a filled background.
