@@ -1,26 +1,13 @@
-# Final Character Inspector
+# Smart Character Inspector tooltip positioning
 
 Replace:
 
 ```text
-public/tools/character-inspector/index.html
 public/tools/character-inspector/tool.css
 public/tools/character-inspector/tool.js
-public/tools/character-inspector/tool.json
 ```
 
-Then run:
-
-```bash
-python3 scripts/build_site.py
-```
-
-Final behavior:
-
-- Live updates while typing
-- Small individual outlined character boxes directly beneath the textarea
-- Only the character appears inside each box
-- Opaque, readable hover and keyboard-focus tooltip
-- Tooltip shows the exact character name, position, Unicode code point, and decimal value
-- Invisible characters receive compact labels such as SP, TAB, LF, and ZWSP
-- No example button
+The tooltip now measures its real viewport position whenever a character is
+hovered or focused. It remains centered normally, shifts right only when it
+would cross the left edge, and shifts left only when it would cross the right
+edge. This works independently for every character on every wrapped line.

@@ -128,6 +128,50 @@
     return { text: character, invisible: false };
   }
 
+
+  function positionTooltip(box) {
+    const tooltip = box.querySelector(".character-tooltip");
+    if (!tooltip) return;
+
+    const viewportPadding = 12;
+
+    box.style.setProperty("--tooltip-left", "50%");
+    box.style.setProperty("--tooltip-shift-x", "-50%");
+    box.style.setProperty("--tooltip-arrow-left", "50%");
+
+    const boxRect = box.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const centeredLeft = boxRect.left + (boxRect.width / 2) - (tooltipRect.width / 2);
+    const centeredRight = centeredLeft + tooltipRect.width;
+
+    if (centeredLeft < viewportPadding) {
+      const leftOffset = viewportPadding - boxRect.left;
+      const arrowCenter = (boxRect.width / 2) - leftOffset;
+
+      box.style.setProperty("--tooltip-left", `${leftOffset}px`);
+      box.style.setProperty("--tooltip-shift-x", "0");
+      box.style.setProperty(
+        "--tooltip-arrow-left",
+        `${Math.max(10, Math.min(tooltipRect.width - 10, arrowCenter))}px`
+      );
+      return;
+    }
+
+    if (centeredRight > window.innerWidth - viewportPadding) {
+      const rightEdge = window.innerWidth - viewportPadding;
+      const tooltipLeft = rightEdge - tooltipRect.width;
+      const leftOffset = tooltipLeft - boxRect.left;
+      const arrowCenter = (boxRect.width / 2) - leftOffset;
+
+      box.style.setProperty("--tooltip-left", `${leftOffset}px`);
+      box.style.setProperty("--tooltip-shift-x", "0");
+      box.style.setProperty(
+        "--tooltip-arrow-left",
+        `${Math.max(10, Math.min(tooltipRect.width - 10, arrowCenter))}px`
+      );
+    }
+  }
+
   function createCharacterBox(character, index) {
     const display = displayCharacter(character);
     const name = unicodeName(character);
@@ -167,6 +211,9 @@
     details.append(characterLine, positionLine, codePointLine, decimalLine);
     tooltip.append(tooltipName, details);
     box.append(glyph, tooltip);
+
+    box.addEventListener("mouseenter", () => positionTooltip(box));
+    box.addEventListener("focus", () => positionTooltip(box));
 
     return box;
   }

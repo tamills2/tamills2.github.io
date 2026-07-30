@@ -212,17 +212,35 @@ html[data-theme="dark"] .tooltip-details {
 }
 
 
-/* Keep tooltips for the first few boxes inside the viewport. */
-.character-box:nth-child(-n + 4) .character-tooltip {
-  left: 0;
-  transform: translate(0, 0.2rem);
+
+
+/* Tooltip position is calculated per character at hover/focus time. */
+.character-tooltip {
+  left: var(--tooltip-left, 50%);
+  transform: translate(var(--tooltip-shift-x, -50%), 0.2rem);
 }
 
-.character-box:nth-child(-n + 4):hover .character-tooltip,
-.character-box:nth-child(-n + 4):focus-visible .character-tooltip {
-  transform: translate(0, 0);
+.character-tooltip::after {
+  left: var(--tooltip-arrow-left, 50%);
 }
 
-.character-box:nth-child(-n + 4) .character-tooltip::after {
-  left: 1rem;
+.character-box:hover .character-tooltip,
+.character-box:focus-visible .character-tooltip {
+  transform: translate(var(--tooltip-shift-x, -50%), 0);
+}
+
+@media (max-width: 620px) {
+  .character-tooltip {
+    left: var(--tooltip-left, 50%);
+    transform: translate(var(--tooltip-shift-x, -50%), 0.2rem);
+  }
+
+  .character-box:hover .character-tooltip,
+  .character-box:focus-visible .character-tooltip {
+    transform: translate(var(--tooltip-shift-x, -50%), 0);
+  }
+
+  .character-tooltip::after {
+    left: var(--tooltip-arrow-left, 50%);
+  }
 }
