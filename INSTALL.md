@@ -1,5 +1,16 @@
+# Navigation collapse-state fix
+
 Replace:
 
-public/css/tools.css
+```text
+public/js/main.js
+public/js/tool-base.js
+```
 
-This removes the default/selected-looking background from directory rows. A folder row is now highlighted only on mouse hover; keyboard focus uses an outline instead of a filled background.
+Behavior after this update:
+
+- Clicking **Repo** returns to the homepage with Notes collapsed.
+- Opening any tool starts with Notes collapsed.
+- Choosing another tool also preserves the collapsed state.
+- Moving from one note to another preserves the current Notes open/collapsed state.
+- Opening a note from an already-open tool sidebar preserves that open state on the note page.

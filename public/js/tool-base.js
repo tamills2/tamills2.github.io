@@ -20,7 +20,7 @@
           </button>
         </div>
 
-        <a class="site-title" href="${root}">Repo</a>
+        <a class="site-title" id="repo-home-link" href="${root}">Repo</a>
 
         <div class="header-right">
           <div class="site-search">
@@ -164,8 +164,8 @@
     shell.append(sidebar, main);
     trigger.setAttribute("aria-controls", sidebar.id);
 
-    const saved = localStorage.getItem("repo-sidebar-collapsed");
-    const startCollapsed = saved === "true" || (saved === null && window.innerWidth <= 760);
+    // Tool pages always begin with Notes collapsed.
+    const startCollapsed = true;
 
     function setCollapsed(collapsed) {
       document.body.classList.toggle("sidebar-collapsed", collapsed);
@@ -244,7 +244,23 @@
     return list;
   }
 
+  function initialiseNavigationCollapseState() {
+    const homeLink = document.querySelector("#repo-home-link");
+
+    homeLink?.addEventListener("click", () => {
+      localStorage.setItem("repo-sidebar-collapsed", "true");
+    });
+
+    document.addEventListener("click", (event) => {
+      const toolLink = event.target.closest('#tools-menu a[href*="/tools/"]');
+      if (toolLink) {
+        localStorage.setItem("repo-sidebar-collapsed", "true");
+      }
+    });
+  }
+
   if (!renderSharedToolChrome()) return;
+  initialiseNavigationCollapseState();
   initialiseToolsMenu();
   initialiseSearch();
   initialiseToolNotesSidebar();
