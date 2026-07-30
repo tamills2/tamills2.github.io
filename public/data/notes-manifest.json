@@ -1,0 +1,18 @@
+[
+  {
+    "type": "directory",
+    "name": "Examples",
+    "children": [
+      {
+        "type": "file",
+        "name": "hello-world",
+        "path": "Examples/hello-world.sh"
+      }
+    ]
+  },
+  {
+    "type": "file",
+    "name": "welcome",
+    "path": "welcome.txt"
+  }
+]

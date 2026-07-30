@@ -1,0 +1,6 @@
+Welcome to Repo.
+
+This is a placeholder text note.
+
+Add folders and text files anywhere inside public/Notes.
+The notes manifest will be regenerated automatically every time you push.

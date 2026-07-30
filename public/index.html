@@ -1,27 +1,174 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>My Website</title>
-  <meta name="description" content="A static website hosted with GitHub Pages.">
+  <title>Repo</title>
+  <meta name="description" content="A self-contained static notes and tools website.">
 
+  <script>
+    // Apply the saved theme before rendering to avoid a flash of the wrong theme.
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+
+  <link rel="stylesheet" href="./vendor/highlight/styles/github.min.css" id="highlight-light-theme">
+  <link rel="stylesheet" href="./vendor/highlight/styles/github-dark.min.css" id="highlight-dark-theme" disabled>
   <link rel="stylesheet" href="./css/styles.css">
+
+  <script src="./vendor/highlight/highlight.min.js" defer></script>
+  <script src="./vendor/highlight/languages/bash.min.js" defer></script>
   <script src="./js/main.js" defer></script>
 </head>
 
 <body>
-  <header>
-    <h1>My Website</h1>
+  <header class="site-header">
+    <div class="header-left">
+      <button
+        class="icon-button"
+        id="sidebar-toggle"
+        type="button"
+        aria-label="Toggle notes sidebar"
+        aria-controls="notes-sidebar"
+        aria-expanded="true"
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+      <span class="header-section-label">Notes</span>
+    </div>
+
+    <a class="site-title" href="./" aria-label="Repo homepage">Repo</a>
+
+    <div class="header-right">
+      <div class="dropdown">
+        <button
+          class="tools-button"
+          id="tools-button"
+          type="button"
+          aria-haspopup="true"
+          aria-expanded="false"
+          aria-controls="tools-menu"
+        >
+          Tools
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="m7 10 5 5 5-5"></path>
+          </svg>
+        </button>
+
+        <div class="tools-menu" id="tools-menu" role="menu" hidden>
+          <a href="#tool-placeholder-1" role="menuitem">Tool placeholder 1</a>
+          <a href="#tool-placeholder-2" role="menuitem">Tool placeholder 2</a>
+          <a href="#tool-placeholder-3" role="menuitem">Tool placeholder 3</a>
+        </div>
+      </div>
+
+      <div class="theme-switch-wrapper">
+        <span class="theme-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path>
+          </svg>
+        </span>
+
+        <button
+          class="theme-switch"
+          id="theme-switch"
+          type="button"
+          role="switch"
+          aria-label="Use dark mode"
+          aria-checked="false"
+        >
+          <span class="theme-switch-thumb"></span>
+        </button>
+
+        <span class="theme-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+          </svg>
+        </span>
+      </div>
+    </div>
   </header>
 
-  <main>
-    <p>The website is connected and working.</p>
-  </main>
+  <div class="app-shell">
+    <aside class="notes-sidebar" id="notes-sidebar" aria-label="Notes">
+      <h2>Notes</h2>
+      <nav id="notes-tree" class="notes-tree" aria-label="Notes directory">
+        <p class="sidebar-status">Loading notes…</p>
+      </nav>
+    </aside>
 
-  <footer>
-    <p>&copy; 2026</p>
-  </footer>
+    <main class="main-content" id="main-content" tabindex="-1">
+      <section class="home-view" id="home-view">
+        <div class="hero">
+          <p class="eyebrow">Static knowledge base</p>
+          <h1>Repo</h1>
+          <p>Browse notes and launch small tools from one self-contained site.</p>
+        </div>
+
+        <section aria-labelledby="quick-links-title">
+          <div class="section-heading">
+            <h2 id="quick-links-title">Quick links</h2>
+            <p>Frequently used pages and notes will live here.</p>
+          </div>
+
+          <div class="quick-links-grid">
+            <a class="quick-link-card" href="#placeholder-note">
+              <span class="card-icon" aria-hidden="true">01</span>
+              <span>
+                <strong>Popular note</strong>
+                <small>Placeholder for a frequently viewed note</small>
+              </span>
+            </a>
+
+            <a class="quick-link-card" href="#tool-placeholder-1">
+              <span class="card-icon" aria-hidden="true">02</span>
+              <span>
+                <strong>Tool placeholder</strong>
+                <small>A future utility will be linked here</small>
+              </span>
+            </a>
+
+            <a class="quick-link-card" href="#recent-notes">
+              <span class="card-icon" aria-hidden="true">03</span>
+              <span>
+                <strong>Recent notes</strong>
+                <small>Placeholder for recently added material</small>
+              </span>
+            </a>
+          </div>
+        </section>
+      </section>
+
+      <section class="file-view" id="file-view" hidden>
+        <div class="file-toolbar">
+          <div>
+            <p class="file-location" id="file-location">Notes</p>
+            <h1 id="file-title">File</h1>
+          </div>
+          <button class="secondary-button" id="close-file" type="button">Home</button>
+        </div>
+
+        <div class="code-window">
+          <div class="code-window-header">
+            <span id="code-file-name">File</span>
+            <span class="language-label">Bash</span>
+          </div>
+
+          <div class="code-table-wrapper" id="code-table-wrapper">
+            <p class="viewer-status">Choose a note from the sidebar.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 </body>
 </html>
