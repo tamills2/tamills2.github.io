@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Number Base Converter | Repo</title>
+  <meta name="description" content="Convert integers between binary, octal, decimal, hexadecimal, base 36, and custom bases from 2 to 36.">
+
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+
+  <main class="tool-main base-converter-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>Number Base Converter</h1>
+      <p>Convert whole numbers between binary, octal, decimal, hexadecimal, base 36, and any custom base from 2 to 36.</p>
+    </div>
+
+    <section class="converter-panel" aria-labelledby="converter-title">
+      <div class="panel-heading">
+        <h2 id="converter-title">Values</h2>
+        <div class="panel-actions">
+          <button class="tool-secondary-button" id="clear-button" type="button">Clear</button>
+        </div>
+      </div>
+
+      <p class="helper-text">Enter a value in any field. All other fields update automatically.</p>
+
+      <div class="base-grid">
+        <label class="base-field">
+          <span class="base-label">
+            <strong>Binary</strong>
+            <small>Base 2</small>
+          </span>
+          <div class="input-row">
+            <input id="binary-input" class="tool-input mono-input" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="101010">
+            <button class="copy-button" type="button" data-copy-target="binary-input" aria-label="Copy binary value">Copy</button>
+          </div>
+          <span class="field-error" id="binary-error"></span>
+        </label>
+
+        <label class="base-field">
+          <span class="base-label">
+            <strong>Octal</strong>
+            <small>Base 8</small>
+          </span>
+          <div class="input-row">
+            <input id="octal-input" class="tool-input mono-input" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="52">
+            <button class="copy-button" type="button" data-copy-target="octal-input" aria-label="Copy octal value">Copy</button>
+          </div>
+          <span class="field-error" id="octal-error"></span>
+        </label>
+
+        <label class="base-field">
+          <span class="base-label">
+            <strong>Decimal</strong>
+            <small>Base 10</small>
+          </span>
+          <div class="input-row">
+            <input id="decimal-input" class="tool-input mono-input" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="42">
+            <button class="copy-button" type="button" data-copy-target="decimal-input" aria-label="Copy decimal value">Copy</button>
+          </div>
+          <span class="field-error" id="decimal-error"></span>
+        </label>
+
+        <label class="base-field">
+          <span class="base-label">
+            <strong>Hexadecimal</strong>
+            <small>Base 16</small>
+          </span>
+          <div class="input-row">
+            <input id="hex-input" class="tool-input mono-input" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="2A">
+            <button class="copy-button" type="button" data-copy-target="hex-input" aria-label="Copy hexadecimal value">Copy</button>
+          </div>
+          <span class="field-error" id="hex-error"></span>
+        </label>
+
+        <label class="base-field">
+          <span class="base-label">
+            <strong>Base 36</strong>
+            <small>0–9, A–Z</small>
+          </span>
+          <div class="input-row">
+            <input id="base36-input" class="tool-input mono-input" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="16">
+            <button class="copy-button" type="button" data-copy-target="base36-input" aria-label="Copy base 36 value">Copy</button>
+          </div>
+          <span class="field-error" id="base36-error"></span>
+        </label>
+
+        <div class="base-field custom-field">
+          <span class="base-label">
+            <strong>Custom base</strong>
+            <small>Base 2–36</small>
+          </span>
+
+          <div class="custom-controls">
+            <label>
+              <span class="sr-only">Custom base</span>
+              <input id="custom-base-input" class="tool-input custom-base-number" type="number" min="2" max="36" value="3">
+            </label>
+
+            <div class="input-row">
+              <input id="custom-value-input" class="tool-input mono-input" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="1120">
+              <button class="copy-button" type="button" data-copy-target="custom-value-input" aria-label="Copy custom base value">Copy</button>
+            </div>
+          </div>
+          <span class="field-error" id="custom-error"></span>
+        </div>
+      </div>
+
+      <div class="summary-card" id="summary-card" hidden>
+        <div>
+          <span>Bit length</span>
+          <strong id="bit-length">—</strong>
+        </div>
+        <div>
+          <span>Hex digits</span>
+          <strong id="hex-length">—</strong>
+        </div>
+        <div>
+          <span>Sign</span>
+          <strong id="sign-value">—</strong>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
