@@ -1,6 +1,6 @@
 {
   "title": "Number Base Converter",
-  "description": "Convert integers between binary, octal, decimal, hexadecimal, base 36, and custom bases, including signed two's-complement values.",
+  "description": "Convert integers between binary, octal, decimal, hexadecimal, base 36, and custom bases, including signed two's-complement values with automatic bit-width detection.",
   "category": "Developer Tools",
   "keywords": [
     "binary",
@@ -16,7 +16,8 @@
     "base 8",
     "base 10",
     "base 16",
-    "base 36"
+    "base 36",
+    "bit width"
   ],
   "homepage": true,
   "order": 50,

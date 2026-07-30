@@ -8,6 +8,10 @@ Then run:
 
 python3 scripts/build_site.py
 
-Signed mode uses fixed-width two's-complement representation for binary,
-octal, and hexadecimal. Decimal, Base 36, and custom-base values remain
-human-readable signed magnitude values.
+Auto width is the default. Examples in signed mode:
+
+- FF -> 11111111 -> -1
+- FFFF -> 1111111111111111 -> -1
+- 7F -> 01111111 -> 127
+
+Manual 8-, 16-, 32-, and 64-bit modes are also available.

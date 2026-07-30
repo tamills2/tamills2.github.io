@@ -2,32 +2,32 @@
 
 (() => {
   const modeSelect = document.querySelector("#mode-select");
-  const bitWidthSelect = document.querySelector("#bit-width-select");
-  const bitWidthField = document.querySelector("#bit-width-field");
+  const widthSelect = document.querySelector("#bit-width-select");
+  const widthField = document.querySelector("#bit-width-field");
   const rangeNote = document.querySelector("#range-note");
   const clearButton = document.querySelector("#clear-button");
 
-  const standardFields = [
-    { id: "binary-input", error: "binary-error", base: 2, bitPattern: true },
-    { id: "octal-input", error: "octal-error", base: 8, bitPattern: true },
+  const fields = [
+    { id: "binary-input", error: "binary-error", base: 2, pattern: true },
+    { id: "octal-input", error: "octal-error", base: 8, pattern: true },
     { id: "decimal-input", error: "decimal-error", base: 10, decimal: true },
-    { id: "hex-input", error: "hex-error", base: 16, bitPattern: true },
+    { id: "hex-input", error: "hex-error", base: 16, pattern: true },
     { id: "base36-input", error: "base36-error", base: 36 }
   ];
 
   const customBaseInput = document.querySelector("#custom-base-input");
   const customValueInput = document.querySelector("#custom-value-input");
   const customError = document.querySelector("#custom-error");
-  const summaryCard = document.querySelector("#summary-card");
-  const signedValueOutput = document.querySelector("#signed-value");
-  const unsignedValueOutput = document.querySelector("#unsigned-value");
-  const bitPatternOutput = document.querySelector("#bit-pattern");
+  const summary = document.querySelector("#summary-card");
+  const signedOutput = document.querySelector("#signed-value");
+  const unsignedOutput = document.querySelector("#unsigned-value");
+  const effectiveWidthOutput = document.querySelector("#effective-width");
 
-  let currentSigned = null;
-  let activeId = null;
+  let currentValue = null;
+  let currentWidth = 8;
   let updating = false;
 
-  const normalize = (value) => value.trim().replace(/[\s_]/g, "").toUpperCase();
+  const normalize = value => value.trim().replace(/[\s_]/g, "").toUpperCase();
 
   function digitValue(char) {
     const code = char.charCodeAt(0);
@@ -42,7 +42,6 @@
 
     let sign = 1n;
     let digits = value;
-
     if (digits.startsWith("-")) {
       sign = -1n;
       digits = digits.slice(1);
@@ -54,7 +53,6 @@
 
     let result = 0n;
     const bigBase = BigInt(base);
-
     for (const char of digits) {
       const digit = digitValue(char);
       if (digit < 0 || digit >= base) {
@@ -62,117 +60,107 @@
       }
       result = result * bigBase + BigInt(digit);
     }
-
-    return { value: result * sign };
+    return { value: result * sign, digits };
   }
 
-  function width() {
-    return Number(bitWidthSelect.value);
+  function nextStandardWidth(bits) {
+    if (bits <= 8) return 8;
+    if (bits <= 16) return 16;
+    if (bits <= 32) return 32;
+    return 64;
   }
 
-  function modulus() {
-    return 1n << BigInt(width());
+  function inferredWidth(field, raw, parsedValue) {
+    if (widthSelect.value !== "auto") return Number(widthSelect.value);
+
+    const clean = normalize(raw).replace(/^[+-]/, "");
+
+    if (field.pattern) {
+      if (field.base === 2) return nextStandardWidth(Math.max(1, clean.length));
+      if (field.base === 8) return nextStandardWidth(Math.max(1, clean.length * 3));
+      if (field.base === 16) return nextStandardWidth(Math.max(1, clean.length * 4));
+    }
+
+    const value = parsedValue;
+    for (const bits of [8, 16, 32, 64]) {
+      const min = -(1n << BigInt(bits - 1));
+      const max = (1n << BigInt(bits - 1)) - 1n;
+      if (value >= min && value <= max) return bits;
+    }
+    return 64;
   }
 
-  function signedMin() {
-    return -(1n << BigInt(width() - 1));
-  }
-
-  function signedMax() {
-    return (1n << BigInt(width() - 1)) - 1n;
-  }
-
-  function unsignedMax() {
-    return modulus() - 1n;
-  }
-
-  function toUnsignedPattern(signedValue) {
-    return signedValue < 0n ? modulus() + signedValue : signedValue;
-  }
-
-  function patternToSigned(unsignedValue) {
-    const signBit = 1n << BigInt(width() - 1);
-    return (unsignedValue & signBit) !== 0n ? unsignedValue - modulus() : unsignedValue;
-  }
+  const modulus = bits => 1n << BigInt(bits);
+  const signedMin = bits => -(1n << BigInt(bits - 1));
+  const signedMax = bits => (1n << BigInt(bits - 1)) - 1n;
+  const unsignedMax = bits => modulus(bits) - 1n;
+  const toUnsigned = (value, bits) => value < 0n ? modulus(bits) + value : value;
+  const toSigned = (value, bits) => {
+    const signBit = 1n << BigInt(bits - 1);
+    return (value & signBit) !== 0n ? value - modulus(bits) : value;
+  };
 
   function parseField(raw, field) {
     const parsed = parseMagnitude(raw, field.base);
     if (parsed.empty || parsed.error) return parsed;
 
-    const mode = modeSelect.value;
+    const bits = inferredWidth(field, raw, parsed.value);
 
-    if (mode === "unsigned") {
+    if (modeSelect.value === "unsigned") {
       if (parsed.value < 0n) return { error: "Unsigned mode does not allow negative values." };
-      return { value: parsed.value };
+      return { value: parsed.value, bits };
     }
 
-    if (field.decimal || !field.bitPattern) {
-      if (parsed.value < signedMin() || parsed.value > signedMax()) {
-        return { error: `Value must fit in signed ${width()}-bit range.` };
+    if (field.pattern && parsed.value >= 0n) {
+      if (parsed.value > unsignedMax(bits)) {
+        return { error: `Bit pattern exceeds ${bits} bits.` };
       }
-      return { value: parsed.value };
+      return { value: toSigned(parsed.value, bits), bits };
     }
 
-    if (parsed.value < 0n) {
-      if (parsed.value < signedMin()) {
-        return { error: `Value must fit in signed ${width()}-bit range.` };
-      }
-      return { value: parsed.value };
+    if (parsed.value < signedMin(bits) || parsed.value > signedMax(bits)) {
+      return { error: `Value must fit in signed ${bits}-bit range.` };
     }
 
-    if (parsed.value > unsignedMax()) {
-      return { error: `Bit pattern exceeds ${width()} bits.` };
-    }
-
-    return { value: patternToSigned(parsed.value) };
+    return { value: parsed.value, bits };
   }
 
-  function formatBitPattern(value, base) {
-    const unsigned = toUnsignedPattern(value);
-    let text = unsigned.toString(base).toUpperCase();
-
-    if (base === 2) {
-      text = text.padStart(width(), "0");
-    } else if (base === 8) {
-      text = text.padStart(Math.ceil(width() / 3), "0");
-    } else if (base === 16) {
-      text = text.padStart(Math.ceil(width() / 4), "0");
-    }
-
+  function formatPattern(value, base, bits) {
+    let text = toUnsigned(value, bits).toString(base).toUpperCase();
+    if (base === 2) text = text.padStart(bits, "0");
+    if (base === 8) text = text.padStart(Math.ceil(bits / 3), "0");
+    if (base === 16) text = text.padStart(Math.ceil(bits / 4), "0");
     return text;
   }
 
-  function formatField(value, field) {
-    if (modeSelect.value === "signed" && field.bitPattern) {
-      return formatBitPattern(value, field.base);
+  function formatField(value, field, bits) {
+    if (modeSelect.value === "signed" && field.pattern) {
+      return formatPattern(value, field.base, bits);
     }
     return value.toString(field.base).toUpperCase();
   }
 
   function clearErrors() {
-    standardFields.forEach((field) => {
-      document.querySelector(`#${field.error}`).textContent = "";
-    });
+    fields.forEach(field => document.querySelector(`#${field.error}`).textContent = "");
     customError.textContent = "";
   }
 
   function clearOthers(except = "") {
     updating = true;
-    standardFields.forEach((field) => {
+    fields.forEach(field => {
       if (field.id !== except) document.querySelector(`#${field.id}`).value = "";
     });
     if (except !== "custom-value-input") customValueInput.value = "";
     updating = false;
-    currentSigned = null;
-    summaryCard.hidden = true;
+    currentValue = null;
+    summary.hidden = true;
   }
 
-  function writeAll(value, source = "") {
+  function writeAll(value, bits, source = "") {
     updating = true;
-
-    standardFields.forEach((field) => {
+    fields.forEach(field => {
       if (field.id !== source) {
-        document.querySelector(`#${field.id}`).value = formatField(value, field);
+        document.querySelector(`#${field.id}`).value = formatField(value, field, bits);
       }
     });
 
@@ -181,23 +169,18 @@
     }
 
     updating = false;
-    currentSigned = value;
+    currentValue = value;
+    currentWidth = bits;
 
-    const unsigned = modeSelect.value === "signed" ? toUnsignedPattern(value) : value;
-    signedValueOutput.textContent = value.toString(10);
-    unsignedValueOutput.textContent = unsigned.toString(10);
-    bitPatternOutput.textContent =
-      modeSelect.value === "signed"
-        ? formatBitPattern(value, 2)
-        : value.toString(2);
-
-    summaryCard.hidden = false;
+    signedOutput.textContent = value.toString(10);
+    unsignedOutput.textContent =
+      modeSelect.value === "signed" ? toUnsigned(value, bits).toString(10) : value.toString(10);
+    effectiveWidthOutput.textContent = modeSelect.value === "signed" ? `${bits}-bit` : "Magnitude";
+    summary.hidden = false;
   }
 
   function handleField(field) {
     if (updating) return;
-
-    activeId = field.id;
     clearErrors();
 
     const input = document.querySelector(`#${field.id}`);
@@ -214,13 +197,11 @@
       return;
     }
 
-    writeAll(parsed.value, field.id);
+    writeAll(parsed.value, parsed.bits, field.id);
   }
 
   function handleCustom() {
     if (updating) return;
-
-    activeId = "custom-value-input";
     clearErrors();
 
     const base = Number(customBaseInput.value);
@@ -231,21 +212,23 @@
     }
 
     const parsed = parseMagnitude(customValueInput.value, base);
-
     if (parsed.empty) {
       clearOthers("custom-value-input");
       return;
     }
-
     if (parsed.error) {
       customError.textContent = parsed.error;
       clearOthers("custom-value-input");
       return;
     }
 
+    const bits = widthSelect.value === "auto"
+      ? inferredWidth({ pattern: false }, customValueInput.value, parsed.value)
+      : Number(widthSelect.value);
+
     if (modeSelect.value === "signed" &&
-        (parsed.value < signedMin() || parsed.value > signedMax())) {
-      customError.textContent = `Value must fit in signed ${width()}-bit range.`;
+        (parsed.value < signedMin(bits) || parsed.value > signedMax(bits))) {
+      customError.textContent = `Value must fit in signed ${bits}-bit range.`;
       clearOthers("custom-value-input");
       return;
     }
@@ -256,82 +239,83 @@
       return;
     }
 
-    writeAll(parsed.value, "custom-value-input");
+    writeAll(parsed.value, bits, "custom-value-input");
   }
 
   function updateRangeNote() {
-    if (modeSelect.value === "signed") {
-      bitWidthField.hidden = false;
-      rangeNote.textContent =
-        `Signed range: ${signedMin()} to ${signedMax()} · unsigned bit pattern: 0 to ${unsignedMax()}`;
-    } else {
-      bitWidthField.hidden = true;
+    if (modeSelect.value === "unsigned") {
+      widthField.hidden = true;
       rangeNote.textContent = "Unsigned mode uses ordinary positive magnitude notation.";
+      return;
+    }
+
+    widthField.hidden = false;
+    if (widthSelect.value === "auto") {
+      rangeNote.textContent = "Auto width uses 8, 16, 32, or 64 bits based on the entered value.";
+    } else {
+      const bits = Number(widthSelect.value);
+      rangeNote.textContent =
+        `Signed range: ${signedMin(bits)} to ${signedMax(bits)} · unsigned pattern: 0 to ${unsignedMax(bits)}`;
     }
   }
 
-  function refreshAfterSettingChange() {
+  function refresh() {
     updateRangeNote();
     clearErrors();
+    if (currentValue === null) return;
 
-    if (currentSigned === null) return;
+    let bits = currentWidth;
+    if (widthSelect.value !== "auto") bits = Number(widthSelect.value);
 
-    if (modeSelect.value === "unsigned" && currentSigned < 0n) {
+    if (modeSelect.value === "unsigned" && currentValue < 0n) {
       clearOthers();
       return;
     }
 
     if (modeSelect.value === "signed" &&
-        (currentSigned < signedMin() || currentSigned > signedMax())) {
+        (currentValue < signedMin(bits) || currentValue > signedMax(bits))) {
       clearOthers();
       return;
     }
 
-    writeAll(currentSigned);
+    writeAll(currentValue, bits);
   }
 
-  standardFields.forEach((field) => {
+  fields.forEach(field => {
     document.querySelector(`#${field.id}`).addEventListener("input", () => handleField(field));
   });
 
   customValueInput.addEventListener("input", handleCustom);
-
   customBaseInput.addEventListener("input", () => {
     const base = Number(customBaseInput.value);
     clearErrors();
-
     if (!Number.isInteger(base) || base < 2 || base > 36) {
       customError.textContent = "Custom base must be between 2 and 36.";
       return;
     }
-
-    if (currentSigned !== null) {
-      customValueInput.value = currentSigned.toString(base).toUpperCase();
+    if (currentValue !== null) {
+      customValueInput.value = currentValue.toString(base).toUpperCase();
     }
   });
 
-  modeSelect.addEventListener("change", refreshAfterSettingChange);
-  bitWidthSelect.addEventListener("change", refreshAfterSettingChange);
+  modeSelect.addEventListener("change", refresh);
+  widthSelect.addEventListener("change", refresh);
 
   clearButton.addEventListener("click", () => {
     updating = true;
-    standardFields.forEach((field) => {
-      document.querySelector(`#${field.id}`).value = "";
-    });
+    fields.forEach(field => document.querySelector(`#${field.id}`).value = "");
     customValueInput.value = "";
     updating = false;
-    currentSigned = null;
-    activeId = null;
+    currentValue = null;
+    summary.hidden = true;
     clearErrors();
-    summaryCard.hidden = true;
-    document.querySelector("#decimal-input").focus();
+    document.querySelector("#hex-input").focus();
   });
 
-  document.querySelectorAll(".copy-button").forEach((button) => {
+  document.querySelectorAll(".copy-button").forEach(button => {
     button.addEventListener("click", async () => {
       const input = document.querySelector(`#${button.dataset.copyTarget}`);
       if (!input.value) return;
-
       try {
         await navigator.clipboard.writeText(input.value);
         const old = button.textContent;

@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Number Base Converter | Repo</title>
   <meta name="description" content="Convert integers between binary, octal, decimal, hexadecimal, base 36, and custom bases, including signed two's-complement values.">
-
   <script>
     (() => {
       const saved = localStorage.getItem("repo-theme");
@@ -13,11 +12,9 @@
       document.documentElement.dataset.theme = saved || preferred;
     })();
   </script>
-
   <link rel="stylesheet" href="../../css/styles.css">
   <link rel="stylesheet" href="../../css/tools.css">
   <link rel="stylesheet" href="./tool.css">
-
   <script src="../../js/theme.js" defer></script>
   <script src="../../js/tool-base.js" defer></script>
   <script src="./tool.js" defer></script>
@@ -35,7 +32,7 @@
     <section class="settings-card" aria-labelledby="representation-title">
       <div>
         <h2 id="representation-title">Representation</h2>
-        <p>Choose how negative values should be represented.</p>
+        <p>Auto width infers the intended bit width from the value you enter.</p>
       </div>
 
       <div class="settings-grid">
@@ -50,9 +47,10 @@
         <label class="tool-field" id="bit-width-field">
           <span>Bit width</span>
           <select class="tool-input" id="bit-width-select">
+            <option value="auto" selected>Auto</option>
             <option value="8">8-bit</option>
             <option value="16">16-bit</option>
-            <option value="32" selected>32-bit</option>
+            <option value="32">32-bit</option>
             <option value="64">64-bit</option>
           </select>
         </label>
@@ -67,7 +65,7 @@
         <button class="tool-secondary-button" id="clear-button" type="button">Clear</button>
       </div>
 
-      <p class="helper-text">Enter a value in any field. In signed mode, binary, octal, and hexadecimal are interpreted as fixed-width two's-complement bit patterns.</p>
+      <p class="helper-text">Enter a value in any field. Binary, octal, and hexadecimal are treated as bit patterns in signed mode.</p>
 
       <div class="base-grid">
         <label class="base-field">
@@ -100,14 +98,14 @@
         <label class="base-field">
           <span class="base-label"><strong>Hexadecimal</strong><small>Base 16</small></span>
           <div class="input-row">
-            <input id="hex-input" class="tool-input mono-input" type="text" autocomplete="off" spellcheck="false" placeholder="FFFFFFFF">
+            <input id="hex-input" class="tool-input mono-input" type="text" autocomplete="off" spellcheck="false" placeholder="FF">
             <button class="copy-button" type="button" data-copy-target="hex-input">Copy</button>
           </div>
           <span class="field-error" id="hex-error"></span>
         </label>
 
         <label class="base-field">
-          <span class="base-label"><strong>Base 36</strong><small>Signed magnitude</small></span>
+          <span class="base-label"><strong>Base 36</strong><small>Signed value</small></span>
           <div class="input-row">
             <input id="base36-input" class="tool-input mono-input" type="text" autocomplete="off" spellcheck="false" placeholder="-1">
             <button class="copy-button" type="button" data-copy-target="base36-input">Copy</button>
@@ -130,8 +128,8 @@
 
       <div class="summary-card" id="summary-card" hidden>
         <div><span>Signed value</span><strong id="signed-value">—</strong></div>
-        <div><span>Unsigned value</span><strong id="unsigned-value">—</strong></div>
-        <div><span>Bit pattern</span><strong id="bit-pattern">—</strong></div>
+        <div><span>Unsigned pattern</span><strong id="unsigned-value">—</strong></div>
+        <div><span>Effective width</span><strong id="effective-width">—</strong></div>
       </div>
     </section>
   </main>
