@@ -1295,3 +1295,11 @@ body.search-open .site-search {
   color: var(--text-muted);
   font-size: 0.82rem;
 }
+
+/* The main content container receives programmatic focus after route changes
+   so screen readers announce the newly opened note. It is not an interactive
+   control, so suppress the browser's full-panel focus ring. */
+.main-content:focus,
+.main-content:focus-visible {
+  outline: none;
+}
