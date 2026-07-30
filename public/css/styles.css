@@ -682,3 +682,234 @@ body.sidebar-collapsed .notes-sidebar {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* Search */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.site-search {
+  position: relative;
+  width: clamp(13rem, 25vw, 24rem);
+}
+
+.search-input-shell,
+.note-search-input-shell {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  background: var(--surface);
+}
+
+.search-input-shell {
+  height: 2.5rem;
+  padding: 0 0.55rem;
+}
+
+.search-input-shell:focus-within,
+.note-search-input-shell:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.search-input-shell svg,
+.note-search-input-shell svg {
+  flex: 0 0 auto;
+  width: 1rem;
+  height: 1rem;
+  color: var(--text-muted);
+}
+
+.search-input-shell input,
+.note-search-input-shell input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+}
+
+.search-input-shell input::placeholder,
+.note-search-input-shell input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-input-shell kbd {
+  flex: 0 0 auto;
+  padding: 0.08rem 0.35rem;
+  border: 1px solid var(--border);
+  border-bottom-color: var(--border-strong);
+  border-radius: 0.3rem;
+  background: var(--surface-subtle);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.7rem;
+}
+
+.site-search-results {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  right: 0;
+  width: min(34rem, 92vw);
+  max-height: min(30rem, 70vh);
+  overflow: auto;
+  padding: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.site-search-result {
+  display: block;
+  width: 100%;
+  padding: 0.7rem 0.75rem;
+  border: 0;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.site-search-result:hover,
+.site-search-result:focus-visible,
+.site-search-result.is-active {
+  background: var(--surface-hover);
+  outline: none;
+}
+
+.site-search-result strong,
+.site-search-result small,
+.site-search-result span {
+  display: block;
+}
+
+.site-search-result small {
+  margin-top: 0.1rem;
+  color: var(--text-muted);
+}
+
+.site-search-result span {
+  margin-top: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.search-empty {
+  margin: 0;
+  padding: 0.9rem;
+  color: var(--text-muted);
+}
+
+.note-search {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.note-search-input-shell {
+  width: min(18rem, 30vw);
+  height: 2rem;
+  padding: 0 0.45rem;
+}
+
+.note-search-count {
+  min-width: 3.2rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.note-search-button {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.note-search-button:hover {
+  background: var(--surface-hover);
+}
+
+.note-search-button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.code-search-hit {
+  background: rgba(255, 212, 59, 0.36);
+  color: inherit;
+  border-radius: 0.15rem;
+}
+
+.code-search-hit.is-current {
+  background: rgba(255, 166, 0, 0.65);
+}
+
+@media (max-width: 900px) {
+  .site-search {
+    width: min(15rem, 28vw);
+  }
+
+  .search-input-shell kbd {
+    display: none;
+  }
+
+  .note-search-input-shell {
+    width: min(12rem, 25vw);
+  }
+}
+
+@media (max-width: 680px) {
+  .site-search {
+    position: fixed;
+    top: calc(var(--header-height) + 0.5rem);
+    left: 0.75rem;
+    right: 0.75rem;
+    width: auto;
+    z-index: 110;
+    display: none;
+  }
+
+  body.search-open .site-search {
+    display: block;
+  }
+
+  .site-search-results {
+    width: 100%;
+  }
+
+  .note-search {
+    width: 100%;
+    order: 3;
+    margin-top: 0.45rem;
+  }
+
+  .code-window-header {
+    flex-wrap: wrap;
+  }
+
+  .note-search-input-shell {
+    width: auto;
+    flex: 1;
+  }
+}
