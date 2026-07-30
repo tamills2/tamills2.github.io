@@ -1,0 +1,19 @@
+{
+  "title": "Character Inspector",
+  "description": "Inspect each character in a string by glyph, Unicode code point, name, position, encoding, and common lookalikes.",
+  "category": "Text",
+  "keywords": [
+    "character inspector",
+    "unicode",
+    "code point",
+    "ASCII",
+    "lookalike characters",
+    "confusable characters",
+    "invisible characters",
+    "string analyzer",
+    "letter or number",
+    "I l 1 O 0"
+  ],
+  "homepage": true,
+  "order": 20
+}

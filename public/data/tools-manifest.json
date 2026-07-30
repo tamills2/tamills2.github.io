@@ -36,6 +36,30 @@
     "order": 10,
     "path": "tools/regex-generator/",
     "url": "./tools/regex-generator/",
-    "content": "Generate generalized regular expressions from multiline examples and browse common patterns. Regex Generator | Repo Open Notes homepage Notes Repo Search the entire site Search site Tools Regex Generator Use dark mode Repo tool Paste examples to generate a structural regular expression, or choose a common ready-made pattern. Generate from examples Each non-empty line is treated as one example value. Load example Example text 12345\n67890\n24680 Generation mode One regex for all lines Generalises matching examples into one reusable pattern. One regex per line Produces a separate pattern for every example. Anchor full value with ^ and $ Case-insensitive flag Generate regex Clear Generated regex Copy Common regexes Select one to place it in the result panel. Test the current regex Enter values below to see which complete lines match. Test text Paste test values, one per line"
+    "content": "Generate generalized regular expressions from multiline examples and browse common patterns. Regex Generator | Repo Open Notes homepage Notes Repo Search the entire site Search site Tools Regex Generator Tool Template Use dark mode Repo tool Paste examples to generate a structural regular expression, or choose a common ready-made pattern. Generate from examples Each non-empty line is treated as one example value. Load example Example text 12345\n67890\n24680 Generation mode One regex for all lines Generalises matching examples into one reusable pattern. One regex per line Produces a separate pattern for every example. Anchor full value with ^ and $ Case-insensitive flag Generate regex Clear Generated regex Copy Common regexes Select one to place it in the result panel. Test the current regex Enter values below to see which complete lines match. Test text Paste test values, one per line"
+  },
+  {
+    "type": "tool",
+    "slug": "character-inspector",
+    "title": "Character Inspector",
+    "description": "Inspect each character in a string by glyph, Unicode code point, name, position, encoding, and common lookalikes.",
+    "category": "Text",
+    "keywords": [
+      "character inspector",
+      "unicode",
+      "code point",
+      "ASCII",
+      "lookalike characters",
+      "confusable characters",
+      "invisible characters",
+      "string analyzer",
+      "letter or number",
+      "I l 1 O 0"
+    ],
+    "homepage": true,
+    "order": 20,
+    "path": "tools/character-inspector/",
+    "url": "./tools/character-inspector/",
+    "content": "Inspect each character in a string by glyph, Unicode code point, name, position, encoding, and common lookalikes. Character Inspector String to inspect Text Inspect characters Load example Clear Character-by-character view Inspection Characters Unicode code points UTF-16 units JavaScript string length UTF-8 bytes Encoded size Lines Paste a string and every character appears in its own labeled box. Common lookalikes invisible characters space tab newline zero width Unicode ASCII decimal hexadecimal."
   }
 ]
