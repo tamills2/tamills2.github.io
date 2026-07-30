@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Timezones | Repo</title>
+  <meta name="description" content="Compare live world times and convert timestamps between timezones and Unix epoch formats.">
+
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+
+  <main class="tool-main timezone-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>Timezones</h1>
+      <p>Compare live world times and convert timestamps between timezones or Unix epoch values.</p>
+    </div>
+
+    <section class="local-zone-section" aria-labelledby="local-zone-title">
+      <h2 id="local-zone-title">Current timezone</h2>
+
+      <div class="timezone-card timezone-card-local">
+        <div class="timezone-location" id="local-location">Local time</div>
+        <div class="timezone-time" id="local-time">--:--:--</div>
+        <div class="timezone-date" id="local-date">—</div>
+        <div class="timezone-meta">
+          <span id="local-zone-name">Detecting timezone…</span>
+          <span id="local-offset">—</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="common-zones-section" aria-labelledby="common-zones-title">
+      <div class="section-heading-row">
+        <h2 id="common-zones-title">Common timezones</h2>
+        <button class="tool-secondary-button format-toggle" id="format-toggle" type="button" aria-pressed="false">
+          24-hour time
+        </button>
+      </div>
+
+      <div class="timezone-grid" id="timezone-grid"></div>
+    </section>
+
+    <section class="converter-section" aria-labelledby="converter-title">
+      <div class="converter-heading">
+        <h2 id="converter-title">Timestamp converter</h2>
+        <p>Convert a date and time from one timezone into another, or convert to and from Unix epoch time.</p>
+      </div>
+
+      <div class="tool-card converter-card">
+        <div class="converter-grid">
+          <label class="tool-field">
+            <span>Input type</span>
+            <select class="tool-input" id="input-type">
+              <option value="datetime">Date and time</option>
+              <option value="epoch-seconds">Epoch seconds</option>
+              <option value="epoch-milliseconds">Epoch milliseconds</option>
+            </select>
+          </label>
+
+          <label class="tool-field datetime-only">
+            <span>From timezone</span>
+            <select class="tool-input" id="from-zone"></select>
+          </label>
+
+          <label class="tool-field datetime-only converter-wide">
+            <span>Date and time</span>
+            <input class="tool-input mono-input" id="datetime-input" type="datetime-local" step="1">
+          </label>
+
+          <label class="tool-field epoch-only converter-wide" hidden>
+            <span>Epoch value</span>
+            <input class="tool-input mono-input" id="epoch-input" type="text" inputmode="numeric" placeholder="1724137200">
+          </label>
+
+          <label class="tool-field">
+            <span>To timezone</span>
+            <select class="tool-input" id="to-zone"></select>
+          </label>
+        </div>
+
+        <div class="tool-button-row">
+          <button class="tool-secondary-button" id="now-button" type="button">Use current time</button>
+          <button class="tool-secondary-button" id="swap-button" type="button">Swap zones</button>
+          <button class="tool-secondary-button" id="clear-converter-button" type="button">Clear</button>
+        </div>
+
+        <p class="converter-status" id="converter-status" aria-live="polite"></p>
+
+        <div class="conversion-results" id="conversion-results" hidden>
+          <div class="conversion-primary">
+            <span class="result-label">Converted time</span>
+            <strong id="converted-time">—</strong>
+            <span id="converted-zone">—</span>
+          </div>
+
+          <dl class="conversion-grid">
+            <div>
+              <dt>ISO 8601</dt>
+              <dd id="iso-result">—</dd>
+            </div>
+            <div>
+              <dt>UTC</dt>
+              <dd id="utc-result">—</dd>
+            </div>
+            <div>
+              <dt>Epoch seconds</dt>
+              <dd id="epoch-seconds-result">—</dd>
+            </div>
+            <div>
+              <dt>Epoch milliseconds</dt>
+              <dd id="epoch-milliseconds-result">—</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

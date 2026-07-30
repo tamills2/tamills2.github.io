@@ -1,0 +1,22 @@
+{
+  "title": "Timezones",
+  "description": "Compare live world times and convert timestamps between timezones or Unix epoch formats.",
+  "category": "Date & Time",
+  "keywords": [
+    "timezones",
+    "timezone converter",
+    "timestamp converter",
+    "world clock",
+    "current time",
+    "UTC",
+    "GMT",
+    "epoch",
+    "Unix timestamp",
+    "epoch seconds",
+    "epoch milliseconds",
+    "date conversion"
+  ],
+  "homepage": true,
+  "order": 40,
+  "hidden": false
+}

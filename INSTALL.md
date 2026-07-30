@@ -1,21 +1,28 @@
-# CIDR, Subnet & Wildcard Converter
+# Timezones with timestamp converter
 
-Copy:
+Replace:
 
 ```text
-public/tools/cidr-subnet-converter/
+public/tools/timezones/index.html
+public/tools/timezones/tool.css
+public/tools/timezones/tool.js
+public/tools/timezones/tool.json
 ```
 
-into your repository, then run:
+Then run:
 
 ```bash
 python3 scripts/build_site.py
 ```
 
-Features:
+Added below the live timezone cards:
 
-- CIDR prefix → subnet mask + wildcard mask
-- Subnet mask → CIDR prefix + wildcard mask
-- Wildcard mask → CIDR prefix + subnet mask
-- Optional IPv4 network, broadcast, usable range, and host counts
-- Static HTML, CSS, and JavaScript only
+- Date and time conversion between selectable IANA timezones
+- Unix epoch seconds input
+- Unix epoch milliseconds input
+- Converted local time in the selected target timezone
+- ISO 8601 output
+- UTC output
+- Epoch seconds and milliseconds output
+- Current-time shortcut
+- Timezone swap button
