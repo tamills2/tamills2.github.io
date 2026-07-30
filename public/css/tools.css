@@ -159,56 +159,6 @@
   }
 }
 
-/* Notes navigation drawer available from every tool page. */
-.tool-notes-backdrop {
-  position: fixed;
-  inset: var(--header-height) 0 0;
-  z-index: 180;
-  border: 0;
-  background: rgb(0 0 0 / 0.32);
-  cursor: default;
-}
-
-.tool-notes-drawer {
-  position: fixed;
-  top: var(--header-height);
-  bottom: 0;
-  left: 0;
-  z-index: 190;
-  width: min(88vw, var(--sidebar-width));
-  overflow-y: auto;
-  padding: 1rem;
-  border-right: 1px solid var(--border);
-  background: var(--surface);
-  box-shadow: var(--shadow);
-}
-
-.tool-notes-drawer-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.8rem;
-}
-
-.tool-notes-drawer-heading h2,
-.tool-notes-drawer-heading p {
-  margin: 0;
-}
-
-.tool-notes-tree .tool-note-link {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  color: var(--text);
-  text-decoration: none;
-}
-
-body.tool-notes-open {
-  overflow: hidden;
-}
-
-
 /* Keep each header control in its own click area. */
 .tool-page-shell .site-header {
   isolation: isolate;
@@ -229,4 +179,81 @@ body.tool-notes-open {
 /* The shared header is injected into this mount by tool-base.js. */
 #shared-tool-header {
   display: contents;
+}
+
+/* Tool pages use the same collapsible sidebar model as the homepage. */
+.tool-app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  min-height: 100vh;
+  padding-top: var(--header-height);
+  transition: grid-template-columns 180ms ease;
+}
+
+body.sidebar-collapsed .tool-app-shell {
+  grid-template-columns: 0 minmax(0, 1fr);
+}
+
+.tool-app-shell .notes-sidebar {
+  position: sticky;
+  top: var(--header-height);
+  height: calc(100vh - var(--header-height));
+}
+
+.tool-app-shell .tool-main {
+  padding-top: 2rem;
+}
+
+/* The shared tree uses exactly the same row layout as the homepage tree. */
+.tool-notes-tree .tree-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.tool-notes-tree .tree-row > button,
+.tool-notes-tree .tree-row > a {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  min-width: 0;
+  padding: 0.4rem 0.5rem;
+  border: 0;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  text-decoration: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.tool-notes-tree .tree-row > button:hover,
+.tool-notes-tree .tree-row > a:hover {
+  background: var(--surface-hover);
+}
+
+@media (max-width: 760px) {
+  .tool-app-shell,
+  body.sidebar-collapsed .tool-app-shell {
+    display: block;
+  }
+
+  .tool-app-shell .notes-sidebar {
+    position: fixed;
+    z-index: 90;
+    top: var(--header-height);
+    left: 0;
+    width: min(88vw, var(--sidebar-width));
+    box-shadow: var(--shadow);
+  }
+
+  body.sidebar-collapsed .tool-app-shell .notes-sidebar {
+    visibility: hidden;
+  }
+
+  .tool-app-shell .tool-main {
+    padding-top: 1.25rem;
+  }
 }

@@ -59,21 +59,6 @@
         </div>
       </header>
 
-      <button class="tool-notes-backdrop" type="button" hidden aria-label="Close notes navigation"></button>
-      <aside class="tool-notes-drawer" id="tool-notes-drawer" hidden aria-label="Notes">
-        <div class="tool-notes-drawer-heading">
-          <div>
-            <p class="eyebrow">Repository</p>
-            <h2>Notes</h2>
-          </div>
-          <button class="icon-button tool-notes-close" type="button" aria-label="Close notes navigation">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"></path></svg>
-          </button>
-        </div>
-        <nav class="notes-tree tool-notes-tree" aria-label="Notes directory">
-          <p class="sidebar-status">Loading notes…</p>
-        </nav>
-      </aside>
     `;
 
     // theme.js runs first; initialise again now that the shared switch exists.
@@ -156,31 +141,44 @@
     }
   }
 
-  function initialiseToolNotesDrawer() {
+  function initialiseToolNotesSidebar() {
     const trigger = document.querySelector("#tool-notes-button");
-    const backdrop = document.querySelector(".tool-notes-backdrop");
-    const drawer = document.querySelector("#tool-notes-drawer");
-    const closeButton = document.querySelector(".tool-notes-close");
-    const tree = document.querySelector(".tool-notes-tree");
-    if (!trigger || !backdrop || !drawer || !closeButton || !tree) return;
+    const main = document.querySelector(".tool-main");
+    if (!trigger || !main) return;
 
-    function setOpen(open) {
-      drawer.hidden = !open;
-      backdrop.hidden = !open;
-      trigger.setAttribute("aria-expanded", String(open));
-      document.body.classList.toggle("tool-notes-open", open);
-      if (open) closeButton.focus();
-      else trigger.focus();
+    const shell = document.createElement("div");
+    shell.className = "tool-app-shell";
+
+    const sidebar = document.createElement("aside");
+    sidebar.className = "notes-sidebar tool-notes-sidebar";
+    sidebar.id = "tool-notes-sidebar";
+    sidebar.setAttribute("aria-label", "Notes");
+    sidebar.innerHTML = `
+      <h2>Notes</h2>
+      <nav class="notes-tree tool-notes-tree" aria-label="Notes directory">
+        <p class="sidebar-status">Loading notes…</p>
+      </nav>
+    `;
+
+    main.parentNode.insertBefore(shell, main);
+    shell.append(sidebar, main);
+    trigger.setAttribute("aria-controls", sidebar.id);
+
+    const saved = localStorage.getItem("repo-sidebar-collapsed");
+    const startCollapsed = saved === "true" || (saved === null && window.innerWidth <= 760);
+
+    function setCollapsed(collapsed) {
+      document.body.classList.toggle("sidebar-collapsed", collapsed);
+      trigger.setAttribute("aria-expanded", String(!collapsed));
+      localStorage.setItem("repo-sidebar-collapsed", String(collapsed));
     }
 
-    trigger.addEventListener("click", () => setOpen(drawer.hidden));
-    closeButton.addEventListener("click", () => setOpen(false));
-    backdrop.addEventListener("click", () => setOpen(false));
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !drawer.hidden) setOpen(false);
+    setCollapsed(startCollapsed);
+    trigger.addEventListener("click", () => {
+      setCollapsed(!document.body.classList.contains("sidebar-collapsed"));
     });
 
-    loadToolNotesTree(tree);
+    loadToolNotesTree(sidebar.querySelector(".tool-notes-tree"));
   }
 
   async function loadToolNotesTree(container) {
@@ -204,14 +202,16 @@
       const isFolder = node.type === "folder" || node.type === "directory";
 
       if (isFolder) {
+        const row = document.createElement("div");
         const button = document.createElement("button");
         const childList = createToolNotesList(node.children || []);
+        row.className = "tree-row";
         button.className = "folder-button";
         button.type = "button";
         button.setAttribute("aria-expanded", "false");
         button.innerHTML = `
           <svg class="tree-chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v10H3z"></path></svg>
+          <svg class="tree-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v10H3z"></path></svg>
           <span class="tree-label"></span>
         `;
         button.querySelector(".tree-label").textContent = node.name;
@@ -221,18 +221,22 @@
           button.setAttribute("aria-expanded", String(!expanded));
           childList.hidden = expanded;
         });
-        item.append(button, childList);
+        row.append(button);
+        item.append(row, childList);
       } else if (node.type === "file") {
+        const row = document.createElement("div");
         const link = document.createElement("a");
+        row.className = "tree-row";
         link.className = "file-button tool-note-link";
         link.href = `${root}?note=${encodeURIComponent(node.path)}`;
         link.innerHTML = `
           <span class="tree-spacer" aria-hidden="true"></span>
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v5h5"></path></svg>
+          <svg class="tree-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v5h5"></path></svg>
           <span class="tree-label"></span>
         `;
         link.querySelector(".tree-label").textContent = node.name;
-        item.append(link);
+        row.append(link);
+        item.append(row);
       }
 
       list.append(item);
@@ -243,6 +247,6 @@
   if (!renderSharedToolChrome()) return;
   initialiseToolsMenu();
   initialiseSearch();
-  initialiseToolNotesDrawer();
+  initialiseToolNotesSidebar();
   loadSharedToolsMenu();
 })();
