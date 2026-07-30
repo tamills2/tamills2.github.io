@@ -136,31 +136,33 @@
         </div>
       </section>
 
-      <aside class="tool-card presets-card" aria-labelledby="presets-title">
-        <div class="section-title-row">
-          <div>
-            <h2 id="presets-title">Common regexes</h2>
-            <p>Select one to place it in the result panel.</p>
+      <div class="regex-sidebar">
+        <section class="tool-card tester-card" aria-labelledby="tester-title">
+          <div class="section-title-row">
+            <div>
+              <h2 id="tester-title">Test the current regex</h2>
+              <p>Enter values below to see which complete lines match.</p>
+            </div>
+            <span class="match-count" id="match-count">0 matches</span>
           </div>
-        </div>
-        <div class="preset-list" id="preset-list"></div>
-      </aside>
-    </div>
+          <div class="tool-field">
+            <label for="test-input">Test text</label>
+            <textarea class="tool-textarea test-textarea" id="test-input" placeholder="Paste test values, one per line" spellcheck="false"></textarea>
+          </div>
+          <div class="test-results" id="test-results" aria-live="polite"></div>
+        </section>
 
-    <section class="tool-card tester-card" aria-labelledby="tester-title">
-      <div class="section-title-row">
-        <div>
-          <h2 id="tester-title">Test the current regex</h2>
-          <p>Enter values below to see which complete lines match.</p>
-        </div>
-        <span class="match-count" id="match-count">0 matches</span>
+        <aside class="tool-card presets-card" aria-labelledby="presets-title">
+          <div class="section-title-row">
+            <div>
+              <h2 id="presets-title">Common regexes</h2>
+              <p>Select one to place it in the result panel.</p>
+            </div>
+          </div>
+          <div class="preset-list" id="preset-list"></div>
+        </aside>
       </div>
-      <div class="tool-field">
-        <label for="test-input">Test text</label>
-        <textarea class="tool-textarea test-textarea" id="test-input" placeholder="Paste test values, one per line" spellcheck="false"></textarea>
-      </div>
-      <div class="test-results" id="test-results" aria-live="polite"></div>
-    </section>
+    </div>
   </main>
 </body>
 </html>

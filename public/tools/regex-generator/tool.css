@@ -171,8 +171,9 @@
   font-size: 0.72rem;
 }
 
-.tester-card {
-  margin-top: 1rem;
+.regex-sidebar {
+  display: grid;
+  gap: 1rem;
 }
 
 .test-textarea {
@@ -228,9 +229,6 @@
     grid-template-columns: 1fr;
   }
 
-  .presets-card {
-    order: 2;
-  }
 }
 
 @media (max-width: 640px) {
