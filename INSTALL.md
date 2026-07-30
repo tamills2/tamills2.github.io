@@ -83,3 +83,10 @@ Notes are indexed automatically. Tools and pages are read directly from links in
 
 Typing a query and pressing Enter opens a full results view. Using the arrow
 keys first and then pressing Enter opens the highlighted dropdown result.
+
+## Balanced header layout
+
+The header uses three grid columns: left controls, flexible title space, and
+right controls. Repo is centered inside the space remaining between the two
+control groups. The global search retains its normal width instead of
+progressively collapsing as the window narrows.
