@@ -1,6 +1,6 @@
 {
   "title": "Number Base Converter",
-  "description": "Convert whole numbers between binary, octal, decimal, hexadecimal, base 36, and custom bases from 2 to 36.",
+  "description": "Convert integers between binary, octal, decimal, hexadecimal, base 36, and custom bases, including signed two's-complement values.",
   "category": "Developer Tools",
   "keywords": [
     "binary",
@@ -9,12 +9,14 @@
     "hexadecimal",
     "hex",
     "base converter",
+    "two's complement",
+    "signed integer",
+    "unsigned integer",
     "base 2",
     "base 8",
     "base 10",
     "base 16",
-    "base 36",
-    "number conversion"
+    "base 36"
   ],
   "homepage": true,
   "order": 50,
