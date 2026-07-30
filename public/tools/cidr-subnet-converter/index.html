@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CIDR, Subnet & Wildcard Converter | Repo</title>
+  <meta name="description" content="Convert between IPv4 CIDR prefixes, subnet masks, and wildcard masks, with optional network details.">
+
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+
+  <main class="tool-main subnet-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>CIDR, Subnet & Wildcard Converter</h1>
+      <p>Convert between IPv4 CIDR prefixes, subnet masks, and wildcard masks. Add an IP address to calculate the network range.</p>
+    </div>
+
+    <section class="tool-card converter-card">
+      <div class="converter-grid">
+        <label class="tool-field">
+          <span>IP address <small>optional</small></span>
+          <input class="tool-input mono-input" id="ip-input" type="text" inputmode="decimal" placeholder="192.168.1.42">
+        </label>
+
+        <label class="tool-field">
+          <span>CIDR prefix</span>
+          <div class="prefix-input-wrap">
+            <span>/</span>
+            <input class="tool-input mono-input" id="cidr-input" type="number" min="0" max="32" step="1" placeholder="24">
+          </div>
+        </label>
+
+        <label class="tool-field">
+          <span>Subnet mask</span>
+          <input class="tool-input mono-input" id="subnet-input" type="text" inputmode="decimal" placeholder="255.255.255.0">
+        </label>
+
+        <label class="tool-field">
+          <span>Wildcard mask</span>
+          <input class="tool-input mono-input" id="wildcard-input" type="text" inputmode="decimal" placeholder="0.0.0.255">
+        </label>
+      </div>
+
+      <div class="tool-button-row">
+        <button class="tool-secondary-button" id="clear-button" type="button">Clear</button>
+      </div>
+
+      <p class="status-message" id="status-message" aria-live="polite"></p>
+    </section>
+
+    <section class="results-section" id="results-section" hidden>
+      <div class="results-heading">
+        <h2>Network details</h2>
+      </div>
+
+      <dl class="result-grid">
+        <div>
+          <dt>Network address</dt>
+          <dd id="network-result">—</dd>
+        </div>
+        <div>
+          <dt>Broadcast address</dt>
+          <dd id="broadcast-result">—</dd>
+        </div>
+        <div>
+          <dt>First usable address</dt>
+          <dd id="first-result">—</dd>
+        </div>
+        <div>
+          <dt>Last usable address</dt>
+          <dd id="last-result">—</dd>
+        </div>
+        <div>
+          <dt>Total addresses</dt>
+          <dd id="total-result">—</dd>
+        </div>
+        <div>
+          <dt>Usable hosts</dt>
+          <dd id="usable-result">—</dd>
+        </div>
+      </dl>
+    </section>
+  </main>
+</body>
+</html>

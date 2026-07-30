@@ -1,0 +1,19 @@
+{
+  "title": "CIDR, Subnet & Wildcard Converter",
+  "description": "Convert between IPv4 CIDR prefixes, subnet masks, and wildcard masks, with optional network range details.",
+  "category": "Networking",
+  "keywords": [
+    "CIDR",
+    "subnet mask",
+    "wildcard mask",
+    "inverse mask",
+    "IPv4",
+    "network calculator",
+    "broadcast address",
+    "usable hosts",
+    "prefix length"
+  ],
+  "homepage": true,
+  "order": 30,
+  "hidden": false
+}
