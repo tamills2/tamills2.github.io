@@ -10,7 +10,7 @@ from typing import Any
 REPOSITORY_ROOT = Path(__file__).resolve().parent.parent
 NOTES_ROOT = REPOSITORY_ROOT / "public" / "Notes"
 OUTPUT_FILE = REPOSITORY_ROOT / "public" / "data" / "notes-manifest.json"
-SEARCH_INDEX_FILE = REPOSITORY_ROOT / "public" / "data" / "notes-search-index.json"
+SEARCH_INDEX_FILE = REPOSITORY_ROOT / "public" / "data" / "site-search-index.json"
 
 IGNORED_NAMES = {".DS_Store", ".gitkeep"}
 ALLOWED_EXTENSIONS = {".txt", ".sh", ".bash"}
@@ -62,8 +62,8 @@ def build_tree(directory: Path) -> list[dict[str, Any]]:
     return nodes
 
 
-def build_search_index(directory: Path) -> list[dict[str, str]]:
-    """Create a plain-text search index for every supported note."""
+def build_search_index(directory: Path) -> list[dict[str, object]]:
+    """Create the note portion of the site-wide search index."""
     entries: list[dict[str, str]] = []
 
     if not directory.exists():
@@ -81,8 +81,11 @@ def build_search_index(directory: Path) -> list[dict[str, str]]:
         relative_path = path.relative_to(NOTES_ROOT).as_posix()
         entries.append(
             {
-                "name": display_name(path),
+                "type": "note",
+                "title": display_name(path),
                 "path": relative_path,
+                "url": f"note:{relative_path}",
+                "keywords": [display_name(path), *path.relative_to(NOTES_ROOT).parts[:-1]],
                 "content": path.read_text(encoding="utf-8", errors="replace"),
             }
         )

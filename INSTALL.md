@@ -48,3 +48,38 @@ git push
 
 The deployment workflow regenerates public/data/notes-manifest.json before
 uploading public/ to GitHub Pages.
+
+
+## Search features
+
+The header search searches note names, paths, and full text. Its static index is
+generated into:
+
+public/data/site-search-index.json
+
+Keyboard shortcuts:
+
+- Command+K on macOS or Ctrl+K elsewhere focuses the site-wide search.
+- Command+F on macOS or Ctrl+F while a note is open focuses Find in note.
+- Enter moves to the next in-note match.
+- Shift+Enter moves to the previous match.
+- Escape clears the active search.
+
+
+## Adding tools and pages to global search
+
+Add these attributes to a link you want indexed:
+
+```html
+data-search-type="tool"
+data-search-title="Subnet Calculator"
+data-search-keywords="cidr network ip address"
+```
+
+Notes are indexed automatically. Tools and pages are read directly from links in public/index.html.
+
+
+## Global search results page
+
+Typing a query and pressing Enter opens a full results view. Using the arrow
+keys first and then pressing Enter opens the highlighted dropdown result.

@@ -45,11 +45,11 @@
       <span class="header-section-label">Notes</span>
     </div>
 
-    <a class="site-title" href="./" aria-label="Repo homepage">Repo</a>
+    <a class="site-title" href="./" aria-label="Repo homepage" data-search-type="page" data-search-title="Home" data-search-keywords="repo homepage dashboard quick links">Repo</a>
 
     <div class="header-right">
       <div class="site-search">
-        <label class="visually-hidden" for="site-search-input">Search all notes</label>
+        <label class="visually-hidden" for="site-search-input">Search the entire site</label>
         <div class="search-input-shell">
           <svg aria-hidden="true" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="7"></circle>
@@ -58,7 +58,7 @@
           <input
             id="site-search-input"
             type="search"
-            placeholder="Search notes"
+            placeholder="Search site"
             autocomplete="off"
             spellcheck="false"
           >
@@ -83,9 +83,9 @@
         </button>
 
         <div class="tools-menu" id="tools-menu" role="menu" hidden>
-          <a href="#tool-placeholder-1" role="menuitem">Tool placeholder 1</a>
-          <a href="#tool-placeholder-2" role="menuitem">Tool placeholder 2</a>
-          <a href="#tool-placeholder-3" role="menuitem">Tool placeholder 3</a>
+          <a href="#tool-placeholder-1" role="menuitem" data-search-type="tool" data-search-title="Tool placeholder 1" data-search-keywords="utility placeholder future tool">Tool placeholder 1</a>
+          <a href="#tool-placeholder-2" role="menuitem" data-search-type="tool" data-search-title="Tool placeholder 2" data-search-keywords="utility placeholder future tool">Tool placeholder 2</a>
+          <a href="#tool-placeholder-3" role="menuitem" data-search-type="tool" data-search-title="Tool placeholder 3" data-search-keywords="utility placeholder future tool">Tool placeholder 3</a>
         </div>
       </div>
 
@@ -140,7 +140,7 @@
           </div>
 
           <div class="quick-links-grid">
-            <a class="quick-link-card" href="#placeholder-note">
+            <a class="quick-link-card" href="#placeholder-note" data-search-type="page" data-search-title="Popular note" data-search-keywords="popular note quick link">
               <span class="card-icon" aria-hidden="true">01</span>
               <span>
                 <strong>Popular note</strong>
@@ -148,7 +148,7 @@
               </span>
             </a>
 
-            <a class="quick-link-card" href="#tool-placeholder-1">
+            <a class="quick-link-card" href="#tool-placeholder-1" data-search-type="tool" data-search-title="Tool placeholder" data-search-keywords="future utility quick link">
               <span class="card-icon" aria-hidden="true">02</span>
               <span>
                 <strong>Tool placeholder</strong>
@@ -156,7 +156,7 @@
               </span>
             </a>
 
-            <a class="quick-link-card" href="#recent-notes">
+            <a class="quick-link-card" href="#recent-notes" data-search-type="page" data-search-title="Recent notes" data-search-keywords="recent notes quick link">
               <span class="card-icon" aria-hidden="true">03</span>
               <span>
                 <strong>Recent notes</strong>
@@ -165,6 +165,18 @@
             </a>
           </div>
         </section>
+      </section>
+
+      <section class="search-page-view" id="search-page-view" hidden>
+        <div class="search-page-header">
+          <div>
+            <p class="eyebrow">Global search</p>
+            <h1 id="search-page-title">Search results</h1>
+            <p id="search-page-summary" class="search-page-summary"></p>
+          </div>
+          <button class="secondary-button" id="close-search-page" type="button">Home</button>
+        </div>
+        <div class="search-page-results" id="search-page-results"></div>
       </section>
 
       <section class="file-view" id="file-view" hidden>

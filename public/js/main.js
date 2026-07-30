@@ -36,6 +36,11 @@ function cacheElements() {
   elements.toolsMenu = document.querySelector("#tools-menu");
   elements.homeView = document.querySelector("#home-view");
   elements.fileView = document.querySelector("#file-view");
+  elements.searchPageView = document.querySelector("#search-page-view");
+  elements.searchPageTitle = document.querySelector("#search-page-title");
+  elements.searchPageSummary = document.querySelector("#search-page-summary");
+  elements.searchPageResults = document.querySelector("#search-page-results");
+  elements.closeSearchPage = document.querySelector("#close-search-page");
   elements.fileLocation = document.querySelector("#file-location");
   elements.fileTitle = document.querySelector("#file-title");
   elements.codeFileName = document.querySelector("#code-file-name");
@@ -128,6 +133,7 @@ function closeToolsMenu() {
 
 function initialiseHomeButton() {
   elements.closeFile.addEventListener("click", showHome);
+  elements.closeSearchPage.addEventListener("click", showHome);
 }
 
 
@@ -153,11 +159,14 @@ function initialiseSiteSearch() {
       updateActiveSiteSearchResult(results);
     }
 
-    if (event.key === "Enter" && results.length) {
+    if (event.key === "Enter") {
       event.preventDefault();
-      const target =
-        results[state.activeSiteSearchIndex >= 0 ? state.activeSiteSearchIndex : 0];
-      target.click();
+
+      if (state.activeSiteSearchIndex >= 0 && results.length) {
+        results[state.activeSiteSearchIndex].click();
+      } else if (elements.siteSearchInput.value.trim()) {
+        showSearchPage(elements.siteSearchInput.value);
+      }
     }
 
     if (event.key === "Escape") {
@@ -186,7 +195,7 @@ function initialiseSiteSearch() {
 
 async function loadSearchIndex() {
   try {
-    const response = await fetch("./data/notes-search-index.json", {
+    const response = await fetch("./data/site-search-index.json", {
       cache: "no-store",
     });
 
@@ -210,33 +219,7 @@ function renderSiteSearchResults(rawQuery) {
     return;
   }
 
-  const matches = state.searchIndex
-    .map((entry) => {
-      const name = entry.name.toLowerCase();
-      const path = entry.path.toLowerCase();
-      const content = entry.content.toLowerCase();
-      const nameIndex = name.indexOf(query);
-      const pathIndex = path.indexOf(query);
-      const contentIndex = content.indexOf(query);
-
-      if (nameIndex === -1 && pathIndex === -1 && contentIndex === -1) {
-        return null;
-      }
-
-      const score =
-        nameIndex === 0 ? 0 :
-        nameIndex > -1 ? 1 :
-        pathIndex > -1 ? 2 : 3;
-
-      return {
-        ...entry,
-        score,
-        snippet: createSearchSnippet(entry.content, contentIndex, query.length),
-      };
-    })
-    .filter(Boolean)
-    .sort((a, b) => a.score - b.score || a.path.localeCompare(b.path))
-    .slice(0, 20);
+  const matches = getSiteSearchMatches(query, 30);
 
   elements.siteSearchResults.replaceChildren();
   elements.siteSearchResults.hidden = false;
@@ -244,40 +227,54 @@ function renderSiteSearchResults(rawQuery) {
   if (!matches.length) {
     const empty = document.createElement("p");
     empty.className = "search-empty";
-    empty.textContent = "No matching notes found.";
+    empty.textContent = "No matching notes, tools, pages, or actions.";
     elements.siteSearchResults.append(empty);
     return;
   }
 
+  let previousType = null;
+
   for (const match of matches) {
+    if (match.type !== previousType) {
+      const heading = document.createElement("p");
+      heading.className = "search-group-heading";
+      heading.textContent = formatSearchType(match.type);
+      elements.siteSearchResults.append(heading);
+      previousType = match.type;
+    }
+
     const button = document.createElement("button");
     button.className = "site-search-result";
     button.type = "button";
 
+    const titleRow = document.createElement("span");
+    titleRow.className = "search-result-title-row";
+
+    const badge = document.createElement("span");
+    badge.className = `search-type-badge search-type-${match.type}`;
+    badge.textContent = getSearchTypeIcon(match.type);
+    badge.setAttribute("aria-hidden", "true");
+
     const title = document.createElement("strong");
-    title.textContent = match.name;
+    title.textContent = match.title;
+    titleRow.append(badge, title);
+    button.append(titleRow);
 
-    const path = document.createElement("small");
-    path.textContent = match.path;
-
-    button.append(title, path);
+    if (match.path) {
+      const path = document.createElement("small");
+      path.textContent = match.path;
+      button.append(path);
+    }
 
     if (match.snippet) {
       const snippet = document.createElement("span");
+      snippet.className = "search-result-snippet";
       snippet.textContent = match.snippet;
       button.append(snippet);
     }
 
     button.addEventListener("click", async () => {
-      const treeButton = document.querySelector(
-        `.file-button[data-path="${CSS.escape(match.path)}"]`
-      );
-
-      await openNote(
-        { name: match.name, path: match.path },
-        treeButton || null
-      );
-
+      await activateSearchEntry(match);
       closeSiteSearch();
     });
 
@@ -285,20 +282,247 @@ function renderSiteSearchResults(rawQuery) {
   }
 }
 
-function createSearchSnippet(content, index, queryLength) {
-  if (index < 0) {
-    return "";
+function getSiteSearchMatches(rawQuery, limit = Infinity) {
+  const query = rawQuery.trim().toLowerCase();
+  if (!query) {
+    return [];
   }
 
-  const flattened = content.replace(/\s+/g, " ").trim();
-  const flatIndex = flattened.toLowerCase().indexOf(
-    content.slice(index, index + queryLength).toLowerCase()
-  );
-  const start = Math.max(0, flatIndex - 45);
-  const end = Math.min(flattened.length, flatIndex + queryLength + 65);
-  const prefix = start > 0 ? "…" : "";
-  const suffix = end < flattened.length ? "…" : "";
-  return `${prefix}${flattened.slice(start, end)}${suffix}`;
+  const entries = [
+    ...state.searchIndex,
+    ...collectStaticSearchEntries(),
+    ...createActionSearchEntries(),
+  ];
+
+  const uniqueEntries = [];
+  const seen = new Set();
+
+  for (const entry of entries) {
+    const key = `${entry.type}:${entry.url || entry.path}:${entry.title}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      uniqueEntries.push(entry);
+    }
+  }
+
+  return uniqueEntries
+    .map((entry) => scoreSearchEntry(entry, query))
+    .filter(Boolean)
+    .sort((a, b) => a.score - b.score || a.title.localeCompare(b.title))
+    .slice(0, limit);
+}
+
+function showSearchPage(rawQuery) {
+  const query = rawQuery.trim();
+  if (!query) {
+    return;
+  }
+
+  const matches = getSiteSearchMatches(query);
+  state.selectedPath = null;
+
+  elements.homeView.hidden = true;
+  elements.fileView.hidden = true;
+  elements.searchPageView.hidden = false;
+  elements.searchPageTitle.textContent = `Results for “${query}”`;
+  elements.searchPageSummary.textContent = matches.length === 1
+    ? "1 result found"
+    : `${matches.length} results found`;
+
+  renderSearchPageResults(matches);
+  closeSiteSearchResults();
+  elements.siteSearchInput.value = query;
+  elements.mainContent.focus({ preventScroll: true });
+  window.scrollTo({ top: 0, behavior: "instant" });
+}
+
+function renderSearchPageResults(matches) {
+  elements.searchPageResults.replaceChildren();
+
+  if (!matches.length) {
+    const empty = document.createElement("div");
+    empty.className = "search-page-empty";
+    empty.innerHTML = "<h2>No results found</h2><p>Try a shorter term or a different spelling.</p>";
+    elements.searchPageResults.append(empty);
+    return;
+  }
+
+  const groups = new Map();
+  for (const match of matches) {
+    if (!groups.has(match.type)) {
+      groups.set(match.type, []);
+    }
+    groups.get(match.type).push(match);
+  }
+
+  for (const type of ["note", "tool", "page", "action"]) {
+    const groupMatches = groups.get(type);
+    if (!groupMatches?.length) {
+      continue;
+    }
+
+    const section = document.createElement("section");
+    section.className = "search-page-group";
+
+    const heading = document.createElement("h2");
+    heading.textContent = `${formatSearchType(type)} (${groupMatches.length})`;
+    section.append(heading);
+
+    const list = document.createElement("div");
+    list.className = "search-page-list";
+
+    for (const match of groupMatches) {
+      const button = document.createElement("button");
+      button.className = "search-page-result";
+      button.type = "button";
+
+      const badge = document.createElement("span");
+      badge.className = `search-type-badge search-type-${match.type}`;
+      badge.textContent = getSearchTypeIcon(match.type);
+      badge.setAttribute("aria-hidden", "true");
+
+      const content = document.createElement("span");
+      content.className = "search-page-result-content";
+
+      const title = document.createElement("strong");
+      title.textContent = match.title;
+      content.append(title);
+
+      if (match.path) {
+        const path = document.createElement("small");
+        path.textContent = match.path;
+        content.append(path);
+      }
+
+      if (match.snippet) {
+        const snippet = document.createElement("span");
+        snippet.className = "search-page-snippet";
+        snippet.textContent = match.snippet;
+        content.append(snippet);
+      }
+
+      button.append(badge, content);
+      button.addEventListener("click", () => activateSearchEntry(match));
+      list.append(button);
+    }
+
+    section.append(list);
+    elements.searchPageResults.append(section);
+  }
+}
+
+function collectStaticSearchEntries() {
+  const seen = new Set();
+
+  return [...document.querySelectorAll("[data-search-type]")]
+    .map((element) => {
+      const title = element.dataset.searchTitle?.trim();
+      const url = element.getAttribute("href");
+      if (!title || !url) return null;
+
+      const key = `${element.dataset.searchType}:${title}:${url}`;
+      if (seen.has(key)) return null;
+      seen.add(key);
+
+      return {
+        type: element.dataset.searchType || "page",
+        title,
+        path: url === "./" ? "Home" : url,
+        url,
+        keywords: (element.dataset.searchKeywords || "").split(/\s+/),
+        content: element.textContent.trim(),
+      };
+    })
+    .filter(Boolean);
+}
+
+function createActionSearchEntries() {
+  return [
+    { type: "action", title: "Toggle dark or light mode", path: "Site action", url: "action:toggle-theme", keywords: ["dark", "light", "theme", "mode", "sun", "moon"], content: "Switch between light and dark mode." },
+    { type: "action", title: "Open home", path: "Site action", url: "action:home", keywords: ["home", "repo", "homepage", "dashboard"], content: "Return to the Repo homepage." },
+    { type: "action", title: "Toggle Notes sidebar", path: "Site action", url: "action:toggle-sidebar", keywords: ["notes", "sidebar", "menu", "navigation", "hamburger"], content: "Open or close the Notes directory sidebar." },
+  ];
+}
+
+function scoreSearchEntry(entry, query) {
+  const title = String(entry.title || "").toLowerCase();
+  const path = String(entry.path || "").toLowerCase();
+  const keywords = Array.isArray(entry.keywords) ? entry.keywords.join(" ").toLowerCase() : String(entry.keywords || "").toLowerCase();
+  const content = String(entry.content || "").toLowerCase();
+
+  const titleIndex = title.indexOf(query);
+  const pathIndex = path.indexOf(query);
+  const keywordIndex = keywords.indexOf(query);
+  const contentIndex = content.indexOf(query);
+
+  if (titleIndex === -1 && pathIndex === -1 && keywordIndex === -1 && contentIndex === -1) return null;
+
+  let score = 100;
+  if (title === query) score = 0;
+  else if (titleIndex === 0) score = 5;
+  else if (titleIndex > -1) score = 12;
+  else if (pathIndex === 0) score = 20;
+  else if (pathIndex > -1) score = 26;
+  else if (keywordIndex > -1) score = 34;
+  else if (contentIndex > -1) score = 50;
+
+  score += ({ note: 0, tool: 1, page: 2, action: 3 }[entry.type] ?? 4);
+
+  return {
+    ...entry,
+    score,
+    snippet: createSearchSnippet(String(entry.content || ""), contentIndex, query.length),
+  };
+}
+
+function createSearchSnippet(content, index, queryLength) {
+  if (index < 0 || !content) return "";
+  const start = Math.max(0, index - 55);
+  const end = Math.min(content.length, index + queryLength + 80);
+  const snippet = content.slice(start, end).replace(/\s+/g, " ").trim();
+  return `${start > 0 ? "…" : ""}${snippet}${end < content.length ? "…" : ""}`;
+}
+
+async function activateSearchEntry(entry) {
+  if (entry.type === "note" || String(entry.url || "").startsWith("note:")) {
+    const notePath = String(entry.url || "").replace(/^note:/, "") || entry.path;
+    const treeButton = document.querySelector(`.file-button[data-path="${CSS.escape(notePath)}"]`);
+    await openNote({ name: entry.title, path: notePath }, treeButton || null);
+    return;
+  }
+
+  if (String(entry.url || "").startsWith("action:")) {
+    performSearchAction(entry.url);
+    return;
+  }
+
+  if (entry.url === "./") {
+    showHome();
+    return;
+  }
+
+  if (String(entry.url).startsWith("#")) {
+    const target = document.querySelector(entry.url);
+    if (target) target.scrollIntoView({ behavior: "smooth" });
+    else window.location.hash = entry.url;
+    return;
+  }
+
+  window.location.href = entry.url;
+}
+
+function performSearchAction(action) {
+  if (action === "action:toggle-theme") elements.themeSwitch.click();
+  else if (action === "action:home") showHome();
+  else if (action === "action:toggle-sidebar") elements.sidebarToggle.click();
+}
+
+function formatSearchType(type) {
+  return ({ note: "Notes", tool: "Tools", page: "Pages", action: "Actions" }[type] || "Other");
+}
+
+function getSearchTypeIcon(type) {
+  return ({ note: "N", tool: "T", page: "P", action: "A" }[type] || "•");
 }
 
 function updateActiveSiteSearchResult(results) {
@@ -554,6 +778,7 @@ function showFileLoadingState(node) {
   state.selectedPath = node.path;
 
   elements.homeView.hidden = true;
+  elements.searchPageView.hidden = true;
   elements.fileView.hidden = false;
   elements.fileTitle.textContent = node.name;
   elements.codeFileName.textContent = node.name;
@@ -661,6 +886,7 @@ function showHome() {
   state.currentNoteContent = "";
   clearNoteSearch();
   elements.fileView.hidden = true;
+  elements.searchPageView.hidden = true;
   elements.homeView.hidden = false;
 
   document.querySelectorAll(".file-button[aria-current]").forEach((button) => {
