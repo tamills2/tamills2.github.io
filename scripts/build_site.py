@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate note and tool manifests plus the global static search index."""
+"""Build all generated data used by the static Repo site."""
 
 from __future__ import annotations
 

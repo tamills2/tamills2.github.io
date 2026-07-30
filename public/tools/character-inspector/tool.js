@@ -226,65 +226,61 @@
   function createTile(character, index) {
     const tile = document.createElement("article");
     const group = lookalikeGroup(character);
-    tile.className = `character-tile${group ? " lookalike" : ""}`;
+    tile.className = "character-tile";
     tile.setAttribute("role", "listitem");
-
-    const position = document.createElement("span");
-    position.className = "tile-index";
-    position.textContent = `#${index + 1}`;
-    position.title = `Character position ${index + 1}`;
-
-    const stage = document.createElement("div");
-    stage.className = "glyph-stage";
+    tile.tabIndex = 0;
 
     const glyphData = displayCharacter(character);
     const glyph = document.createElement("span");
-    glyph.className = `glyph${glyphData.invisible ? " invisible" : ""}`;
+    glyph.className = `character-glyph${glyphData.invisible ? " invisible" : ""}`;
     glyph.textContent = glyphData.text;
-    glyph.setAttribute("aria-label", unicodeName(character));
-    stage.append(glyph);
+    glyph.setAttribute("aria-hidden", "true");
 
-    const details = document.createElement("div");
-    details.className = "character-details";
+    const summary = document.createElement("span");
+    summary.className = "character-summary-label";
 
-    const name = document.createElement("h3");
-    name.className = "character-name";
+    const name = document.createElement("strong");
     name.textContent = unicodeName(character);
 
-    const identity = document.createElement("div");
-    identity.className = "identity-code";
+    const position = document.createElement("span");
+    position.textContent = `#${index + 1} · ${codePointLabel(character)}`;
 
-    const code = document.createElement("code");
-    code.textContent = codePointLabel(character);
+    summary.append(name, position);
 
-    const literal = document.createElement("code");
-    literal.textContent = `"${escapeRepresentation(character)}"`;
-
-    identity.append(code, literal);
+    const tooltip = document.createElement("div");
+    tooltip.className = "character-tooltip";
+    tooltip.setAttribute("role", "tooltip");
 
     const meta = document.createElement("dl");
-    meta.className = "character-meta";
     meta.append(
-      createMeta("Category", characterCategory(character)),
+      createMeta("Character", `"${escapeRepresentation(character)}"`),
+      createMeta("Position", String(index + 1)),
+      createMeta("Code point", codePointLabel(character)),
       createMeta("Decimal", String(character.codePointAt(0))),
+      createMeta("Category", characterCategory(character)),
       createMeta("UTF-8", utf8Hex(character)),
       createMeta("UTF-16", Array.from({ length: character.length }, (_, i) =>
         character.charCodeAt(i).toString(16).toUpperCase().padStart(4, "0")
       ).join(" "))
     );
 
-    details.append(name, identity, meta);
+    tooltip.append(meta);
 
     if (group) {
       const note = document.createElement("p");
       note.className = "lookalike-note";
       const strong = document.createElement("strong");
       strong.textContent = "Common lookalikes: ";
-      note.append(strong, document.createTextNode(group.join("  ·  ")));
-      details.append(note);
+      note.append(strong, document.createTextNode(group.join(" · ")));
+      tooltip.append(note);
     }
 
-    tile.append(position, stage, details);
+    tile.setAttribute(
+      "aria-label",
+      `${unicodeName(character)}, position ${index + 1}, ${codePointLabel(character)}`
+    );
+
+    tile.append(glyph, summary, tooltip);
     return tile;
   }
 

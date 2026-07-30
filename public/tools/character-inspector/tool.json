@@ -1,6 +1,6 @@
 {
   "title": "Character Inspector",
-  "description": "Inspect each character in a string by glyph, Unicode code point, name, position, encoding, and common lookalikes.",
+  "description": "Identify every character in a string with compact labeled tiles and detailed Unicode information on hover.",
   "category": "Text",
   "keywords": [
     "character inspector",
