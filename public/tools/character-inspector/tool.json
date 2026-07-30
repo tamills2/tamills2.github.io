@@ -1,6 +1,6 @@
 {
   "title": "Character Inspector",
-  "description": "Display every character in a string as a small outlined box, with a clear identity shown on hover.",
+  "description": "Display every character in a string as a small outlined box and identify it clearly on hover.",
   "category": "Text",
   "keywords": [
     "character inspector",

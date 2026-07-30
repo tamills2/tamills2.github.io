@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Character Inspector | Repo</title>
-  <meta name="description" content="Inspect every character in a string by glyph, Unicode code point, name, position, and encoded value.">
+  <meta name="description" content="Display every character in a string as an outlined box and identify it clearly on hover.">
 
   <script>
     (() => {
@@ -29,14 +29,14 @@
     <div class="tool-heading">
       <p class="eyebrow">Repo tool</p>
       <h1>Character Inspector</h1>
-      <p>Paste a string to identify every character clearly—even when letters, numbers, spaces, and invisible characters look alike.</p>
+      <p>Paste a string to separate every character into an individual box and identify ambiguous or invisible characters clearly.</p>
     </div>
 
-    <section class="tool-card inspector-input-card" aria-labelledby="input-title">
+    <section class="tool-card inspector-card" aria-labelledby="input-title">
       <div class="section-title-row">
         <div>
           <h2 id="input-title">String to inspect</h2>
-          <p>Each character appears in its own outlined box directly below. Hover or focus a box to identify it.</p>
+          <p>Characters appear automatically as you type.</p>
         </div>
       </div>
 
@@ -46,15 +46,13 @@
           class="tool-textarea character-input"
           id="character-input"
           rows="5"
-          placeholder="Paste or type a string, for example: Il1 O0o"
+          placeholder="Paste or type a string"
           spellcheck="false"
           autocomplete="off"
         ></textarea>
       </div>
 
       <div class="tool-button-row">
-        <button class="tool-primary-button" id="inspect-button" type="button">Inspect characters</button>
-        <button class="tool-secondary-button" id="example-button" type="button">Load example</button>
         <button class="tool-secondary-button" id="clear-button" type="button">Clear</button>
       </div>
     </section>

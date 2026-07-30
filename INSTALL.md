@@ -1,4 +1,4 @@
-# Minimal Character Inspector boxes
+# Final Character Inspector
 
 Replace:
 
@@ -15,7 +15,12 @@ Then run:
 python3 scripts/build_site.py
 ```
 
-The output now sits directly below the textarea as small individual outlined
-character boxes. Each box contains only the character. Hover or keyboard-focus
-a box to see an opaque tooltip with the character name, position, Unicode code
-point, and decimal value.
+Final behavior:
+
+- Live updates while typing
+- Small individual outlined character boxes directly beneath the textarea
+- Only the character appears inside each box
+- Opaque, readable hover and keyboard-focus tooltip
+- Tooltip shows the exact character name, position, Unicode code point, and decimal value
+- Invisible characters receive compact labels such as SP, TAB, LF, and ZWSP
+- No example button

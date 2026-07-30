@@ -4,8 +4,6 @@
   const input = document.querySelector("#character-input");
   const grid = document.querySelector("#character-grid");
   const emptyState = document.querySelector("#empty-state");
-  const inspectButton = document.querySelector("#inspect-button");
-  const exampleButton = document.querySelector("#example-button");
   const clearButton = document.querySelector("#clear-button");
   const characterCount = document.querySelector("#character-count");
 
@@ -131,16 +129,17 @@
   }
 
   function createCharacterBox(character, index) {
-    const box = document.createElement("div");
     const display = displayCharacter(character);
     const name = unicodeName(character);
     const codePoint = codePointLabel(character);
 
+    const box = document.createElement("div");
     box.className = `character-box${display.invisible ? " invisible-character" : ""}`;
     box.setAttribute("role", "listitem");
     box.tabIndex = 0;
-    box.textContent = display.text;
     box.setAttribute("aria-label", `${name}, character ${index + 1}, ${codePoint}`);
+
+    const glyph = document.createTextNode(display.text);
 
     const tooltip = document.createElement("div");
     tooltip.className = "character-tooltip";
@@ -153,18 +152,21 @@
     const details = document.createElement("span");
     details.className = "tooltip-details";
 
-    const position = document.createElement("span");
-    position.textContent = `Position: ${index + 1}`;
+    const characterLine = document.createElement("span");
+    characterLine.textContent = `Character: ${JSON.stringify(character)}`;
 
-    const point = document.createElement("span");
-    point.textContent = `Code point: ${codePoint}`;
+    const positionLine = document.createElement("span");
+    positionLine.textContent = `Position: ${index + 1}`;
 
-    const decimal = document.createElement("span");
-    decimal.textContent = `Decimal: ${character.codePointAt(0)}`;
+    const codePointLine = document.createElement("span");
+    codePointLine.textContent = `Unicode: ${codePoint}`;
 
-    details.append(position, point, decimal);
+    const decimalLine = document.createElement("span");
+    decimalLine.textContent = `Decimal: ${character.codePointAt(0)}`;
+
+    details.append(characterLine, positionLine, codePointLine, decimalLine);
     tooltip.append(tooltipName, details);
-    box.append(tooltip);
+    box.append(glyph, tooltip);
 
     return box;
   }
@@ -178,20 +180,15 @@
     grid.hidden = characters.length === 0;
 
     const fragment = document.createDocumentFragment();
+
     characters.forEach((character, index) => {
       fragment.append(createCharacterBox(character, index));
     });
+
     grid.append(fragment);
   }
 
   input.addEventListener("input", render);
-  inspectButton.addEventListener("click", render);
-
-  exampleButton.addEventListener("click", () => {
-    input.value = "Il1 O0o";
-    render();
-    input.focus();
-  });
 
   clearButton.addEventListener("click", () => {
     input.value = "";

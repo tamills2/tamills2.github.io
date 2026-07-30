@@ -2,7 +2,7 @@
   width: min(980px, calc(100% - 2rem));
 }
 
-.inspector-input-card {
+.inspector-card {
   margin-bottom: 1rem;
 }
 
@@ -16,8 +16,8 @@
 }
 
 .character-output-section {
-  position: relative;
-  padding: 0.9rem 0 2rem;
+  padding: 0.85rem 0 2.5rem;
+  overflow: visible;
 }
 
 .output-label-row {
@@ -25,7 +25,7 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.7rem;
 }
 
 .output-label-row h2 {
@@ -39,7 +39,7 @@
 }
 
 .empty-state {
-  padding: 1rem 0;
+  padding: 0.9rem 0;
   color: var(--text-muted);
   font-size: 0.9rem;
 }
@@ -55,14 +55,15 @@
 .character-box {
   position: relative;
   display: grid;
-  width: 2.35rem;
-  height: 2.35rem;
-  flex: 0 0 2.35rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  flex: 0 0 2.4rem;
   place-items: center;
-  border: 1px solid var(--border-color);
+  box-sizing: border-box;
+  border: 2px solid #626b78;
   border-radius: 5px;
-  background: var(--panel-background, var(--card-background));
-  color: var(--text-color);
+  background: #ffffff;
+  color: #111827;
   cursor: help;
   font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
   font-size: 1.08rem;
@@ -73,13 +74,14 @@
 
 .character-box:hover,
 .character-box:focus-visible {
-  border-color: var(--accent-color);
-  outline: 2px solid color-mix(in srgb, var(--accent-color) 25%, transparent);
-  outline-offset: 1px;
+  z-index: 50;
+  border-color: #2563eb;
+  outline: 2px solid rgba(37, 99, 235, 0.28);
+  outline-offset: 2px;
 }
 
 .character-box.invisible-character {
-  color: var(--accent-color);
+  color: #1d4ed8;
   font-size: 0.62rem;
   letter-spacing: 0.02em;
 }
@@ -87,16 +89,18 @@
 .character-tooltip {
   position: absolute;
   left: 50%;
-  bottom: calc(100% + 0.6rem);
+  bottom: calc(100% + 0.65rem);
   z-index: 1000;
+  display: block;
   width: max-content;
-  max-width: min(320px, calc(100vw - 2rem));
-  padding: 0.7rem 0.8rem;
-  border: 1px solid var(--border-color);
+  max-width: min(330px, calc(100vw - 2rem));
+  padding: 0.75rem 0.85rem;
+  box-sizing: border-box;
+  border: 1px solid #374151;
   border-radius: 8px;
-  background: var(--panel-background, var(--card-background));
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
-  color: var(--text-color);
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.38);
   opacity: 0;
   pointer-events: none;
   transform: translate(-50%, 0.2rem);
@@ -107,11 +111,11 @@
   position: absolute;
   top: 100%;
   left: 50%;
-  width: 0.6rem;
-  height: 0.6rem;
-  border-right: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
-  background: var(--panel-background, var(--card-background));
+  width: 0.62rem;
+  height: 0.62rem;
+  border-right: 1px solid #374151;
+  border-bottom: 1px solid #374151;
+  background: #ffffff;
   content: "";
   transform: translate(-50%, -50%) rotate(45deg);
 }
@@ -124,10 +128,10 @@
 
 .tooltip-name {
   display: block;
-  margin-bottom: 0.35rem;
-  color: var(--text-color);
-  font-family: var(--font-sans, system-ui, sans-serif);
-  font-size: 0.78rem;
+  margin-bottom: 0.42rem;
+  color: #111827;
+  font-family: system-ui, sans-serif;
+  font-size: 0.8rem;
   font-weight: 800;
   line-height: 1.25;
   text-align: left;
@@ -136,12 +140,49 @@
 
 .tooltip-details {
   display: grid;
-  gap: 0.18rem;
-  color: var(--text-muted);
-  font-family: var(--font-mono, monospace);
-  font-size: 0.68rem;
+  gap: 0.2rem;
+  color: #4b5563;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
   line-height: 1.35;
   text-align: left;
+}
+
+html[data-theme="dark"] .character-box {
+  border-color: #aeb7c5;
+  background: #171a21;
+  color: #f8fafc;
+}
+
+html[data-theme="dark"] .character-box:hover,
+html[data-theme="dark"] .character-box:focus-visible {
+  border-color: #7db4ff;
+  outline-color: rgba(125, 180, 255, 0.35);
+}
+
+html[data-theme="dark"] .character-box.invisible-character {
+  color: #93c5fd;
+}
+
+html[data-theme="dark"] .character-tooltip {
+  border-color: #c6ccd6;
+  background: #111318;
+  color: #f8fafc;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.78);
+}
+
+html[data-theme="dark"] .character-tooltip::after {
+  border-right-color: #c6ccd6;
+  border-bottom-color: #c6ccd6;
+  background: #111318;
+}
+
+html[data-theme="dark"] .tooltip-name {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .tooltip-details {
+  color: #d1d5db;
 }
 
 @media (max-width: 620px) {
@@ -150,9 +191,9 @@
   }
 
   .character-box {
-    width: 2.25rem;
-    height: 2.25rem;
-    flex-basis: 2.25rem;
+    width: 2.3rem;
+    height: 2.3rem;
+    flex-basis: 2.3rem;
   }
 
   .character-tooltip {
