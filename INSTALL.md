@@ -90,3 +90,20 @@ The header uses three grid columns: left controls, flexible title space, and
 right controls. Repo is centered inside the space remaining between the two
 control groups. The global search retains its normal width instead of
 progressively collapsing as the window narrows.
+
+
+## Shared tool framework
+
+The reusable tool framework adds:
+
+- `public/css/tools.css` — shared cards, fields, buttons, output panels, and tool layout.
+- `public/js/theme.js` — shared light/dark theme state and persistence.
+- `public/js/tool-base.js` — shared tool-header menu and global-search forwarding.
+- `public/tools/template/` — a folder you can duplicate for each new tool.
+
+To create a tool, duplicate `public/tools/template`, rename the folder, and edit
+its `index.html`, `tool.css`, and `tool.js` files.
+
+Every tool loads the same CSS variables as the homepage, so changing themes on
+one page changes the saved theme for all pages. Search from a tool redirects to
+the homepage and opens the full global results view.

@@ -14,7 +14,6 @@ const elements = {};
 
 document.addEventListener("DOMContentLoaded", () => {
   cacheElements();
-  initialiseTheme();
   initialiseSidebar();
   initialiseToolsMenu();
   initialiseHomeButton();
@@ -54,32 +53,6 @@ function cacheElements() {
   elements.noteSearchCount = document.querySelector("#note-search-count");
   elements.noteSearchPrevious = document.querySelector("#note-search-previous");
   elements.noteSearchNext = document.querySelector("#note-search-next");
-}
-
-function initialiseTheme() {
-  applyTheme(document.documentElement.dataset.theme || "light");
-
-  elements.themeSwitch.addEventListener("click", () => {
-    const nextTheme =
-      document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-
-    applyTheme(nextTheme);
-    localStorage.setItem("repo-theme", nextTheme);
-  });
-}
-
-function applyTheme(theme) {
-  const isDark = theme === "dark";
-
-  document.documentElement.dataset.theme = isDark ? "dark" : "light";
-  elements.themeSwitch.setAttribute("aria-checked", String(isDark));
-  elements.themeSwitch.setAttribute(
-    "aria-label",
-    isDark ? "Use light mode" : "Use dark mode"
-  );
-
-  elements.highlightLightTheme.disabled = isDark;
-  elements.highlightDarkTheme.disabled = !isDark;
 }
 
 function initialiseSidebar() {
@@ -204,6 +177,13 @@ async function loadSearchIndex() {
     }
 
     state.searchIndex = await response.json();
+
+    const initialSearch = new URLSearchParams(window.location.search).get("search");
+    if (initialSearch) {
+      elements.siteSearchInput.value = initialSearch;
+      showSearchPage(initialSearch);
+      history.replaceState(null, "", window.location.pathname);
+    }
   } catch (error) {
     console.error(error);
     state.searchIndex = [];

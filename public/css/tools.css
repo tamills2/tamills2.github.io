@@ -1,0 +1,143 @@
+/* Shared layout and controls for every tool page. */
+
+.tool-page-shell {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.tool-main {
+  width: min(100% - 2rem, 72rem);
+  margin: 0 auto;
+  padding: calc(var(--header-height) + 2rem) 0 4rem;
+}
+
+.tool-heading {
+  margin-bottom: 1.5rem;
+}
+
+.tool-heading h1 {
+  margin: 0.15rem 0 0.45rem;
+  font-size: clamp(1.8rem, 5vw, 2.65rem);
+}
+
+.tool-heading p {
+  max-width: 48rem;
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.tool-card {
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: 1rem;
+}
+
+.tool-field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.tool-field label {
+  font-weight: 650;
+}
+
+.tool-input,
+.tool-select,
+.tool-textarea {
+  width: 100%;
+  min-height: 2.65rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+.tool-textarea {
+  min-height: 10rem;
+  resize: vertical;
+}
+
+.tool-input:focus,
+.tool-select:focus,
+.tool-textarea:focus {
+  border-color: var(--accent);
+  outline: 2px solid var(--accent-soft);
+  outline-offset: 1px;
+}
+
+.tool-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.tool-primary-button,
+.tool-secondary-button {
+  min-height: 2.5rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.tool-primary-button {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.tool-secondary-button {
+  background: var(--surface);
+  color: var(--text);
+}
+
+.tool-primary-button:hover,
+.tool-secondary-button:hover {
+  filter: brightness(0.97);
+}
+
+.tool-output {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.55rem;
+  background: var(--surface-subtle);
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.tool-header-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 650;
+}
+
+.tool-header-home svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+@media (max-width: 760px) {
+  .tool-main {
+    width: min(100% - 1.25rem, 72rem);
+    padding-top: calc(var(--header-height) + 1.25rem);
+  }
+}

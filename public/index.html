@@ -11,9 +11,7 @@
     // Apply the saved theme before rendering to avoid a flash of the wrong theme.
     (() => {
       const saved = localStorage.getItem("repo-theme");
-      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
       document.documentElement.dataset.theme = saved || preferred;
     })();
   </script>
@@ -24,6 +22,7 @@
 
   <script src="./vendor/highlight/highlight.min.js" defer></script>
   <script src="./vendor/highlight/languages/bash.min.js" defer></script>
+  <script src="./js/theme.js" defer></script>
   <script src="./js/main.js" defer></script>
 </head>
 
@@ -83,7 +82,7 @@
         </button>
 
         <div class="tools-menu" id="tools-menu" role="menu" hidden>
-          <a href="#tool-placeholder-1" role="menuitem" data-search-type="tool" data-search-title="Tool placeholder 1" data-search-keywords="utility placeholder future tool">Tool placeholder 1</a>
+          <a href="./tools/template/" role="menuitem" data-search-type="tool" data-search-title="Tool Template" data-search-keywords="template starter example utility">Tool Template</a>
           <a href="#tool-placeholder-2" role="menuitem" data-search-type="tool" data-search-title="Tool placeholder 2" data-search-keywords="utility placeholder future tool">Tool placeholder 2</a>
           <a href="#tool-placeholder-3" role="menuitem" data-search-type="tool" data-search-title="Tool placeholder 3" data-search-keywords="utility placeholder future tool">Tool placeholder 3</a>
         </div>
@@ -100,6 +99,7 @@
         <button
           class="theme-switch"
           id="theme-switch"
+          data-theme-switch
           type="button"
           role="switch"
           aria-label="Use dark mode"
