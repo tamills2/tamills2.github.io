@@ -716,6 +716,7 @@ async function loadNotesManifest() {
 
     state.manifest = await response.json();
     renderNotesTree(state.manifest);
+    openRequestedNote();
   } catch (error) {
     console.error(error);
     elements.notesTree.innerHTML = `
@@ -725,6 +726,26 @@ async function loadNotesManifest() {
       </p>
     `;
   }
+}
+
+
+function openRequestedNote() {
+  const requestedPath = new URLSearchParams(window.location.search).get("note");
+  if (!requestedPath) return;
+
+  const node = findNoteNode(state.manifest, requestedPath);
+  if (node) openNote(node, null);
+}
+
+function findNoteNode(nodes, requestedPath) {
+  for (const node of Array.isArray(nodes) ? nodes : []) {
+    if (node.type === "file" && node.path === requestedPath) return node;
+    if (node.type === "folder" || node.type === "directory") {
+      const match = findNoteNode(node.children || [], requestedPath);
+      if (match) return match;
+    }
+  }
+  return null;
 }
 
 function renderNotesTree(nodes) {
@@ -748,7 +769,7 @@ function createTreeList(nodes) {
   for (const node of nodes) {
     const item = document.createElement("li");
 
-    if (node.type === "directory") {
+    if (node.type === "directory" || node.type === "folder") {
       item.append(createDirectoryNode(node));
     } else {
       item.append(createFileNode(node));
