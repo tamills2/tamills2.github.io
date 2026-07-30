@@ -1,49 +1,66 @@
+/* Fix for timezone layout */
 
-/* --- Fixed 5-column timezone grid --- */
-.timezone-grid {
+/* Keep the local clock centered */
+.local-zone-section {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: clamp(0.3rem, 0.8vw, 0.75rem);
-  padding-bottom: 2.25rem;
+  justify-items: center;
+  margin-bottom: 2rem;
 }
 
-/* Scale cards instead of changing column count */
-.timezone-grid .timezone-card {
-  padding: clamp(0.35rem, 1vw, 1rem);
+.local-zone-section > h2 {
+  width: 100%;
+  text-align: center;
+  margin: 0 0 .8rem;
 }
 
-.timezone-grid .timezone-location {
-  font-size: clamp(0.50rem, 0.8vw, 0.76rem);
+/* Restore outlines on all clock cards */
+.timezone-card {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--surface-color);
+  box-sizing: border-box;
 }
 
-.timezone-grid .timezone-time {
-  font-size: clamp(0.72rem, 1.6vw, 1.5rem);
+.timezone-card-local {
+  width: min(430px, 100%);
+  border: 2px solid var(--border-color);
+  padding: 1.35rem;
 }
 
-.timezone-grid .timezone-date {
-  font-size: clamp(0.50rem, 0.8vw, 0.78rem);
+/* Fixed 5-column grid */
+.timezone-grid {
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:clamp(.3rem,.8vw,.75rem);
+  padding-bottom:2.25rem;
 }
 
-.timezone-grid .timezone-meta {
-  gap: clamp(0.15rem, 0.4vw, 0.6rem);
-  font-size: clamp(0.45rem, 0.7vw, 0.72rem);
+.timezone-grid .timezone-card{
+  padding:clamp(.35rem,1vw,1rem);
 }
 
-/* Remove responsive column changes */
-@media (max-width: 1050px) {
-  .timezone-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
+.timezone-grid .timezone-location{
+  font-size:clamp(.5rem,.8vw,.76rem);
 }
 
-@media (max-width: 720px) {
-  .timezone-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
+.timezone-grid .timezone-time{
+  font-size:clamp(.72rem,1.6vw,1.5rem);
 }
 
-@media (max-width: 500px) {
-  .timezone-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+.timezone-grid .timezone-date{
+  font-size:clamp(.5rem,.8vw,.78rem);
+}
+
+.timezone-grid .timezone-meta{
+  gap:clamp(.15rem,.4vw,.6rem);
+  font-size:clamp(.45rem,.7vw,.72rem);
+}
+
+/* Never change column count */
+@media (max-width:1050px),
+       (max-width:720px),
+       (max-width:500px){
+  .timezone-grid{
+    grid-template-columns:repeat(5,minmax(0,1fr));
   }
 }
