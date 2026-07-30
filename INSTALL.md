@@ -1,6 +1,6 @@
-# Timezones — complete fixed version
+# Timezones
 
-Replace the entire folder:
+Replace the complete folder:
 
 ```text
 public/tools/timezones/
@@ -12,4 +12,4 @@ Then run:
 python3 scripts/build_site.py
 ```
 
-This is the complete tool, not a partial CSS patch. It preserves the timestamp converter and restores the full clock card styling while keeping exactly five clocks per row at every viewport width.
+This complete version explicitly applies a visible 2px border to all ten common timezone clock cards while retaining the fixed five-column layout and timestamp/epoch converter.

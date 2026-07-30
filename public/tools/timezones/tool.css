@@ -276,3 +276,12 @@ html[data-theme="dark"] .converter-status.error {
     gap: 0.1rem;
   }
 }
+
+/* Explicit borders for the ten common timezone clocks. */
+.common-zones-section .timezone-grid > .timezone-card {
+  border: 2px solid var(--border-color, currentColor) !important;
+  border-radius: 8px;
+  background: var(--surface-color, transparent);
+  box-sizing: border-box;
+  text-align: center;
+}
