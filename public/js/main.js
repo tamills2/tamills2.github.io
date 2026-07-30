@@ -754,7 +754,7 @@ function createTreeList(nodes) {
   for (const node of nodes) {
     const item = document.createElement("li");
 
-    if (node.type === "directory") {
+    if (node.type === "folder" || node.type === "directory") {
       item.append(createDirectoryNode(node));
     } else {
       item.append(createFileNode(node));
