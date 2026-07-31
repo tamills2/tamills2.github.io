@@ -1,16 +1,18 @@
-# Shared Tools Menu Standardization
+# Regex Generator cleanup
 
-Extract this archive into the repository root, replacing the included files.
+This update changes only the Regex Generator.
 
-The Tools menu width and single-line labels now live in:
+1. Extract this archive into the repository root and replace the included files.
+2. Delete the no-longer-used stylesheet:
 
-`public/css/styles.css`
+```bash
+rm -f public/tools/regex-generator/regex-cleanup.css
+```
 
-Page-specific copies were removed from Common Ports, Timezones, and Cron Expression.
-All current and future pages that use the shared site stylesheet inherit the same menu.
-
-Rebuild with:
+3. Rebuild:
 
 ```bash
 python3 scripts/build_site.py
 ```
+
+The existing `tool.css` now contains the Regex Generator's tool-specific layout rules. The temporary `regex-cleanup.css` link, file, preset markup, preset JavaScript, and preset-only CSS are removed.

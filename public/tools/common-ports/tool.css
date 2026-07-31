@@ -50,7 +50,6 @@
 .ephemeral-table code { font-family:var(--mono); white-space:nowrap; }
 .ephemeral-command-title { margin:1.35rem 0 .75rem; font-size:1.05rem; }
 .ephemeral-command-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
-.ephemeral-note { margin:1rem 0 0; color:var(--muted); font-size:.9rem; }
 .notes-card p:last-child { margin-bottom:0; }
 .empty-row td { color:var(--muted); text-align:center; padding:2rem; }
 [data-theme="dark"] .security-badge.secure { color:#6be3a6; }

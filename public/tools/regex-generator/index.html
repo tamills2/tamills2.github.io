@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Regex Generator | Repo</title>
-  <meta name="description" content="Generate regular expressions from example text or choose common regex patterns.">
+  <meta name="description" content="Generate regular expressions from example text and test them against sample values.">
 
   <script>
     (() => {
@@ -29,7 +29,7 @@
     <div class="tool-heading">
       <p class="eyebrow">Repo tool</p>
       <h1>Regex Generator</h1>
-      <p>Paste examples to generate a structural regular expression, or choose a common ready-made pattern.</p>
+      <p>Paste examples to generate a structural regular expression, then test it against additional values.</p>
     </div>
 
     <div class="regex-layout">
@@ -104,15 +104,7 @@
           <div class="test-results" id="test-results" aria-live="polite"></div>
         </section>
 
-        <aside class="tool-card presets-card" aria-labelledby="presets-title">
-          <div class="section-title-row">
-            <div>
-              <h2 id="presets-title">Common regexes</h2>
-              <p>Select one to place it in the result panel.</p>
-            </div>
-          </div>
-          <div class="preset-list" id="preset-list"></div>
-        </aside>
+
       </div>
     </div>
   </main>

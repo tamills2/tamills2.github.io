@@ -1,4 +1,5 @@
 .subnet-main { max-width: 72rem; }
+.calculator-card { padding-bottom: 1rem; }
 .section-title-row, .results-heading { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
 .section-title-row h2, .section-title-row h3, .results-heading h2 { margin:0; }
 .section-title-row p { margin:.35rem 0 0; color:var(--text-muted); }
