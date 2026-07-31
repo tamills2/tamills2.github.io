@@ -1,14 +1,16 @@
-# Tool sidebar restored
+# Tool sidebar formatting fix
 
-Replace these existing files:
+Replace:
 
-- `public/js/tool-base.js`
-- `public/css/tools.css`
+`public/css/tools.css`
 
-Then rebuild:
+Then rebuild and redeploy:
 
 ```bash
 python3 scripts/build_site.py
+git add public/css/tools.css public/data
+git commit -m "Fix tool notes sidebar formatting"
+git push
 ```
 
-This restores the shared tool-page header/sidebar implementation and adds the Builder button to the drawer header. No new runtime files are introduced.
+This version keeps Notes mathematically centered regardless of the Builder button width and draws the divider directly on the drawer header.
