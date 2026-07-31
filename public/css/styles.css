@@ -615,6 +615,13 @@ body.sidebar-collapsed .notes-sidebar {
   background: var(--code-line-hover);
 }
 
+/* Add breathing room above the first note line without moving the gutter,
+   changing the sidebar, or altering the copy button positioning context. */
+.code-table tr:first-child > .line-number,
+.code-table tr:first-child > .code-line {
+  padding-top: 0.6rem;
+}
+
 .line-number {
   width: 1%;
   min-width: 3.2rem;
