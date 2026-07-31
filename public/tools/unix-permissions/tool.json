@@ -1,0 +1,18 @@
+{
+  "title": "Unix Permissions",
+  "description": "Convert Unix rwx permissions, octal modes, chmod commands, and special permission bits.",
+  "category": "System",
+  "keywords": [
+    "Unix permissions",
+    "Linux permissions",
+    "chmod",
+    "rwx",
+    "octal",
+    "setuid",
+    "setgid",
+    "sticky bit",
+    "file permissions"
+  ],
+  "homepage": true,
+  "order": 40
+}

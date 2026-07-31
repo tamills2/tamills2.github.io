@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Unix Permissions | Repo</title>
+  <meta name="description" content="Convert Unix rwx permissions, octal modes, chmod commands, and special permission bits.">
+
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+
+  <main class="tool-main permissions-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>Unix Permissions</h1>
+      <p>Convert between rwx permissions, octal modes, and chmod commands.</p>
+    </div>
+
+    <section class="tool-card permissions-card" aria-labelledby="permissions-title">
+      <div class="section-title-row">
+        <h2 id="permissions-title">Permissions</h2>
+        <button class="tool-secondary-button compact-button" id="reset-permissions" type="button">Reset</button>
+      </div>
+
+      <div class="permissions-grid" role="group" aria-label="Read, write, and execute permissions">
+        <div class="grid-corner" aria-hidden="true"></div>
+        <div class="column-heading">Read</div>
+        <div class="column-heading">Write</div>
+        <div class="column-heading">Execute</div>
+
+        <div class="row-heading">Owner</div>
+        <label class="permission-toggle"><input type="checkbox" data-class="owner" data-permission="read" checked><span>r</span></label>
+        <label class="permission-toggle"><input type="checkbox" data-class="owner" data-permission="write" checked><span>w</span></label>
+        <label class="permission-toggle"><input type="checkbox" data-class="owner" data-permission="execute" checked><span>x</span></label>
+
+        <div class="row-heading">Group</div>
+        <label class="permission-toggle"><input type="checkbox" data-class="group" data-permission="read" checked><span>r</span></label>
+        <label class="permission-toggle"><input type="checkbox" data-class="group" data-permission="write"><span>w</span></label>
+        <label class="permission-toggle"><input type="checkbox" data-class="group" data-permission="execute" checked><span>x</span></label>
+
+        <div class="row-heading">Other</div>
+        <label class="permission-toggle"><input type="checkbox" data-class="other" data-permission="read" checked><span>r</span></label>
+        <label class="permission-toggle"><input type="checkbox" data-class="other" data-permission="write"><span>w</span></label>
+        <label class="permission-toggle"><input type="checkbox" data-class="other" data-permission="execute" checked><span>x</span></label>
+      </div>
+    </section>
+
+    <section class="tool-card special-card" aria-labelledby="special-title">
+      <h2 id="special-title">Special bits</h2>
+      <div class="special-grid">
+        <label class="special-toggle"><input id="setuid" type="checkbox"><span>setuid</span><code>4</code></label>
+        <label class="special-toggle"><input id="setgid" type="checkbox"><span>setgid</span><code>2</code></label>
+        <label class="special-toggle"><input id="sticky" type="checkbox"><span>sticky</span><code>1</code></label>
+      </div>
+    </section>
+
+    <section class="conversion-grid" aria-label="Permission formats">
+      <div class="tool-card format-card">
+        <label for="symbolic-input">Symbolic</label>
+        <div class="input-with-copy">
+          <input class="tool-input mono-input" id="symbolic-input" type="text" value="rwxr-xr-x" maxlength="9" spellcheck="false" autocomplete="off">
+          <button class="copy-icon-button" type="button" data-copy-target="symbolic-input" aria-label="Copy symbolic permissions" title="Copy">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="tool-card format-card">
+        <label for="octal-input">Octal</label>
+        <div class="input-with-copy">
+          <input class="tool-input mono-input" id="octal-input" type="text" inputmode="numeric" value="755" maxlength="4" spellcheck="false" autocomplete="off">
+          <button class="copy-icon-button" type="button" data-copy-target="octal-input" aria-label="Copy octal permissions" title="Copy">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="tool-card format-card command-card">
+        <label for="command-input">chmod command</label>
+        <div class="input-with-copy">
+          <input class="tool-input mono-input" id="command-input" type="text" value="chmod 755 path" spellcheck="false" autocomplete="off">
+          <button class="copy-icon-button" type="button" data-copy-target="command-input" aria-label="Copy chmod command" title="Copy">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
