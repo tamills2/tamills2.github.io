@@ -1,43 +1,34 @@
 "use strict";
 
 (() => {
+  const STORAGE_TEXT = "repo-note-builder-text";
+  const STORAGE_FILENAME = "repo-note-builder-filename";
+
   const MANIFEST_CANDIDATES = [
     "../../data/notes-manifest.json",
     "../../data/notes.json",
     "../../notes-manifest.json",
-    "../../notes.json",
-    "../../assets/notes-manifest.json",
-    "../../assets/notes.json"
+    "../../notes.json"
   ];
 
-  const searchInput = document.querySelector("#note-search");
+  const noteSearch = document.querySelector("#note-search");
+  const noteCount = document.querySelector("#note-count");
+  const availableNotes = document.querySelector("#available-notes");
+  const editor = document.querySelector("#document-editor");
   const filenameInput = document.querySelector("#filename-input");
-  const downloadButton = document.querySelector("#download-button");
-  const copyButton = document.querySelector("#copy-button");
-  const clearButton = document.querySelector("#clear-selection");
   const statusMessage = document.querySelector("#status-message");
-  const availableContainer = document.querySelector("#available-notes");
-  const availableCount = document.querySelector("#available-count");
-  const selectedList = document.querySelector("#selected-notes");
-  const selectedCount = document.querySelector("#selected-count");
-  const selectedEmpty = document.querySelector("#selected-empty");
-  const preview = document.querySelector("#combined-preview");
+  const documentCounts = document.querySelector("#document-counts");
+  const copyButton = document.querySelector("#copy-button");
+  const downloadButton = document.querySelector("#download-button");
+  const clearButton = document.querySelector("#clear-button");
 
   let notes = [];
-  let selected = [];
-  let instanceCounter = 0;
+  let selectedNoteId = "";
+  let draggedNoteId = "";
+  let saveTimer = 0;
 
-  function setStatus(message, isError = false) {
-    statusMessage.textContent = message;
-    statusMessage.classList.toggle("is-error", isError);
-  }
-
-  function titleFromPath(path) {
-    const file = String(path).split("/").filter(Boolean).pop() || "Untitled note";
-    return decodeURIComponent(file)
-      .replace(/\.(md|markdown|txt|html?)$/i, "")
-      .replace(/[-_]+/g, " ")
-      .replace(/\b\w/g, char => char.toUpperCase());
+  function normalizeLf(text) {
+    return String(text ?? "").replace(/\r\n?/g, "\n");
   }
 
   function cleanPath(path) {
@@ -47,378 +38,286 @@
       .replace(/^\/+/, "");
   }
 
-  function resolveNoteUrl(path) {
-    if (/^(https?:)?\/\//i.test(path)) return path;
-    if (path.startsWith("public/")) return "../../" + path.slice("public/".length);
-    if (path.startsWith("notes/")) return "../../" + path;
-    if (path.startsWith("../")) return path;
-    return "../../" + path;
+  function titleFromPath(path) {
+    const file = String(path).split("/").filter(Boolean).pop() || "Untitled note";
+    return decodeURIComponent(file)
+      .replace(/\.(md|markdown|txt|html?|sh|bash|zsh|ps1|py|js|css|json|ya?ml|xml|ini|conf|cfg)$/i, "")
+      .replace(/[-_]+/g, " ")
+      .replace(/\b\w/g, character => character.toUpperCase());
   }
 
   function normalizeManifest(input) {
     const output = [];
     const seen = new Set();
 
-    function addNote(item, inheritedCategory = "") {
-      if (!item || typeof item !== "object") return;
-
-      const type = String(item.type || "").toLowerCase();
-      if (type === "folder" || type === "directory") {
-        const category = item.title || item.name || item.label || inheritedCategory;
-        const children = item.children || item.items || item.notes || item.entries || [];
-        walk(children, category);
+    function walk(value, inheritedFolder = "") {
+      if (Array.isArray(value)) {
+        value.forEach(item => walk(item, inheritedFolder));
         return;
       }
 
+      if (typeof value === "string") {
+        addFile({ path: value }, inheritedFolder);
+        return;
+      }
+
+      if (!value || typeof value !== "object") return;
+
+      const type = String(value.type || "").toLowerCase();
+      const children =
+        value.children ||
+        value.items ||
+        value.notes ||
+        value.entries ||
+        value.files;
+
+      if (type === "folder" || type === "directory" || (children && !value.path)) {
+        const folder =
+          value.title ||
+          value.name ||
+          value.label ||
+          inheritedFolder ||
+          "Notes";
+        walk(children || [], folder);
+        return;
+      }
+
+      if (value.path || value.href || value.url || value.file || value.source) {
+        addFile(value, inheritedFolder);
+        return;
+      }
+
+      Object.entries(value).forEach(([key, child]) => {
+        if (child && (Array.isArray(child) || typeof child === "object")) {
+          walk(child, inheritedFolder || key);
+        }
+      });
+    }
+
+    function addFile(item, inheritedFolder) {
       const rawPath =
         item.path ||
         item.href ||
         item.url ||
         item.file ||
-        item.source ||
-        item.contentPath ||
-        item.content_path;
-
-      if (!rawPath) {
-        const children = item.children || item.items || item.notes || item.entries;
-        if (children) walk(children, inheritedCategory);
-        return;
-      }
+        item.source;
 
       const path = cleanPath(rawPath);
       if (!path || seen.has(path)) return;
 
-      const extensionLooksReadable = /\.(md|markdown|txt|html?)($|\?)/i.test(path);
-      const explicitNote = type === "note" || item.kind === "note";
-      if (!extensionLooksReadable && !explicitNote) return;
+      const type = String(item.type || "").toLowerCase();
+      if (type && !["file", "note"].includes(type)) return;
 
       seen.add(path);
       output.push({
         id: item.id || path,
         title: item.title || item.name || item.label || titleFromPath(path),
         path,
-        category:
+        folder:
           item.category ||
           item.section ||
           item.folder ||
-          inheritedCategory ||
+          inheritedFolder ||
           "Notes"
       });
     }
 
-    function walk(value, inheritedCategory = "") {
-      if (Array.isArray(value)) {
-        value.forEach(item => {
-          if (typeof item === "string") {
-            addNote({ path: item }, inheritedCategory);
-          } else {
-            addNote(item, inheritedCategory);
-          }
-        });
-        return;
-      }
-
-      if (!value || typeof value !== "object") return;
-
-      const commonRoots = [
-        value.notes,
-        value.items,
-        value.entries,
-        value.children,
-        value.files,
-        value.data
-      ].filter(Boolean);
-
-      if (commonRoots.length) {
-        commonRoots.forEach(root => walk(root, inheritedCategory));
-        return;
-      }
-
-      Object.entries(value).forEach(([key, child]) => {
-        if (Array.isArray(child) || (child && typeof child === "object")) {
-          walk(child, inheritedCategory || key);
-        }
-      });
-    }
-
     walk(input);
+
     return output.sort((a, b) =>
-      a.category.localeCompare(b.category) ||
+      a.folder.localeCompare(b.folder) ||
       a.title.localeCompare(b.title)
     );
   }
 
-  async function loadManifest() {
-    const failures = [];
-
-    for (const candidate of MANIFEST_CANDIDATES) {
-      try {
-        const response = await fetch(candidate, { cache: "no-store" });
-        if (!response.ok) {
-          failures.push(`${candidate}: ${response.status}`);
-          continue;
-        }
-
-        const data = await response.json();
-        const normalized = normalizeManifest(data);
-
-        if (normalized.length) {
-          notes = normalized;
-          renderAvailable();
-          setStatus(`Loaded ${notes.length} notes from ${candidate}.`);
-          return;
-        }
-
-        failures.push(`${candidate}: no readable notes found`);
-      } catch (error) {
-        failures.push(`${candidate}: ${error.message}`);
-      }
-    }
-
-    throw new Error(
-      "Could not find a usable notes manifest. Checked: " +
-      MANIFEST_CANDIDATES.join(", ")
-    );
-  }
-
-  function renderAvailable() {
-    const query = searchInput.value.trim().toLowerCase();
-    const filtered = notes.filter(note =>
-      !query ||
-      note.title.toLowerCase().includes(query) ||
-      note.path.toLowerCase().includes(query) ||
-      note.category.toLowerCase().includes(query)
-    );
-
-    availableCount.textContent =
-      `${filtered.length} ${filtered.length === 1 ? "note" : "notes"}`;
-
-    if (!filtered.length) {
-      availableContainer.innerHTML =
-        '<div class="no-results">No matching notes.</div>';
-      return;
-    }
-
-    const groups = new Map();
-    filtered.forEach(note => {
-      const category = note.category || "Notes";
-      if (!groups.has(category)) groups.set(category, []);
-      groups.get(category).push(note);
-    });
-
-    availableContainer.innerHTML = "";
-
-    groups.forEach((groupNotes, category) => {
-      const section = document.createElement("section");
-      section.className = "note-group";
-
-      const heading = document.createElement("h3");
-      heading.className = "note-group-title";
-      heading.textContent = category;
-      section.appendChild(heading);
-
-      groupNotes.forEach(note => {
-        const row = document.createElement("div");
-        row.className = "available-note";
-
-        const details = document.createElement("div");
-        details.className = "note-details";
-
-        const title = document.createElement("span");
-        title.className = "note-title";
-        title.textContent = note.title;
-
-        const path = document.createElement("span");
-        path.className = "note-path";
-        path.textContent = note.path;
-
-        const addButton = document.createElement("button");
-        addButton.className = "add-note-button";
-        addButton.type = "button";
-        addButton.textContent = "Add";
-        addButton.setAttribute("aria-label", `Add ${note.title}`);
-        addButton.addEventListener("click", () => addSelected(note));
-
-        details.append(title, path);
-        row.append(details, addButton);
-        section.appendChild(row);
-      });
-
-      availableContainer.appendChild(section);
-    });
+  function resolveNoteUrl(path) {
+    if (/^(https?:)?\/\//i.test(path)) return path;
+    if (path.startsWith("public/")) return "../../" + path.slice("public/".length);
+    if (/^notes\//i.test(path)) return "../../" + path;
+    return "../../Notes/" + path.replace(/^Notes\//i, "");
   }
 
   function stripHtml(html) {
-    const documentFragment = new DOMParser().parseFromString(html, "text/html");
-
-    documentFragment.querySelectorAll(
-      "script, style, nav, header, footer, button, .tool-header, #shared-tool-header"
+    const parsed = new DOMParser().parseFromString(html, "text/html");
+    parsed.querySelectorAll(
+      "script, style, nav, header, footer, button, #shared-tool-header, .tool-header"
     ).forEach(node => node.remove());
 
-    const preferred =
-      documentFragment.querySelector("article") ||
-      documentFragment.querySelector("main") ||
-      documentFragment.body;
+    const content =
+      parsed.querySelector("article") ||
+      parsed.querySelector("main") ||
+      parsed.body;
 
-    return preferred.innerText;
-  }
-
-  function normalizeLineEndings(text) {
-    return String(text).replace(/\r\n?/g, "\n");
+    return content.innerText;
   }
 
   async function fetchNoteText(note) {
-    const response = await fetch(resolveNoteUrl(note.path), { cache: "no-store" });
+    const response = await fetch(encodeURI(resolveNoteUrl(note.path)), {
+      cache: "no-store"
+    });
+
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      throw new Error(`Could not load ${note.title} (HTTP ${response.status}).`);
     }
 
     const raw = await response.text();
     const contentType = response.headers.get("content-type") || "";
-    const looksHtml =
+    const isHtml =
       contentType.includes("text/html") ||
       /\.html?($|\?)/i.test(note.path) ||
       /^\s*<!doctype html/i.test(raw);
 
-    return normalizeLineEndings(looksHtml ? stripHtml(raw) : raw).trim();
+    return normalizeLf(isHtml ? stripHtml(raw) : raw).trim();
   }
 
-  async function addSelected(note) {
-    const item = {
-      instanceId: ++instanceCounter,
-      note,
-      text: "",
-      state: "loading",
-      error: ""
-    };
+  function setStatus(message, error = false) {
+    statusMessage.textContent = message;
+    statusMessage.classList.toggle("is-error", error);
+  }
 
-    selected.push(item);
-    renderSelected();
-    updateCombined();
+  function renderNotes() {
+    const query = noteSearch.value.trim().toLocaleLowerCase();
+    const filtered = notes.filter(note =>
+      !query || note.title.toLocaleLowerCase().includes(query)
+    );
 
-    try {
-      item.text = await fetchNoteText(note);
-      item.state = "ready";
-    } catch (error) {
-      item.state = "error";
-      item.error = error.message;
+    noteCount.textContent =
+      `${filtered.length} of ${notes.length} ${notes.length === 1 ? "note" : "notes"}`;
+
+    if (!filtered.length) {
+      availableNotes.innerHTML =
+        '<p class="empty-message">No note names match that search.</p>';
+      return;
     }
 
-    renderSelected();
-    updateCombined();
-  }
+    availableNotes.replaceChildren();
+    let currentFolder = "";
 
-  function moveSelected(index, direction) {
-    const target = index + direction;
-    if (target < 0 || target >= selected.length) return;
+    filtered.forEach(note => {
+      if (note.folder !== currentFolder) {
+        currentFolder = note.folder;
+        const heading = document.createElement("h3");
+        heading.className = "note-group-heading";
+        heading.textContent = currentFolder;
+        availableNotes.append(heading);
+      }
 
-    [selected[index], selected[target]] = [selected[target], selected[index]];
-    renderSelected();
-    updateCombined();
-  }
-
-  function removeSelected(index) {
-    selected.splice(index, 1);
-    renderSelected();
-    updateCombined();
-  }
-
-  function renderSelected() {
-    selectedCount.textContent =
-      `${selected.length} ${selected.length === 1 ? "item" : "items"}`;
-
-    selectedEmpty.hidden = selected.length > 0;
-    clearButton.disabled = selected.length === 0;
-    selectedList.innerHTML = "";
-
-    selected.forEach((item, index) => {
-      const li = document.createElement("li");
-      li.className = "selected-item";
-      if (item.state === "loading") li.classList.add("is-loading");
-      if (item.state === "error") li.classList.add("is-error");
-
-      const details = document.createElement("div");
-      details.className = "note-details";
+      const button = document.createElement("button");
+      button.className = "note-option";
+      button.type = "button";
+      button.draggable = true;
+      button.dataset.noteId = note.id;
+      button.setAttribute("role", "option");
+      button.setAttribute("aria-selected", String(note.id === selectedNoteId));
 
       const title = document.createElement("span");
-      title.className = "note-title";
-      title.textContent =
-        item.state === "loading"
-          ? `${item.note.title} — loading…`
-          : item.state === "error"
-            ? `${item.note.title} — failed to load`
-            : item.note.title;
+      title.className = "note-option-title";
+      title.textContent = note.title;
 
       const path = document.createElement("span");
-      path.className = "note-path";
-      path.textContent =
-        item.state === "error"
-          ? `${item.note.path} (${item.error})`
-          : item.note.path;
+      path.className = "note-option-path";
+      path.textContent = note.path;
 
-      const actions = document.createElement("div");
-      actions.className = "item-actions";
+      button.append(title, path);
 
-      const up = document.createElement("button");
-      up.className = "item-button";
-      up.type = "button";
-      up.textContent = "↑";
-      up.title = "Move up";
-      up.disabled = index === 0;
-      up.addEventListener("click", () => moveSelected(index, -1));
+      button.addEventListener("click", () => {
+        selectedNoteId = note.id;
+        renderNotes();
+      });
 
-      const down = document.createElement("button");
-      down.className = "item-button";
-      down.type = "button";
-      down.textContent = "↓";
-      down.title = "Move down";
-      down.disabled = index === selected.length - 1;
-      down.addEventListener("click", () => moveSelected(index, 1));
+      button.addEventListener("dblclick", () => insertNote(note));
 
-      const remove = document.createElement("button");
-      remove.className = "item-button remove-button";
-      remove.type = "button";
-      remove.textContent = "×";
-      remove.title = "Remove";
-      remove.addEventListener("click", () => removeSelected(index));
+      button.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          insertNote(note);
+        }
+      });
 
-      details.append(title, path);
-      actions.append(up, down, remove);
-      li.append(details, actions);
-      selectedList.appendChild(li);
+      button.addEventListener("dragstart", event => {
+        draggedNoteId = note.id;
+        event.dataTransfer.effectAllowed = "copy";
+        event.dataTransfer.setData("text/plain", note.id);
+      });
+
+      button.addEventListener("dragend", () => {
+        draggedNoteId = "";
+      });
+
+      availableNotes.append(button);
     });
   }
 
-  function combinedText() {
-    return selected
-      .filter(item => item.state === "ready")
-      .map(item => normalizeLineEndings(item.text).trim())
-      .filter(Boolean)
-      .join("\n\n");
+  function insertionText(noteText) {
+    const current = normalizeLf(editor.value);
+    const start = editor.selectionStart ?? current.length;
+    const end = editor.selectionEnd ?? start;
+
+    const before = current.slice(0, start);
+    const after = current.slice(end);
+
+    const leftSeparator =
+      before.length && !before.endsWith("\n\n")
+        ? before.endsWith("\n") ? "\n" : "\n\n"
+        : "";
+
+    const rightSeparator =
+      after.length && !after.startsWith("\n\n")
+        ? after.startsWith("\n") ? "\n" : "\n\n"
+        : "";
+
+    const inserted = leftSeparator + noteText + rightSeparator;
+
+    return {
+      value: before + inserted + after,
+      cursor: before.length + inserted.length
+    };
   }
 
-  function updateCombined() {
-    const text = combinedText();
-    preview.value = text;
+  async function insertNote(note) {
+    setStatus(`Loading ${note.title}…`);
 
-    const hasReadyText = Boolean(text);
-    const hasLoading = selected.some(item => item.state === "loading");
-    const hasErrors = selected.some(item => item.state === "error");
-
-    downloadButton.disabled = !hasReadyText || hasLoading;
-    copyButton.disabled = !hasReadyText;
-
-    if (!selected.length) {
-      setStatus(notes.length ? `Loaded ${notes.length} notes.` : "Loading notes…");
-    } else if (hasLoading) {
-      setStatus("Loading selected note content…");
-    } else if (hasErrors) {
-      setStatus("Some notes could not be loaded. Remove or retry those entries before downloading.", true);
-    } else {
-      setStatus(
-        `${selected.length} selected ${selected.length === 1 ? "item" : "items"} ready.`
-      );
+    try {
+      const text = await fetchNoteText(note);
+      const insertion = insertionText(text);
+      editor.value = insertion.value;
+      editor.focus();
+      editor.setSelectionRange(insertion.cursor, insertion.cursor);
+      updateEditorState();
+      persistNow();
+      setStatus(`Inserted ${note.title}.`);
+    } catch (error) {
+      console.error(error);
+      setStatus(error.message, true);
     }
+  }
+
+  function updateCounts() {
+    const text = normalizeLf(editor.value);
+    const characters = text.length;
+    const lines = text.length ? text.split("\n").length : 0;
+
+    documentCounts.textContent =
+      `${characters.toLocaleString()} ${characters === 1 ? "character" : "characters"} · ` +
+      `${lines.toLocaleString()} ${lines === 1 ? "line" : "lines"}`;
+  }
+
+  function updateEditorState() {
+    const hasText = editor.value.length > 0;
+    copyButton.disabled = !hasText;
+    downloadButton.disabled = !hasText;
+    clearButton.disabled = !hasText;
+    updateCounts();
+  }
+
+  function scheduleSave() {
+    window.clearTimeout(saveTimer);
+    saveTimer = window.setTimeout(persistNow, 200);
+  }
+
+  function persistNow() {
+    localStorage.setItem(STORAGE_TEXT, normalizeLf(editor.value));
+    localStorage.setItem(STORAGE_FILENAME, filenameInput.value);
   }
 
   function safeFilename(value) {
@@ -428,57 +327,157 @@
     return name;
   }
 
-  function downloadText() {
-    const text = normalizeLineEndings(combinedText());
-    if (!text) return;
-
-    const blob = new Blob([text], {
-      type: "text/plain;charset=utf-8"
-    });
-
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = safeFilename(filenameInput.value);
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  function currentLfText() {
+    return normalizeLf(editor.value);
   }
 
-  searchInput.addEventListener("input", renderAvailable);
-
-  clearButton.addEventListener("click", () => {
-    selected = [];
-    renderSelected();
-    updateCombined();
-  });
-
-  downloadButton.addEventListener("click", downloadText);
-
-  copyButton.addEventListener("click", async () => {
-    const text = combinedText();
+  async function copyText() {
+    const text = currentLfText();
     if (!text) return;
 
     try {
       await navigator.clipboard.writeText(text);
-      const original = copyButton.textContent;
-      copyButton.textContent = "Copied";
-      setTimeout(() => {
-        copyButton.textContent = original;
-      }, 900);
     } catch {
-      preview.focus();
-      preview.select();
+      editor.focus();
+      editor.select();
       document.execCommand("copy");
+    }
+
+    const original = copyButton.textContent;
+    copyButton.textContent = "Copied";
+    window.setTimeout(() => {
+      copyButton.textContent = original;
+    }, 900);
+  }
+
+  async function saveTextFile() {
+    const text = currentLfText();
+    if (!text) return;
+
+    const filename = safeFilename(filenameInput.value);
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+
+    if ("showSaveFilePicker" in window) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: filename,
+          types: [{
+            description: "Text file",
+            accept: { "text/plain": [".txt"] }
+          }]
+        });
+
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        setStatus(`Saved ${filename} with Linux LF line endings.`);
+        return;
+      } catch (error) {
+        if (error?.name === "AbortError") {
+          setStatus("Save cancelled.");
+          return;
+        }
+        console.warn("Save picker failed; using browser download fallback.", error);
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setStatus(`Downloaded ${filename} with Linux LF line endings.`);
+  }
+
+  async function loadManifest() {
+    const failures = [];
+
+    for (const candidate of MANIFEST_CANDIDATES) {
+      try {
+        const response = await fetch(candidate, { cache: "no-store" });
+        if (!response.ok) {
+          failures.push(`${candidate}: HTTP ${response.status}`);
+          continue;
+        }
+
+        const normalized = normalizeManifest(await response.json());
+        if (!normalized.length) {
+          failures.push(`${candidate}: no notes found`);
+          continue;
+        }
+
+        notes = normalized;
+        renderNotes();
+        setStatus(`Loaded ${notes.length} notes.`);
+        return;
+      } catch (error) {
+        failures.push(`${candidate}: ${error.message}`);
+      }
+    }
+
+    throw new Error(
+      "The notes manifest could not be loaded. Checked: " +
+      failures.join("; ")
+    );
+  }
+
+  noteSearch.addEventListener("input", renderNotes);
+
+  editor.addEventListener("input", () => {
+    updateEditorState();
+    scheduleSave();
+  });
+
+  editor.addEventListener("dragover", event => {
+    if (!draggedNoteId && !event.dataTransfer.types.includes("text/plain")) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+    editor.classList.add("is-drop-target");
+  });
+
+  editor.addEventListener("dragleave", () => {
+    editor.classList.remove("is-drop-target");
+  });
+
+  editor.addEventListener("drop", event => {
+    event.preventDefault();
+    editor.classList.remove("is-drop-target");
+
+    const id = event.dataTransfer.getData("text/plain") || draggedNoteId;
+    const note = notes.find(candidate => candidate.id === id);
+    if (note) insertNote(note);
+  });
+
+  filenameInput.addEventListener("input", scheduleSave);
+  copyButton.addEventListener("click", copyText);
+  downloadButton.addEventListener("click", saveTextFile);
+
+  clearButton.addEventListener("click", () => {
+    if (!editor.value || window.confirm("Clear the current note builder document?")) {
+      editor.value = "";
+      updateEditorState();
+      persistNow();
+      setStatus("Document cleared.");
+      editor.focus();
     }
   });
 
-  renderSelected();
+  const savedText = localStorage.getItem(STORAGE_TEXT);
+  const savedFilename = localStorage.getItem(STORAGE_FILENAME);
+
+  if (savedText !== null) editor.value = normalizeLf(savedText);
+  if (savedFilename) filenameInput.value = savedFilename;
+
+  updateEditorState();
+
   loadManifest().catch(error => {
-    availableContainer.innerHTML =
-      '<div class="no-results">The notes manifest could not be loaded.</div>';
+    console.error(error);
+    availableNotes.innerHTML =
+      '<p class="empty-message">Notes could not be loaded.</p>';
+    noteCount.textContent = "Unavailable";
     setStatus(error.message, true);
   });
 })();

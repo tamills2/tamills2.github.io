@@ -1,20 +1,18 @@
 {
   "title": "Note Builder",
-  "description": "Choose site notes, add any note multiple times, arrange them in order, preview the combined text, and download a UTF-8 text file with Linux LF line endings.",
+  "description": "Insert repository notes into an editable document, then copy or save it as a Linux LF text file.",
   "category": "Notes",
   "keywords": [
-    "notes",
     "note builder",
     "combine notes",
-    "merge notes",
-    "text file",
+    "text editor",
     "download notes",
     "linux lf",
     "line endings",
-    "note organizer",
-    "note exporter"
+    "copy notes",
+    "merge notes"
   ],
   "homepage": true,
-  "order": 1,
+  "order": 5,
   "hidden": false
 }

@@ -1,33 +1,50 @@
 # Note Builder
 
-Copy this complete folder into the repository:
+## 1. Install the tool
+
+Copy this complete folder into the site:
 
 public/tools/note-builder/
 
-Then run:
+Then rebuild the generated manifests:
 
 python3 scripts/build_site.py
 
-## Manifest lookup
+## 2. Install the tool-to-note navigation fix
 
-The tool automatically checks these common generated manifest paths:
+Copy:
 
-- public/data/notes-manifest.json
-- public/data/notes.json
-- public/notes-manifest.json
-- public/notes.json
-- public/assets/notes-manifest.json
-- public/assets/notes.json
+public/js/note-route-boot.js
 
-If your generated notes manifest uses a different location, edit the
-MANIFEST_CANDIDATES array near the top of tool.js.
+into the site's existing:
 
-## Behaviour
+public/js/
 
-- A note may be added any number of times.
-- Each added copy is an independent ordered item.
-- Up/down buttons arrange the selected notes.
-- One blank line is inserted between note contents.
-- Downloads use UTF-8 text and Linux LF (`\n`) line endings.
-- HTML notes are converted to visible page text before combining.
-- Markdown and plain-text notes are preserved as text.
+Then add this script in `public/index.html` before the existing deferred
+`main.js` script:
+
+```html
+<script src="./js/note-route-boot.js"></script>
+<script src="./js/main.js" defer></script>
+```
+
+`note-route-boot.js` only handles the initial display state. The existing
+`main.js` continues loading and rendering the requested note normally.
+
+## Note Builder behaviour
+
+- Two-pane layout
+- Available-note list on the left
+- Search matches note titles only
+- Double-click or press Enter to insert a note
+- Drag a note into the editor to insert it
+- The same note can be inserted repeatedly
+- One blank line is inserted between notes
+- The combined document is a normal editable textarea
+- Live character and line counts
+- Draft text and filename are saved in localStorage
+- Copy-to-clipboard button
+- Save button uses the browser save-location picker when supported
+- Other browsers use their normal download-location behaviour
+- UTF-8 `.txt` output
+- All downloaded line endings are explicitly normalized to Linux LF (`\n`)

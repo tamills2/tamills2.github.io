@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Note Builder | Repo</title>
-  <meta name="description" content="Choose site notes, arrange them, combine their contents, and download a Linux LF text file.">
+  <meta name="description" content="Insert repository notes into an editable document, then copy or download it as a Linux LF text file.">
 
   <script>
     (() => {
@@ -29,64 +29,84 @@
     <div class="tool-heading">
       <p class="eyebrow">Repo tool</p>
       <h1>Note Builder</h1>
-      <p>Select notes from the site, arrange them in any order, and download one combined UTF-8 text file with Linux LF line endings.</p>
+      <p>Insert notes from the repository, edit the combined document, then copy it or save it as a UTF-8 text file with Linux LF line endings.</p>
     </div>
 
-    <section class="builder-toolbar" aria-label="Note builder controls">
-      <label class="tool-field search-field">
-        <span>Find notes</span>
-        <input id="note-search" class="tool-input" type="search" placeholder="Search note titles and paths…" autocomplete="off">
-      </label>
-
-      <label class="tool-field filename-field">
-        <span>File name</span>
-        <input id="filename-input" class="tool-input" type="text" value="combined-notes.txt" autocomplete="off" spellcheck="false">
-      </label>
-
-      <button id="download-button" class="tool-primary-button" type="button" disabled>Download LF text</button>
-    </section>
-
-    <p id="status-message" class="status-message" role="status">Loading notes…</p>
-
-    <div class="builder-layout">
-      <section class="builder-panel" aria-labelledby="available-heading">
-        <div class="panel-header">
+    <section class="builder-layout" aria-label="Note builder">
+      <aside class="library-pane">
+        <div class="pane-heading">
           <div>
-            <h2 id="available-heading">Available notes</h2>
-            <p id="available-count">0 notes</p>
+            <h2>Available notes</h2>
+            <p id="note-count">Loading…</p>
           </div>
         </div>
 
-        <div id="available-notes" class="available-notes" aria-live="polite"></div>
-      </section>
+        <label class="tool-field note-search-field">
+          <span>Search note names</span>
+          <input
+            id="note-search"
+            class="tool-input"
+            type="search"
+            placeholder="Type a note name…"
+            autocomplete="off"
+            spellcheck="false"
+          >
+        </label>
 
-      <section class="builder-panel" aria-labelledby="selected-heading">
-        <div class="panel-header selected-header">
-          <div>
-            <h2 id="selected-heading">Selected order</h2>
-            <p id="selected-count">0 items</p>
+        <p class="library-help">
+          Double-click a note, press Enter, or drag it into the editor. The same note can be inserted any number of times.
+        </p>
+
+        <div id="available-notes" class="available-notes" role="listbox" aria-label="Available notes">
+          <p class="empty-message">Loading notes…</p>
+        </div>
+      </aside>
+
+      <section class="editor-pane">
+        <div class="editor-toolbar">
+          <label class="tool-field filename-field">
+            <span>File name</span>
+            <input
+              id="filename-input"
+              class="tool-input"
+              type="text"
+              value="combined-notes.txt"
+              autocomplete="off"
+              spellcheck="false"
+            >
+          </label>
+
+          <div class="editor-actions">
+            <button id="copy-button" class="tool-secondary-button" type="button" disabled>
+              Copy text
+            </button>
+            <button id="download-button" class="tool-primary-button" type="button" disabled>
+              Save text file
+            </button>
+            <button id="clear-button" class="tool-secondary-button" type="button" disabled>
+              Clear
+            </button>
           </div>
-          <button id="clear-selection" class="tool-secondary-button" type="button" disabled>Clear</button>
         </div>
 
-        <div id="selected-empty" class="empty-state">
-          Add notes from the left. The same note can be added more than once.
+        <div class="editor-status-row">
+          <p id="status-message" class="status-message" aria-live="polite">Loading notes…</p>
+          <p id="document-counts" class="document-counts">0 characters · 0 lines</p>
         </div>
 
-        <ol id="selected-notes" class="selected-notes"></ol>
+        <label class="editor-label" for="document-editor">Combined document</label>
+        <textarea
+          id="document-editor"
+          class="document-editor"
+          placeholder="Double-click or drag notes here. You can edit anything before saving."
+          spellcheck="false"
+          aria-describedby="editor-help"
+        ></textarea>
+
+        <p id="editor-help" class="editor-help">
+          Notes are separated by one blank line. Dragging inserts at the current cursor position when possible; otherwise it appends to the end. Your draft and filename are saved locally in this browser.
+        </p>
       </section>
-    </div>
-
-    <section class="preview-panel" aria-labelledby="preview-heading">
-      <div class="panel-header preview-header">
-        <div>
-          <h2 id="preview-heading">Combined preview</h2>
-          <p>One blank line is inserted between each selected note.</p>
-        </div>
-        <button id="copy-button" class="tool-secondary-button" type="button" disabled>Copy text</button>
-      </div>
-
-      <textarea id="combined-preview" class="tool-input preview-text" readonly spellcheck="false" placeholder="Your combined notes will appear here…"></textarea>
     </section>
   </main>
 </body>
