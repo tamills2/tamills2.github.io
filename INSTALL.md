@@ -1,16 +1,30 @@
-# HTTP Status Codes tool
+# URL Encode / Decode + CIDR title update
 
-Copy the `public` directory into the repository root, preserving paths.
+Extract this archive into the repository root.
 
-Then rebuild the generated manifests:
+Run the one-time CIDR title update, then rebuild:
 
 ```bash
+python3 scripts/apply_cidr_oxford_comma.py
 python3 scripts/build_site.py
 ```
 
-Files added:
+The new tool is located at:
 
-- `public/tools/http-status-codes/index.html`
-- `public/tools/http-status-codes/tool.css`
-- `public/tools/http-status-codes/tool.js`
-- `public/tools/http-status-codes/tool.json`
+```text
+public/tools/url-encode-decode/
+```
+
+The title updater changes the exact text:
+
+```text
+CIDR, Subnet & Wildcard Converter
+```
+
+to:
+
+```text
+CIDR, Subnet, & Wildcard Converter
+```
+
+in matching HTML, JSON, and JavaScript files under `public/tools/`.

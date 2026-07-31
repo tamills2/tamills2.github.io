@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>URL Encode / Decode | Repo</title>
+  <meta name="description" content="Encode, decode, inspect, and edit URLs and query parameters offline.">
+
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+
+  <main class="tool-main url-tool-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>URL Encode / Decode</h1>
+      <p>Encode, decode, inspect, and edit URLs and query parameters.</p>
+    </div>
+
+    <section class="tool-card url-converter" aria-labelledby="converter-title">
+      <h2 id="converter-title">Converter</h2>
+
+      <div class="url-textarea-grid">
+        <div class="tool-field">
+          <label for="url-input">Input</label>
+          <textarea class="tool-textarea url-textarea" id="url-input" spellcheck="false" placeholder="https://example.com/search?q=hello world&amp;sort=date#results"></textarea>
+        </div>
+
+        <div class="tool-field">
+          <div class="field-label-row">
+            <label for="url-output">Output</label>
+            <button class="tool-copy-button" id="copy-output" type="button" disabled>Copy</button>
+          </div>
+          <textarea class="tool-textarea url-textarea" id="url-output" readonly spellcheck="false"></textarea>
+        </div>
+      </div>
+
+      <div class="url-action-row">
+        <button class="tool-primary-button" id="encode-url" type="button">Encode URL</button>
+        <button class="tool-secondary-button" id="encode-component" type="button">Encode Component</button>
+        <button class="tool-secondary-button" id="decode-value" type="button">Decode</button>
+        <button class="tool-secondary-button" id="swap-values" type="button">Swap</button>
+        <button class="tool-secondary-button" id="clear-values" type="button">Clear</button>
+      </div>
+
+      <div class="url-option-row">
+        <label><input id="plus-as-space" type="checkbox"> Treat <code>+</code> as space when decoding</label>
+        <label><input id="uppercase-escapes" type="checkbox"> Uppercase percent escapes</label>
+      </div>
+
+      <p class="url-inline-status" id="converter-status" aria-live="polite"></p>
+    </section>
+
+    <section class="tool-card" aria-labelledby="breakdown-title">
+      <div class="section-heading-row">
+        <h2 id="breakdown-title">URL Breakdown</h2>
+        <button class="tool-secondary-button" id="parse-url" type="button">Parse URL</button>
+      </div>
+
+      <div class="url-breakdown" id="url-breakdown">
+        <div><span>Protocol</span><code id="part-protocol">—</code></div>
+        <div><span>Origin</span><code id="part-origin">—</code></div>
+        <div><span>Host</span><code id="part-host">—</code></div>
+        <div><span>Hostname</span><code id="part-hostname">—</code></div>
+        <div><span>Port</span><code id="part-port">—</code></div>
+        <div><span>Path</span><code id="part-path">—</code></div>
+        <div><span>Query</span><code id="part-query">—</code></div>
+        <div><span>Fragment</span><code id="part-fragment">—</code></div>
+      </div>
+      <p class="url-inline-status" id="parse-status" aria-live="polite"></p>
+    </section>
+
+    <section class="tool-card" aria-labelledby="query-title">
+      <div class="section-heading-row">
+        <h2 id="query-title">Query Parameters</h2>
+        <button class="tool-secondary-button" id="add-parameter" type="button">Add parameter</button>
+      </div>
+
+      <div class="query-table-wrap">
+        <table class="query-table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Value</th>
+              <th scope="col"><span class="visually-hidden">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="query-rows"></tbody>
+        </table>
+      </div>
+      <div class="query-empty" id="query-empty">No query parameters loaded.</div>
+    </section>
+
+    <section class="tool-card" aria-labelledby="helpers-title">
+      <h2 id="helpers-title">Encoding Helpers</h2>
+      <div class="encoding-helper-grid" id="encoding-helpers">
+        <button type="button" data-value="%20"><span>Space</span><code>%20</code></button>
+        <button type="button" data-value="%26"><span>&amp;</span><code>%26</code></button>
+        <button type="button" data-value="%3D"><span>=</span><code>%3D</code></button>
+        <button type="button" data-value="%3F"><span>?</span><code>%3F</code></button>
+        <button type="button" data-value="%23"><span>#</span><code>%23</code></button>
+        <button type="button" data-value="%2B"><span>+</span><code>%2B</code></button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

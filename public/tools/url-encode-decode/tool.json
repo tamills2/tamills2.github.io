@@ -1,0 +1,19 @@
+{
+  "title": "URL Encode / Decode",
+  "description": "Encode, decode, inspect, and edit URLs and query parameters offline.",
+  "category": "Web",
+  "keywords": [
+    "URL",
+    "URI",
+    "encode",
+    "decode",
+    "percent encoding",
+    "query string",
+    "query parameters",
+    "URLSearchParams",
+    "encodeURI",
+    "encodeURIComponent"
+  ],
+  "homepage": true,
+  "order": 11
+}
