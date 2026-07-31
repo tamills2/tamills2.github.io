@@ -1,14 +1,15 @@
-# Tool note-tree formatting fix
+# Note copy button
 
-Replace these files in the repository:
+Replace:
 
-- `public/js/tool-base.js`
-- `public/css/tools.css`
+- `public/index.html`
+- `public/js/main.js`
+- `public/css/styles.css`
 
-Then rebuild:
+Then run:
 
 ```bash
 python3 scripts/build_site.py
 ```
 
-The tool-page Notes tree now uses the same `.tree-row`, `.tree-icon`, chevron, spacing, and single-line entry structure as the main notes viewer.
+No package, CDN, icon font, or internet connection is required. The icon is inline SVG and the clipboard code includes a fallback for browsers that do not expose `navigator.clipboard`.

@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initialiseHomeButton();
   initialiseSiteSearch();
   initialiseNoteSearch();
+  initialiseNoteCopy();
   loadNotesManifest();
   loadSearchIndex();
   loadToolsManifest();
@@ -47,6 +48,7 @@ function cacheElements() {
   elements.codeFileName = document.querySelector("#code-file-name");
   elements.codeTableWrapper = document.querySelector("#code-table-wrapper");
   elements.closeFile = document.querySelector("#close-file");
+  elements.copyNote = document.querySelector("#copy-note");
   elements.mainContent = document.querySelector("#main-content");
   elements.siteSearch = document.querySelector(".site-search");
   elements.siteSearchInput = document.querySelector("#site-search-input");
@@ -79,6 +81,54 @@ function setSidebarCollapsed(collapsed) {
   elements.body.classList.toggle("sidebar-collapsed", collapsed);
   elements.sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
   localStorage.setItem("repo-sidebar-collapsed", String(collapsed));
+}
+
+function initialiseNoteCopy() {
+  if (!elements.copyNote) return;
+
+  let feedbackTimer = null;
+
+  elements.copyNote.addEventListener("click", async () => {
+    if (!state.currentNoteContent) return;
+
+    try {
+      await copyTextToClipboard(state.currentNoteContent);
+      elements.copyNote.classList.add("is-copied");
+      elements.copyNote.setAttribute("aria-label", "Note copied");
+
+      window.clearTimeout(feedbackTimer);
+      feedbackTimer = window.setTimeout(() => {
+        elements.copyNote.classList.remove("is-copied");
+        elements.copyNote.setAttribute("aria-label", "Copy note contents");
+      }, 1500);
+    } catch (error) {
+      console.error("Unable to copy note.", error);
+      elements.copyNote.setAttribute("aria-label", "Unable to copy note");
+    }
+  });
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  textarea.style.pointerEvents = "none";
+  document.body.append(textarea);
+  textarea.select();
+
+  const copied = document.execCommand("copy");
+  textarea.remove();
+
+  if (!copied) {
+    throw new Error("The browser rejected the copy command.");
+  }
 }
 
 function initialiseToolsMenu() {
@@ -886,6 +936,8 @@ async function openNote(node, button, { updateRoute = true } = {}) {
     const content = await response.text();
     state.currentNoteContent = content;
     clearNoteSearch();
+    renderCode(content);
+    elements.copyNote?.classList.remove("is-copied");
   } catch (error) {
     console.error(error);
     elements.codeTableWrapper.innerHTML = `
@@ -908,6 +960,7 @@ function showFileLoadingState(node) {
   elements.fileLocation.textContent = getParentLocation(node.path);
   elements.codeTableWrapper.innerHTML =
     '<p class="viewer-status">Loading file…</p>';
+  elements.copyNote?.classList.remove("is-copied");
 
   elements.mainContent.focus({ preventScroll: true });
   window.scrollTo({ top: 0, behavior: "instant" });

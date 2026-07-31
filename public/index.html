@@ -189,7 +189,19 @@
             <p class="file-location" id="file-location">Notes</p>
             <h1 id="file-title">File</h1>
           </div>
-          <button class="secondary-button" id="close-file" type="button">Home</button>
+          <div class="file-toolbar-actions">
+            <button class="note-copy-button" id="copy-note" type="button" aria-label="Copy note contents" title="Copy note">
+              <svg class="note-copy-icon note-copy-icon-copy" aria-hidden="true" viewBox="0 0 24 24">
+                <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+                <path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"></path>
+              </svg>
+              <svg class="note-copy-icon note-copy-icon-check" aria-hidden="true" viewBox="0 0 24 24">
+                <path d="m5 12 4 4L19 6"></path>
+              </svg>
+              <span class="note-copy-feedback">Copied</span>
+            </button>
+            <button class="secondary-button" id="close-file" type="button">Home</button>
+          </div>
         </div>
 
         <div class="code-window">
