@@ -1,0 +1,163 @@
+.hashes-main {
+  width: min(100% - 2rem, 68rem);
+}
+
+.hashes-main > * + * {
+  margin-top: 1rem;
+}
+
+.section-title-row,
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.section-title-row {
+  margin-bottom: 1rem;
+}
+
+.section-title-row h2,
+.section-heading h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.section-title-row p {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.compact-button {
+  min-height: 2.15rem;
+  padding: 0.35rem 0.7rem;
+}
+
+.hash-input {
+  min-height: 10rem;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+}
+
+.option-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin-top: 1rem;
+}
+
+.option-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text);
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.results-section {
+  padding-top: 0.2rem;
+}
+
+.section-heading {
+  margin-bottom: 0.65rem;
+}
+
+.result-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.result-row {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 0.6rem;
+}
+
+.result-label {
+  display: flex;
+  align-items: center;
+  min-height: 2.65rem;
+  padding: 0 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  background: var(--surface-subtle);
+  font-weight: 700;
+}
+
+.result-output {
+  min-width: 0;
+  min-height: 2.65rem;
+  padding: 0.65rem 0.75rem;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.copy-result {
+  align-self: stretch;
+  min-width: 4.5rem;
+}
+
+.file-drop-zone {
+  display: grid;
+  min-height: 7rem;
+  place-items: center;
+  padding: 1rem;
+  border: 2px dashed var(--border-strong, var(--border));
+  border-radius: 0.65rem;
+  background: var(--surface-subtle);
+  color: var(--text);
+  font-weight: 650;
+  text-align: center;
+  cursor: pointer;
+}
+
+.file-drop-zone:hover,
+.file-drop-zone.drag-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.file-drop-zone:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.file-drop-zone input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (max-width: 720px) {
+  .hashes-main {
+    width: min(100% - 1.25rem, 68rem);
+  }
+
+  .result-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .result-label {
+    grid-column: 1 / -1;
+    min-height: 2.25rem;
+  }
+}

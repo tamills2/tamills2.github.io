@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hashes &amp; Encoding | Repo</title>
+  <meta name="description" content="Generate common hashes and Base64 encodings from text or local files without uploading anything.">
+
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+
+  <main class="tool-main hashes-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>Hashes &amp; Encoding</h1>
+      <p>Generate hashes and Base64 output from UTF-8 text or a local file.</p>
+    </div>
+
+    <section class="tool-card input-card" aria-labelledby="text-input-title">
+      <div class="section-title-row">
+        <div>
+          <h2 id="text-input-title">Text input</h2>
+          <p id="text-counts">0 characters · 0 bytes</p>
+        </div>
+        <button class="tool-secondary-button compact-button" id="clear-text" type="button">Clear</button>
+      </div>
+
+      <div class="tool-field">
+        <label for="text-input">Text</label>
+        <textarea class="tool-textarea hash-input" id="text-input" rows="7" placeholder="Paste or type text" spellcheck="false"></textarea>
+      </div>
+
+      <div class="option-row" aria-label="Output options">
+        <label><input id="uppercase-hex" type="checkbox"> Uppercase hexadecimal</label>
+        <label><input id="remove-padding" type="checkbox"> Remove Base64 padding</label>
+        <label><input id="wrap-base64" type="checkbox"> Wrap Base64 at 76 characters</label>
+      </div>
+    </section>
+
+    <section class="results-section" aria-labelledby="text-results-title">
+      <div class="section-heading">
+        <h2 id="text-results-title">Text results</h2>
+      </div>
+      <div class="result-list" id="text-results"></div>
+    </section>
+
+    <section class="tool-card file-card" aria-labelledby="file-title">
+      <div class="section-title-row">
+        <div>
+          <h2 id="file-title">File hashing</h2>
+          <p id="file-details">No file selected</p>
+        </div>
+        <button class="tool-secondary-button compact-button" id="clear-file" type="button" disabled>Clear</button>
+      </div>
+
+      <label class="file-drop-zone" id="file-drop-zone" for="file-input">
+        <span>Drop a file here or choose a file</span>
+        <input id="file-input" type="file">
+      </label>
+    </section>
+
+    <section class="results-section" id="file-results-section" aria-labelledby="file-results-title" hidden>
+      <div class="section-heading">
+        <h2 id="file-results-title">File results</h2>
+      </div>
+      <div class="result-list" id="file-results"></div>
+    </section>
+  </main>
+</body>
+</html>

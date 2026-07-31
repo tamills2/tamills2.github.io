@@ -1,0 +1,21 @@
+{
+  "title": "Hashes & Encoding",
+  "description": "Generate common hashes and Base64 encodings from text or local files without uploading anything.",
+  "category": "Text",
+  "keywords": [
+    "hash",
+    "MD5",
+    "SHA-1",
+    "SHA-256",
+    "SHA-384",
+    "SHA-512",
+    "Base64",
+    "Base64 URL-safe",
+    "checksum",
+    "digest",
+    "file hash",
+    "UTF-8"
+  ],
+  "homepage": true,
+  "order": 30
+}
