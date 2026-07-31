@@ -128,6 +128,57 @@
       <div class="command-grid" id="command-grid"></div>
     </section>
 
+    <section class="tool-card ephemeral-card" aria-labelledby="ephemeral-title">
+      <div class="section-title-row">
+        <div>
+          <h2 id="ephemeral-title">Ephemeral port defaults</h2>
+          <p>Ephemeral ports are temporary local source ports selected by the operating system for outbound connections. These defaults can be changed by administrators or software.</p>
+        </div>
+      </div>
+
+      <div class="ephemeral-table-wrap">
+        <table class="ephemeral-table">
+          <thead>
+            <tr><th>Operating system</th><th>Default range</th><th>Notes</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Linux</strong></td><td><code>32768–60999</code></td><td>Kernel default for TCP and UDP local-port selection through <code>ip_local_port_range</code>. Distribution or host settings may override it.</td></tr>
+            <tr><td><strong>Windows Vista / Server 2008 and newer</strong></td><td><code>49152–65535</code></td><td>Modern Windows default. TCP and UDP ranges are configured separately for IPv4 and IPv6.</td></tr>
+            <tr><td><strong>Windows XP / Server 2003 and older</strong></td><td><code>1025–5000</code></td><td>Legacy Windows default retained here for troubleshooting older systems and mixed environments.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="ephemeral-command-title">View or change the active range</h3>
+      <div class="ephemeral-command-grid">
+        <article class="command-output">
+          <div><strong>Linux — view with procfs</strong><code>cat /proc/sys/net/ipv4/ip_local_port_range</code></div>
+          <button class="command-copy static-command-copy" type="button" data-copy-command="cat /proc/sys/net/ipv4/ip_local_port_range" aria-label="Copy Linux procfs command"></button>
+        </article>
+        <article class="command-output">
+          <div><strong>Linux — view with sysctl</strong><code>sysctl net.ipv4.ip_local_port_range</code></div>
+          <button class="command-copy static-command-copy" type="button" data-copy-command="sysctl net.ipv4.ip_local_port_range" aria-label="Copy Linux sysctl command"></button>
+        </article>
+        <article class="command-output">
+          <div><strong>Linux — set temporarily</strong><code>sudo sysctl -w net.ipv4.ip_local_port_range=&quot;32768 60999&quot;</code></div>
+          <button class="command-copy static-command-copy" type="button" data-copy-command="sudo sysctl -w net.ipv4.ip_local_port_range=&quot;32768 60999&quot;" aria-label="Copy Linux set command"></button>
+        </article>
+        <article class="command-output">
+          <div><strong>Windows — view IPv4 TCP</strong><code>netsh int ipv4 show dynamicport tcp</code></div>
+          <button class="command-copy static-command-copy" type="button" data-copy-command="netsh int ipv4 show dynamicport tcp" aria-label="Copy Windows TCP view command"></button>
+        </article>
+        <article class="command-output">
+          <div><strong>Windows — view IPv4 UDP</strong><code>netsh int ipv4 show dynamicport udp</code></div>
+          <button class="command-copy static-command-copy" type="button" data-copy-command="netsh int ipv4 show dynamicport udp" aria-label="Copy Windows UDP view command"></button>
+        </article>
+        <article class="command-output">
+          <div><strong>Windows — restore modern TCP default</strong><code>netsh int ipv4 set dynamicport tcp start=49152 num=16384</code></div>
+          <button class="command-copy static-command-copy" type="button" data-copy-command="netsh int ipv4 set dynamicport tcp start=49152 num=16384" aria-label="Copy Windows set command"></button>
+        </article>
+      </div>
+      <p class="ephemeral-note">Changing the range can affect firewalls, NAT, RPC, and high-connection workloads. Check the active host configuration before relying on a default.</p>
+    </section>
+
     <section class="tool-card notes-card" aria-labelledby="notes-title">
       <h2 id="notes-title">Important notes</h2>
       <p>Port numbers identify conventional service endpoints, not guaranteed behavior. Applications can be configured on different ports, and an open port does not prove that the expected service is running.</p>

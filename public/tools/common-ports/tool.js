@@ -205,6 +205,10 @@
   els.reset.addEventListener("click",()=>{ els.search.value=""; els.category.value="all"; els.protocol.value="all"; els.security.value="all"; renderTable(); });
   document.querySelectorAll("[data-quick]").forEach(button => button.addEventListener("click",()=>{ els.search.value=button.dataset.quick; renderTable(); const item=ports.find(p=>p.port===button.dataset.quick); if(item) selectPort(item); }));
   [els.host,els.commandPort].forEach(input=>input.addEventListener("input",renderCommands));
+  document.querySelectorAll("[data-copy-command]").forEach(button => {
+    button.innerHTML = copyIcon;
+    button.addEventListener("click", event => copyText(button.dataset.copyCommand || "", event.currentTarget));
+  });
   els.copySelected.addEventListener("click",event=>{ if(!selected)return; copyText(`${selected.service}\nPort: ${selected.port}\nProtocol: ${selected.protocols.join(" and ")}\nCategory: ${selected.category}\nSecurity: ${securityLabel(selected.security)}\nDescription: ${selected.description}\nTypical software: ${selected.software}`,event.currentTarget); });
 
   populateCategories(); renderTable(); renderCommands();

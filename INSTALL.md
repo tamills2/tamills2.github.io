@@ -1,15 +1,9 @@
-# Common Ports badge and Netcat fix
+# Common Ports: Ephemeral Port Defaults
 
-Extract this archive into the repository root, allowing the files under `public/` to overwrite the existing Common Ports tool files.
-
-Then rebuild the site:
+Extract this archive into the repository root, replacing the included files, then rebuild:
 
 ```bash
 python3 scripts/build_site.py
 ```
 
-Changes:
-
-- Gives all security-status badges a consistent width and centered label alignment.
-- Keeps multi-line status labels centered regardless of the active filter.
-- Changes the generated Netcat command from `nc -vz` to `nc -nvz`.
+This update adds Linux and Windows ephemeral-port defaults and copyable commands for viewing or changing the active range. It retains the standardized security badges and the `nc -nvz` Netcat command.

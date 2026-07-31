@@ -42,6 +42,15 @@
 .command-output { display:grid; grid-template-columns:1fr auto; gap:.75rem; align-items:center; border:1px solid var(--border); border-radius:var(--radius); padding:.82rem .9rem; background:var(--surface); }
 .command-output strong { display:block; margin-bottom:.35rem; font-size:.8rem; color:var(--muted); }
 .command-output code { display:block; overflow-wrap:anywhere; font-family:var(--mono); font-size:.86rem; }
+.ephemeral-table-wrap { margin-top:1rem; overflow-x:auto; border:1px solid var(--border); border-radius:var(--radius); }
+.ephemeral-table { width:100%; min-width:720px; border-collapse:collapse; }
+.ephemeral-table th,.ephemeral-table td { padding:.9rem 1rem; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; }
+.ephemeral-table th { color:var(--muted); font-size:.76rem; letter-spacing:.07em; text-transform:uppercase; }
+.ephemeral-table tbody tr:last-child td { border-bottom:0; }
+.ephemeral-table code { font-family:var(--mono); white-space:nowrap; }
+.ephemeral-command-title { margin:1.35rem 0 .75rem; font-size:1.05rem; }
+.ephemeral-command-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
+.ephemeral-note { margin:1rem 0 0; color:var(--muted); font-size:.9rem; }
 .notes-card p:last-child { margin-bottom:0; }
 .empty-row td { color:var(--muted); text-align:center; padding:2rem; }
 [data-theme="dark"] .security-badge.secure { color:#6be3a6; }
@@ -52,7 +61,7 @@
   .port-details { position:static; }
 }
 @media (max-width:680px) {
-  .range-strip,.filter-grid,.command-controls,.command-grid { grid-template-columns:1fr; }
+  .range-strip,.filter-grid,.command-controls,.command-grid,.ephemeral-command-grid { grid-template-columns:1fr; }
   .range-strip { gap:.65rem; }
   .section-title-row { align-items:flex-start; }
 }
