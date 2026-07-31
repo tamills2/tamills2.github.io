@@ -1,8 +1,8 @@
-# Subnet and ANSI visual cleanup
+# ANSI and subnet visual cleanup v2
 
-Extract this archive into the repository root and allow it to replace the two existing `tool.css` files.
+Extract this archive into the repository root and allow it to replace the existing files.
 
-Then rebuild the site:
+Then rebuild:
 
 ```bash
 python3 scripts/build_site.py
@@ -10,6 +10,9 @@ python3 scripts/build_site.py
 
 Changes:
 
-- Removes the accent border and tinted background from the subnet calculator's **Network** result card.
-- Makes ANSI reference sequences, the color preview, and generated-code panel use the surrounding light-mode background with no extra tint.
-- Keeps the ANSI tool's existing dark-mode backgrounds unchanged.
+- Makes the subnet calculator's **Network** result card identical to the other result cards.
+- Removes the light-gray fill from ANSI reference sequence chips.
+- Removes the light-gray fill from the color preview when displaying a foreground color.
+- Removes the light-gray fill from all generated color-value cards.
+- Keeps selected background-color previews functional.
+- Keeps the ANSI dark-mode styling unchanged.

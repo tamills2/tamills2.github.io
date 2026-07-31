@@ -9,3 +9,13 @@ html:not([data-theme="dark"]) .terminal-preview,
 html:not([data-theme="dark"]) .code-output-shell {
   background: transparent;
 }
+
+/* Light mode uses the same untinted surface as its surrounding cards. */
+html[data-theme="light"] .ansi-sequence,
+html[data-theme="light"] .terminal-preview,
+html[data-theme="light"] .output-item,
+html[data-theme="light"] .code-output-shell {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none;
+}

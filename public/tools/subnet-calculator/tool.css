@@ -44,3 +44,11 @@
 .compact-button { min-height:2.2rem; padding:.4rem .65rem; }
 @media (max-width:900px) { .summary-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media (max-width:680px) { .input-grid, .details-grid, .summary-grid { grid-template-columns:1fr; } .section-title-row, .results-heading { align-items:stretch; flex-direction:column; } .result-list > div { grid-template-columns:1fr; gap:.25rem; } .result-list dd { text-align:left; } }
+
+/* Keep the Network result visually identical to every other result card. */
+.result-card.featured-result {
+  border-color: var(--border) !important;
+  background: var(--surface) !important;
+  box-shadow: var(--shadow) !important;
+  outline: 0 !important;
+}
