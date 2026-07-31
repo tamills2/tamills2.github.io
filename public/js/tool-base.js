@@ -98,6 +98,7 @@ document.addEventListener("DOMContentLoaded", loadSharedToolsMenu);
 
 
 function initialiseToolNotesDrawer() {
+  const root = document.documentElement.dataset.repoRoot || "../../";
   const trigger = document.querySelector(".tool-header-home");
   if (!trigger) return;
 

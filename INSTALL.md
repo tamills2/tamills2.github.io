@@ -1,9 +1,8 @@
-# Tool sidebar consistency fix
+# Tool sidebar visibility fix
 
-Replace these existing files:
+Replace only:
 
 - `public/js/tool-base.js`
-- `public/css/tools.css`
 
 Then run:
 
@@ -11,12 +10,6 @@ Then run:
 python3 scripts/build_site.py
 ```
 
-This makes the Notes drawer opened from any tool match the main notes sidebar immediately:
-
-- centered **Notes** heading
-- **Builder** button on the right
-- close button on the left
-- divider line under the heading
-- Note Builder omitted from the Tools dropdown on tool pages
+The previous patch referenced `root` outside the scope where it was declared. That caused the drawer initialization to stop with a JavaScript error on every tool page. This version resolves the repository root inside the drawer initializer itself.
 
 No new runtime files are added.
