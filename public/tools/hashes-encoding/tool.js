@@ -52,26 +52,35 @@
       name.className = "result-label";
       name.textContent = label;
 
+      const outputWrap = document.createElement("div");
+      outputWrap.className = "result-output-wrap";
+
       const output = document.createElement("output");
       output.className = "result-output";
       output.dataset.output = key;
       output.textContent = "";
 
       const copy = document.createElement("button");
-      copy.className = "tool-secondary-button copy-result";
+      copy.className = "copy-result";
       copy.type = "button";
-      copy.textContent = "Copy";
       copy.disabled = true;
+      copy.setAttribute("aria-label", `Copy ${label}`);
+      copy.title = `Copy ${label}`;
+      copy.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>`;
       copy.addEventListener("click", async () => {
         const value = output.textContent;
         if (!value) return;
         await navigator.clipboard.writeText(value.replace(/\n/g, ""));
-        const original = copy.textContent;
-        copy.textContent = "Copied";
-        window.setTimeout(() => { copy.textContent = original; }, 900);
+        copy.classList.add("copied");
+        copy.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg>`;
+        window.setTimeout(() => {
+          copy.classList.remove("copied");
+          copy.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="11" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>`;
+        }, 900);
       });
 
-      row.append(name, output, copy);
+      outputWrap.append(output, copy);
+      row.append(name, outputWrap);
       fragment.append(row);
     });
 
@@ -198,6 +207,11 @@
     const text = textInput.value;
     const bytes = encoder.encode(text);
     textCounts.textContent = `${Array.from(text).length} characters · ${bytes.length} bytes`;
+
+    if (!text) {
+      TEXT_ALGORITHMS.forEach(([, key]) => setResult(textResults, key, ""));
+      return;
+    }
 
     const base64 = bytesToBase64(bytes);
     const values = {
