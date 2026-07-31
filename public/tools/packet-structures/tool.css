@@ -53,3 +53,19 @@
 .flag-meaning { margin: 0; color: var(--text-muted); font-size: 0.82rem; }
 @media (max-width: 900px) { .packet-workspace { grid-template-columns: 1fr; } .packet-details-card { position: static; } }
 @media (max-width: 560px) { .packet-main { width: min(100% - 1rem, 80rem); } .packet-row { min-height: 3.2rem; } .packet-field-name { font-size: 0.68rem; } .packet-field-width { display: none; } .detail-meta, .flag-results { grid-template-columns: 1fr; } .flag-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Keep the one-bit TCP NS field visually centered without changing its bit width. */
+.packet-field[data-field="ns"] {
+  padding-inline: 0.08rem;
+}
+.packet-field[data-field="ns"] .packet-field-name {
+  width: 100%;
+  font-size: 0.72rem;
+  letter-spacing: -0.015em;
+  text-align: center;
+}
+.packet-field[data-field="ns"] .packet-field-width {
+  width: 100%;
+  font-size: 0.58rem;
+  text-align: center;
+}
