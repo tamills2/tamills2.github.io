@@ -190,7 +190,7 @@
     const host = els.host.value.trim() || "example.com"; const port = Math.min(65535, Math.max(1, Number(els.commandPort.value) || 443));
     const safeHost = host.replace(/[\r\n]/g, "");
     const commands = [
-      ["Netcat", `nc -vz ${safeHost} ${port}`],
+      ["Netcat", `nc -nvz ${safeHost} ${port}`],
       ["Nmap", `nmap -p ${port} ${safeHost}`],
       ["PowerShell", `Test-NetConnection ${safeHost} -Port ${port}`],
       ["Windows netstat (local)", `netstat -ano | findstr :${port}`],

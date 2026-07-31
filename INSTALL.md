@@ -1,22 +1,15 @@
-# Common Ports Reference
+# Common Ports badge and Netcat fix
 
-Extract this archive into the repository root, preserving the `public/tools/common-ports/` directory.
+Extract this archive into the repository root, allowing the files under `public/` to overwrite the existing Common Ports tool files.
 
-Then rebuild the generated manifests and search index:
+Then rebuild the site:
 
 ```bash
 python3 scripts/build_site.py
 ```
 
-The tool is fully offline and uses the repository's existing shared tool header, theme, notes drawer, and tools menu.
+Changes:
 
-## Included features
-
-- Searchable common TCP and UDP port reference
-- Category, protocol, and security filters
-- Quick filters for frequently used ports
-- Port detail panel with related services
-- Copyable port summaries
-- Well-known, registered, and dynamic range guide
-- Offline command generation for Netcat, Nmap, PowerShell, Windows netstat, Linux `ss`, and Bash TCP checks
-- Responsive light and dark themes
+- Gives all security-status badges a consistent width and centered label alignment.
+- Keeps multi-line status labels centered regardless of the active filter.
+- Changes the generated Netcat command from `nc -vz` to `nc -nvz`.
