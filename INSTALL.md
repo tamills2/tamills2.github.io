@@ -1,16 +1,14 @@
-# Tool sidebar formatting fix
+# Tool sidebar split-layout fix
 
-Replace:
+Replace these files in the repository:
 
-`public/css/tools.css`
+- `public/js/tool-base.js`
+- `public/css/tools.css`
 
-Then rebuild and redeploy:
+Then rebuild:
 
 ```bash
 python3 scripts/build_site.py
-git add public/css/tools.css public/data
-git commit -m "Fix tool notes sidebar formatting"
-git push
 ```
 
-This version keeps Notes mathematically centered regardless of the Builder button width and draws the divider directly on the drawer header.
+On desktop, the Notes sidebar now splits the tool page instead of overlaying it. The heading matches the notes viewer and opening a note preserves the expanded sidebar state.

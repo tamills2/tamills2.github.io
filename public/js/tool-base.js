@@ -59,12 +59,8 @@
         </div>
       </header>
 
-      <button class="tool-notes-backdrop" type="button" hidden aria-label="Close notes navigation"></button>
       <aside class="tool-notes-drawer" id="tool-notes-drawer" hidden aria-label="Notes">
         <div class="tool-notes-drawer-heading">
-          <button class="icon-button tool-notes-close" type="button" aria-label="Close notes navigation">
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"></path></svg>
-          </button>
           <h2>Notes</h2>
           <a class="note-builder-link" href="${root}tools/note-builder/">Builder</a>
         </div>
@@ -158,28 +154,35 @@
 
   function initialiseToolNotesDrawer() {
     const trigger = document.querySelector("#tool-notes-button");
-    const backdrop = document.querySelector(".tool-notes-backdrop");
     const drawer = document.querySelector("#tool-notes-drawer");
-    const closeButton = document.querySelector(".tool-notes-close");
     const tree = document.querySelector(".tool-notes-tree");
-    if (!trigger || !backdrop || !drawer || !closeButton || !tree) return;
+    if (!trigger || !drawer || !tree) return;
 
-    function setOpen(open) {
+    function setOpen(open, { focusTrigger = false } = {}) {
       drawer.hidden = !open;
-      backdrop.hidden = !open;
       trigger.setAttribute("aria-expanded", String(open));
       document.body.classList.toggle("tool-notes-open", open);
-      if (open) closeButton.focus();
-      else trigger.focus();
+
+      // The notes viewer uses this same preference. Keeping it in sync means
+      // a note opened from a tool arrives with the sidebar still expanded.
+      localStorage.setItem("repo-sidebar-collapsed", String(!open));
+
+      if (focusTrigger) trigger.focus();
     }
 
-    trigger.addEventListener("click", () => setOpen(drawer.hidden));
-    closeButton.addEventListener("click", () => setOpen(false));
-    backdrop.addEventListener("click", () => setOpen(false));
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !drawer.hidden) setOpen(false);
+    trigger.addEventListener("click", () => {
+      const opening = drawer.hidden;
+      setOpen(opening, { focusTrigger: !opening });
     });
 
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !drawer.hidden) {
+        setOpen(false, { focusTrigger: true });
+      }
+    });
+
+    // Tool pages start closed, matching the normal homepage.
+    setOpen(false);
     loadToolNotesTree(tree);
   }
 
@@ -232,6 +235,9 @@
           <span class="tree-label"></span>
         `;
         link.querySelector(".tree-label").textContent = node.name;
+        link.addEventListener("click", () => {
+          localStorage.setItem("repo-sidebar-collapsed", "false");
+        });
         item.append(link);
       }
 

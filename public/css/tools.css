@@ -159,43 +159,33 @@
   }
 }
 
-/* Notes navigation drawer available from every tool page. */
-.tool-notes-backdrop {
-  position: fixed;
-  inset: var(--header-height) 0 0;
-  z-index: 180;
-  border: 0;
-  background: rgb(0 0 0 / 0.32);
-  cursor: default;
-}
-
+/* Notes navigation on tool pages. On desktop it is a persistent split
+   column, matching the notes viewer. On narrow screens it becomes an overlay. */
 .tool-notes-drawer {
   position: fixed;
   top: var(--header-height);
   bottom: 0;
   left: 0;
-  z-index: 190;
+  z-index: 90;
   display: flex;
-  width: min(88vw, var(--sidebar-width, 18rem));
+  width: var(--sidebar-width);
   flex-direction: column;
   overflow: hidden;
   border-right: 1px solid var(--border);
   background: var(--surface);
-  box-shadow: var(--shadow);
 }
 
-.tool-notes-drawer[hidden],
-.tool-notes-backdrop[hidden] {
+.tool-notes-drawer[hidden] {
   display: none;
 }
 
 .tool-notes-drawer-heading {
   position: relative;
   z-index: 2;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   flex: 0 0 auto;
   align-items: center;
-  justify-content: space-between;
   min-height: 3.5rem;
   padding: 0.55rem 0.65rem;
   border-bottom: 1px solid var(--border);
@@ -203,30 +193,17 @@
 }
 
 .tool-notes-drawer-heading h2 {
-  position: absolute;
-  left: 50%;
+  grid-column: 2;
   margin: 0;
-  transform: translateX(-50%);
   color: var(--text);
   font-size: 0.95rem;
   line-height: 1.2;
   text-align: center;
-  pointer-events: none;
-}
-
-.tool-notes-close {
-  flex: 0 0 auto;
-  margin-right: auto;
-}
-
-.tool-notes-close svg {
-  width: 1.25rem;
-  height: 1.25rem;
 }
 
 .tool-notes-drawer-heading .note-builder-link {
-  flex: 0 0 auto;
-  margin-left: auto;
+  grid-column: 3;
+  justify-self: end;
   padding: 0.3rem 0.5rem;
   border: 1px solid var(--border);
   border-radius: 0.4rem;
@@ -265,8 +242,37 @@
   text-decoration: none;
 }
 
-body.tool-notes-open {
-  overflow: hidden;
+/* Shift and resize the tool rather than covering it. */
+.tool-main {
+  transition: margin-left 180ms ease, width 180ms ease;
+}
+
+body.tool-notes-open .tool-main {
+  width: min(calc(100% - var(--sidebar-width) - 2rem), 72rem);
+  margin-left: calc(var(--sidebar-width) + max(1rem, (100vw - var(--sidebar-width) - 72rem) / 2));
+  margin-right: auto;
+}
+
+@media (max-width: 760px) {
+  .tool-notes-drawer {
+    z-index: 190;
+    width: min(88vw, var(--sidebar-width));
+    box-shadow: var(--shadow);
+  }
+
+  body.tool-notes-open .tool-main {
+    width: min(100% - 1.25rem, 72rem);
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  body.tool-notes-open::after {
+    content: "";
+    position: fixed;
+    inset: var(--header-height) 0 0;
+    z-index: 180;
+    background: rgb(0 0 0 / 0.32);
+  }
 }
 
 /* Keep each header control in its own click area. */
