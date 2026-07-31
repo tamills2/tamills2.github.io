@@ -1,26 +1,20 @@
-# Note Builder
+# Note Builder and note-viewer fixes
 
-## 1. Install the tool
+## 1. Replace the Note Builder
 
-Copy this complete folder into the site:
+Copy the complete folder:
 
 public/tools/note-builder/
 
-Then rebuild the generated manifests:
-
-python3 scripts/build_site.py
-
-## 2. Install the tool-to-note navigation fix
+## 2. Replace the note route helper
 
 Copy:
 
 public/js/note-route-boot.js
 
-into the site's existing:
+into the existing `public/js/` folder.
 
-public/js/
-
-Then add this script in `public/index.html` before the existing deferred
+In `public/index.html`, keep it immediately before the existing deferred
 `main.js` script:
 
 ```html
@@ -28,23 +22,35 @@ Then add this script in `public/index.html` before the existing deferred
 <script src="./js/main.js" defer></script>
 ```
 
-`note-route-boot.js` only handles the initial display state. The existing
-`main.js` continues loading and rendering the requested note normally.
+The corrected helper no longer writes `Loading note…` into the viewer, so it
+cannot overwrite a note that `main.js` has already rendered.
 
-## Note Builder behaviour
+## 3. Add the responsive note-viewer stylesheet
 
-- Two-pane layout
-- Available-note list on the left
-- Search matches note titles only
-- Double-click or press Enter to insert a note
-- Drag a note into the editor to insert it
-- The same note can be inserted repeatedly
-- One blank line is inserted between notes
-- The combined document is a normal editable textarea
-- Live character and line counts
-- Draft text and filename are saved in localStorage
-- Copy-to-clipboard button
-- Save button uses the browser save-location picker when supported
-- Other browsers use their normal download-location behaviour
-- UTF-8 `.txt` output
-- All downloaded line endings are explicitly normalized to Linux LF (`\n`)
+Copy:
+
+public/css/note-viewer-fixes.css
+
+into the existing `public/css/` folder, then add this after the normal site
+stylesheets in `public/index.html`:
+
+```html
+<link rel="stylesheet" href="./css/note-viewer-fixes.css">
+```
+
+This keeps the language label, including `Bash`, inside the viewer header on
+small screens.
+
+## 4. Rebuild
+
+```bash
+python3 scripts/build_site.py
+```
+
+## Included Note Builder fixes
+
+- Editor textarea remains dark in dark mode.
+- Editor text and placeholder remain readable in both themes.
+- Save button uses a stable blue background with white text in both themes.
+- Copy button remains available.
+- Saved `.txt` files are UTF-8 with Linux LF (`\n`) line endings.

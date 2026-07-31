@@ -270,3 +270,47 @@ html[data-theme="dark"] .status-message.is-error {
     grid-template-columns: 1fr;
   }
 }
+
+/* Explicit editor theme colours so the textarea never falls back to white. */
+.document-editor {
+  background: #ffffff;
+  color: #111827;
+  caret-color: #111827;
+}
+
+html[data-theme="dark"] .document-editor {
+  background: #0d1117;
+  color: #e6edf3;
+  caret-color: #e6edf3;
+  border-color: #30363d;
+}
+
+.document-editor::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+html[data-theme="dark"] .document-editor::placeholder {
+  color: #8b949e;
+}
+
+/* Stable contrast in both themes; avoids unresolved site-variable fallbacks. */
+.tool-primary-button,
+#download-button {
+  border-color: #1f6feb;
+  background: #1f6feb;
+  color: #ffffff;
+}
+
+.tool-primary-button:hover:not(:disabled),
+#download-button:hover:not(:disabled) {
+  border-color: #388bfd;
+  background: #388bfd;
+  color: #ffffff;
+}
+
+.tool-primary-button:focus-visible,
+#download-button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
