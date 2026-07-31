@@ -1,16 +1,15 @@
-# ANSI Codes & Color Builder
+# ANSI Codes & Color Builder — light-mode fix
 
-Copy this folder into the repository root so these files land at:
-
-- `public/tools/ansi-code-builder/index.html`
-- `public/tools/ansi-code-builder/tool.css`
-- `public/tools/ansi-code-builder/tool.js`
-- `public/tools/ansi-code-builder/tool.json`
-
-Then rebuild the generated manifests:
+Extract this archive into the repository root, replacing the existing ANSI tool files, then rebuild:
 
 ```bash
 python3 scripts/build_site.py
 ```
 
-No packages, CDN files, icon fonts, or internet access are required. The color wheel is drawn locally with the Canvas API and all icons are inline SVG.
+This fixes the light-theme backgrounds for:
+
+- ANSI sequences in the reference table
+- the terminal preview in the color builder
+- the generated-code output panel
+
+Dark mode retains its existing dark terminal-style surfaces.
