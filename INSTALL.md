@@ -1,15 +1,14 @@
-# Note copy button
+# Note copy button position fix
 
 Replace:
 
 - `public/index.html`
-- `public/js/main.js`
 - `public/css/styles.css`
 
-Then run:
+Then rebuild:
 
 ```bash
 python3 scripts/build_site.py
 ```
 
-No package, CDN, icon font, or internet connection is required. The icon is inline SVG and the clipboard code includes a fallback for browsers that do not expose `navigator.clipboard`.
+The copy button now sits inside the note window header at the far right, beside the language label. Its existing copy and “Copied” behaviour is unchanged.

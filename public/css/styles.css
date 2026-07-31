@@ -643,6 +643,25 @@ body.sidebar-collapsed .notes-sidebar {
   font-weight: 500;
 }
 
+.code-window-header-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.6rem;
+  margin-left: auto;
+}
+
+.code-window-header .note-copy-button {
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0.25rem 0.45rem;
+  background: transparent;
+}
+
+.code-window-header .note-copy-button:hover {
+  background: var(--surface);
+}
+
 .code-table-wrapper {
   overflow: auto;
   max-height: calc(100vh - var(--header-height) - 10rem);
