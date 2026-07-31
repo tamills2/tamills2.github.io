@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Common Ports Reference | Repo</title>
+  <meta name="description" content="Search common TCP and UDP ports, review related services, and generate connectivity test commands.">
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+
+  <main class="tool-main ports-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>Common Ports Reference</h1>
+      <p>Search frequently encountered TCP and UDP services, compare related ports, and generate commands for testing connectivity.</p>
+    </div>
+
+    <section class="range-strip" aria-label="Port number ranges">
+      <article><strong>0–1023</strong><span>Well-known</span></article>
+      <article><strong>1024–49151</strong><span>Registered</span></article>
+      <article><strong>49152–65535</strong><span>Dynamic / ephemeral</span></article>
+    </section>
+
+    <section class="tool-card lookup-card" aria-labelledby="lookup-title">
+      <div class="section-title-row">
+        <div>
+          <h2 id="lookup-title">Port lookup</h2>
+          <p>Filter by number, service, purpose, category, protocol, or security status.</p>
+        </div>
+        <button class="tool-secondary-button compact-button" id="reset-filters" type="button">Reset filters</button>
+      </div>
+
+      <div class="filter-grid">
+        <label class="tool-field search-field" for="port-search">
+          <span>Search</span>
+          <input class="tool-input" id="port-search" type="search" placeholder="22, SSH, DNS, database…" autocomplete="off">
+        </label>
+        <label class="tool-field" for="category-filter">
+          <span>Category</span>
+          <select class="tool-select" id="category-filter"><option value="all">All categories</option></select>
+        </label>
+        <label class="tool-field" for="protocol-filter">
+          <span>Protocol</span>
+          <select class="tool-select" id="protocol-filter">
+            <option value="all">TCP and UDP</option>
+            <option value="TCP">TCP</option>
+            <option value="UDP">UDP</option>
+            <option value="BOTH">Both</option>
+          </select>
+        </label>
+        <label class="tool-field" for="security-filter">
+          <span>Security</span>
+          <select class="tool-select" id="security-filter">
+            <option value="all">Any status</option>
+            <option value="secure">Secure / encrypted</option>
+            <option value="insecure">Plaintext / legacy</option>
+            <option value="neutral">Depends on configuration</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="quick-ports" aria-label="Quick port filters">
+        <span>Common:</span>
+        <button type="button" data-quick="22">22 SSH</button>
+        <button type="button" data-quick="53">53 DNS</button>
+        <button type="button" data-quick="80">80 HTTP</button>
+        <button type="button" data-quick="443">443 HTTPS</button>
+        <button type="button" data-quick="445">445 SMB</button>
+        <button type="button" data-quick="3389">3389 RDP</button>
+      </div>
+
+      <div class="ports-layout">
+        <div>
+          <div class="table-wrap ports-table-wrap">
+            <table class="ports-table">
+              <thead><tr><th>Port</th><th>Protocol</th><th>Service</th><th>Category</th><th>Description</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
+              <tbody id="ports-body"></tbody>
+            </table>
+          </div>
+          <p class="table-status" id="ports-status" aria-live="polite"></p>
+        </div>
+
+        <aside class="port-details" id="port-details" aria-labelledby="details-title">
+          <p class="eyebrow">Selected service</p>
+          <h3 id="details-title">Choose a port</h3>
+          <p id="details-description">Select any row to see practical details and related ports.</p>
+          <dl id="details-list" hidden>
+            <div><dt>Port</dt><dd id="detail-port">—</dd></div>
+            <div><dt>Protocol</dt><dd id="detail-protocol">—</dd></div>
+            <div><dt>Category</dt><dd id="detail-category">—</dd></div>
+            <div><dt>Security</dt><dd id="detail-security">—</dd></div>
+            <div><dt>Typical software</dt><dd id="detail-software">—</dd></div>
+          </dl>
+          <div class="related-block" id="related-block" hidden>
+            <h4>Related ports</h4>
+            <div id="related-ports"></div>
+          </div>
+          <button class="tool-primary-button details-copy" id="copy-selected" type="button" hidden>Copy port details</button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="tool-card command-card" aria-labelledby="command-title">
+      <div class="section-title-row">
+        <div>
+          <h2 id="command-title">Connectivity command generator</h2>
+          <p>This offline tool does not scan hosts. It generates commands for you to run in your own terminal.</p>
+        </div>
+      </div>
+      <div class="command-controls">
+        <label class="tool-field" for="host-input"><span>Host or address</span><input class="tool-input mono-input" id="host-input" value="example.com" spellcheck="false"></label>
+        <label class="tool-field" for="command-port"><span>Port</span><input class="tool-input mono-input" id="command-port" type="number" min="1" max="65535" value="443"></label>
+      </div>
+      <div class="command-grid" id="command-grid"></div>
+    </section>
+
+    <section class="tool-card notes-card" aria-labelledby="notes-title">
+      <h2 id="notes-title">Important notes</h2>
+      <p>Port numbers identify conventional service endpoints, not guaranteed behavior. Applications can be configured on different ports, and an open port does not prove that the expected service is running.</p>
+      <p>Some services use both TCP and UDP, multiple control/data channels, or additional dynamically negotiated ports. Firewall rules should be based on the actual application and network design.</p>
+    </section>
+  </main>
+</body>
+</html>

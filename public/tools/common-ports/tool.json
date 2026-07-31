@@ -1,0 +1,18 @@
+{
+  "title": "Common Ports Reference",
+  "description": "Search common TCP and UDP ports, compare related services, and generate ready-to-run connectivity test commands.",
+  "category": "Networking",
+  "keywords": [
+    "ports",
+    "TCP",
+    "UDP",
+    "services",
+    "firewall",
+    "networking",
+    "port lookup",
+    "nmap",
+    "netcat"
+  ],
+  "homepage": true,
+  "order": 30
+}

@@ -1,18 +1,22 @@
-# ANSI and subnet visual cleanup v2
+# Common Ports Reference
 
-Extract this archive into the repository root and allow it to replace the existing files.
+Extract this archive into the repository root, preserving the `public/tools/common-ports/` directory.
 
-Then rebuild:
+Then rebuild the generated manifests and search index:
 
 ```bash
 python3 scripts/build_site.py
 ```
 
-Changes:
+The tool is fully offline and uses the repository's existing shared tool header, theme, notes drawer, and tools menu.
 
-- Makes the subnet calculator's **Network** result card identical to the other result cards.
-- Removes the light-gray fill from ANSI reference sequence chips.
-- Removes the light-gray fill from the color preview when displaying a foreground color.
-- Removes the light-gray fill from all generated color-value cards.
-- Keeps selected background-color previews functional.
-- Keeps the ANSI dark-mode styling unchanged.
+## Included features
+
+- Searchable common TCP and UDP port reference
+- Category, protocol, and security filters
+- Quick filters for frequently used ports
+- Port detail panel with related services
+- Copyable port summaries
+- Well-known, registered, and dynamic range guide
+- Offline command generation for Netcat, Nmap, PowerShell, Windows netstat, Linux `ss`, and Bash TCP checks
+- Responsive light and dark themes
