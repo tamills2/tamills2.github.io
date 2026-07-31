@@ -1361,3 +1361,32 @@ body.search-open .site-search {
 .tools-menu a {
   white-space: nowrap;
 }
+
+/* Keep the shared Tools dropdown within the visible window. */
+.tools-menu {
+  max-height: calc(100vh - var(--header-height) - 1rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.tools-menu::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+.tools-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tools-menu::-webkit-scrollbar-thumb {
+  border: 0.12rem solid transparent;
+  border-radius: 999px;
+  background: var(--border-strong);
+  background-clip: padding-box;
+}
+
+.tools-menu::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+  background-clip: padding-box;
+}
