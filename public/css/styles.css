@@ -651,20 +651,33 @@ body.sidebar-collapsed .notes-sidebar {
   margin-left: auto;
 }
 
-.code-window-header .note-copy-button {
+.code-window-body {
+  position: relative;
+}
+
+.code-window-body > .note-copy-button {
+  position: absolute;
+  z-index: 3;
+  top: 0.6rem;
+  right: 0.75rem;
   min-width: 2rem;
   min-height: 2rem;
   padding: 0.25rem 0.45rem;
-  background: transparent;
+  background: var(--surface);
 }
 
-.code-window-header .note-copy-button:hover {
-  background: var(--surface);
+.code-window-body > .note-copy-button:hover {
+  background: var(--surface-subtle);
 }
 
 .code-table-wrapper {
   overflow: auto;
   max-height: calc(100vh - var(--header-height) - 10rem);
+}
+
+/* Reserve room for the floating copy control on every note line. */
+.code-table .code-line {
+  padding-right: 4.25rem;
 }
 
 .viewer-status {
