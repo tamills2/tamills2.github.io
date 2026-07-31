@@ -125,26 +125,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.45rem 0.55rem;
-  border: 1px solid transparent;
-  border-radius: 0.45rem;
-  background: transparent;
   color: var(--text);
   text-decoration: none;
-  font: inherit;
   font-weight: 650;
-  cursor: pointer;
-}
-
-.tool-header-home:hover,
-.tool-header-home:focus-visible {
-  border-color: var(--border);
-  background: var(--surface-hover);
-}
-
-.tool-header-home:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
 }
 
 .tool-header-home svg {
@@ -159,148 +142,91 @@
   }
 }
 
-/* Keep each header control in its own click area. */
-.tool-page-shell .site-header {
-  isolation: isolate;
-}
-
-.tool-page-shell .site-title {
-  position: relative;
-  z-index: 1;
-  width: max-content;
-}
-
-.tool-page-shell .header-left,
-.tool-page-shell .header-right {
-  position: relative;
-  z-index: 2;
-}
-
-/* The shared header is injected into this mount by tool-base.js. */
-#shared-tool-header {
-  display: contents;
-}
-
-/* Tool pages use the same collapsible sidebar model as the homepage. */
-.tool-app-shell {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
-  min-height: 100vh;
-  padding-top: var(--header-height);
-  transition: grid-template-columns 180ms ease;
-}
-
-body.sidebar-collapsed .tool-app-shell {
-  grid-template-columns: 0 minmax(0, 1fr);
-}
-
-.tool-app-shell .notes-sidebar {
-  position: sticky;
-  top: var(--header-height);
-  height: calc(100vh - var(--header-height));
-}
-
-.tool-app-shell .tool-main {
-  padding-top: 2rem;
-}
-
-/* The shared tree uses exactly the same row layout as the homepage tree. */
-.tool-notes-tree .tree-row {
-  display: flex;
-  align-items: center;
-  min-width: 0;
-}
-
-.tool-notes-tree .tree-row > button,
-.tool-notes-tree .tree-row > a {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  width: 100%;
-  min-width: 0;
-  padding: 0.4rem 0.5rem;
+/* Notes navigation drawer available from every tool page. */
+.tool-notes-backdrop {
+  position: fixed;
+  inset: var(--header-height) 0 0;
+  z-index: 180;
   border: 0;
-  border-radius: 0.35rem;
-  background: transparent;
+  background: rgb(0 0 0 / 0.32);
+  cursor: default;
+}
+
+.tool-notes-drawer {
+  position: fixed;
+  top: var(--header-height);
+  bottom: 0;
+  left: 0;
+  z-index: 190;
+  width: min(88vw, var(--sidebar-width));
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.tool-notes-drawer-heading {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  min-height: 3.5rem;
+  padding: 0.55rem 0.65rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.tool-notes-drawer-heading h2 {
+  grid-column: 2;
+  margin: 0;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.tool-notes-close {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.tool-notes-drawer-heading .note-builder-link {
+  grid-column: 3;
+  justify-self: end;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  background: var(--surface);
   color: var(--text);
-  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 650;
+  line-height: 1.2;
   text-decoration: none;
-  font: inherit;
-  cursor: pointer;
 }
 
-.tool-notes-tree .tree-row > button:hover,
-.tool-notes-tree .tree-row > a:hover {
+.tool-notes-drawer-heading .note-builder-link:hover,
+.tool-notes-drawer-heading .note-builder-link:focus-visible {
+  border-color: var(--border-strong);
   background: var(--surface-hover);
 }
 
-@media (max-width: 760px) {
-  .tool-app-shell,
-  body.sidebar-collapsed .tool-app-shell {
-    display: block;
-  }
-
-  .tool-app-shell .notes-sidebar {
-    position: fixed;
-    z-index: 90;
-    top: var(--header-height);
-    left: 0;
-    width: min(88vw, var(--sidebar-width));
-    box-shadow: var(--shadow);
-  }
-
-  body.sidebar-collapsed .tool-app-shell .notes-sidebar {
-    visibility: hidden;
-  }
-
-  .tool-app-shell .tool-main {
-    padding-top: 1.25rem;
-  }
-}
-
-/* Keep note-tree controls on one horizontal line on tool pages. */
-.tool-notes-tree .folder-button,
-.tool-notes-tree .file-button {
-  display: inline-flex !important;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  white-space: nowrap;
-}
-
-.tool-notes-tree .tree-chevron,
-.tool-notes-tree .tree-icon,
-.tool-notes-tree .tree-spacer {
-  display: block;
-  flex: 0 0 auto;
-}
-
-.tool-notes-tree .tree-label {
-  display: block;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  line-height: 1.25;
-}
-
-/* Folder rows are visually highlighted only while the pointer is over them. */
-.tool-notes-tree .folder-button,
-.tool-notes-tree .folder-button:focus,
-.tool-notes-tree .folder-button:focus-visible,
-.tool-notes-tree .folder-button[aria-current="page"] {
-  background: transparent;
-  color: var(--text);
-  font-weight: inherit;
-}
-
-.tool-notes-tree .folder-button:hover {
-  background: var(--surface-hover);
-}
-
-/* Retain keyboard accessibility without making the row look selected. */
-.tool-notes-tree .folder-button:focus-visible {
+.tool-notes-drawer-heading .note-builder-link:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: -2px;
+  outline-offset: 2px;
+}
+
+.tool-notes-tree {
+  padding: 0.75rem 0.55rem 2rem;
+}
+
+.tool-notes-tree .tool-note-link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: var(--text);
+  text-decoration: none;
+}
+
+body.tool-notes-open {
+  overflow: hidden;
 }

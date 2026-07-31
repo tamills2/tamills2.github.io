@@ -1,10 +1,9 @@
-# Note Builder sidebar button
+# Tool sidebar consistency fix
 
 Replace these existing files:
 
-- `public/index.html`
-- `public/js/main.js`
-- `public/css/styles.css`
+- `public/js/tool-base.js`
+- `public/css/tools.css`
 
 Then run:
 
@@ -12,10 +11,12 @@ Then run:
 python3 scripts/build_site.py
 ```
 
-This change:
+This makes the Notes drawer opened from any tool match the main notes sidebar immediately:
 
-- Adds a **Builder** button next to the centered **Notes** heading.
-- Links to `./tools/note-builder/`.
-- Removes Note Builder from only the Tools dropdown.
-- Keeps Note Builder available to global search and other generated site features.
-- Adds no new runtime CSS or JavaScript files.
+- centered **Notes** heading
+- **Builder** button on the right
+- close button on the left
+- divider line under the heading
+- Note Builder omitted from the Tools dropdown on tool pages
+
+No new runtime files are added.
