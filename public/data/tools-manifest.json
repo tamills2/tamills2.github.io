@@ -50,7 +50,7 @@
   {
     "type": "tool",
     "slug": "cidr-subnet-converter",
-    "title": "CIDR, Subnet & Wildcard Converter",
+    "title": "CIDR, Subnet, & Wildcard Converter",
     "description": "Convert between IPv4 CIDR prefixes, subnet masks, and wildcard masks, with optional network range details.",
     "category": "Networking",
     "keywords": [
@@ -68,7 +68,7 @@
     "order": 30,
     "path": "tools/cidr-subnet-converter/",
     "url": "./tools/cidr-subnet-converter/",
-    "content": "Convert between IPv4 CIDR prefixes, subnet masks, and wildcard masks, with optional network range details. CIDR, Subnet & Wildcard Converter | Repo Repo tool CIDR, Subnet & Wildcard Converter Convert between IPv4 CIDR prefixes, subnet masks, and wildcard masks. Add an IP address to calculate the network range. IP address optional 192.168.1.42 CIDR prefix / 24 Subnet mask 255.255.255.0 Wildcard mask 0.0.0.255 Clear Network details"
+    "content": "Convert between IPv4 CIDR prefixes, subnet masks, and wildcard masks, with optional network range details. CIDR, Subnet, & Wildcard Converter | Repo Repo tool CIDR, Subnet, & Wildcard Converter Convert between IPv4 CIDR prefixes, subnet masks, and wildcard masks. Add an IP address to calculate the network range. IP address optional 192.168.1.42 CIDR prefix / 24 Subnet mask 255.255.255.0 Wildcard mask 0.0.0.255 Clear Network details"
   },
   {
     "type": "tool",

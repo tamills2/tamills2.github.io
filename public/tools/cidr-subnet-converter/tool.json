@@ -1,5 +1,5 @@
 {
-  "title": "CIDR, Subnet & Wildcard Converter",
+  "title": "CIDR, Subnet, & Wildcard Converter",
   "description": "Convert between IPv4 CIDR prefixes, subnet masks, and wildcard masks, with optional network range details.",
   "category": "Networking",
   "keywords": [

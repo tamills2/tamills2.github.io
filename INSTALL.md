@@ -18,7 +18,7 @@ public/tools/url-encode-decode/
 The title updater changes the exact text:
 
 ```text
-CIDR, Subnet & Wildcard Converter
+CIDR, Subnet, & Wildcard Converter
 ```
 
 to:
