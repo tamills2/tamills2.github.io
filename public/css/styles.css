@@ -1784,9 +1784,9 @@ textarea:focus {
   gap: 0.55rem;
   min-height: 2.75rem;
   padding: 0.5rem 0.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid transparent;
   border-radius: 0.62rem;
-  background: rgba(0, 0, 0, 0.18);
+  background: transparent;
   color: var(--header-text);
   font: inherit;
   font-weight: 700;
@@ -1805,7 +1805,7 @@ textarea:focus {
 .notes-nav-button:focus-visible,
 .tool-header-home:hover,
 .tool-header-home:focus-visible {
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: transparent;
   background: rgba(0, 0, 0, 0.26);
 }
 
