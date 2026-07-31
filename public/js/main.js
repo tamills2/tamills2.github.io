@@ -212,6 +212,10 @@ function renderToolsMenu() {
   let previousCategory = null;
 
   for (const tool of state.toolsManifest) {
+    if (tool.slug === "note-builder") {
+      continue;
+    }
+
     if (tool.category !== previousCategory) {
       const heading = document.createElement("span");
       heading.className = "dropdown-category";

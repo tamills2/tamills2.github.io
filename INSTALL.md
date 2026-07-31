@@ -1,15 +1,21 @@
-# Repo note viewer fix
+# Note Builder sidebar button
 
-Replace only these existing files:
+Replace these existing files:
 
+- `public/index.html`
 - `public/js/main.js`
 - `public/css/styles.css`
 
-Remove the previously added files and their HTML tags if they are still present:
+Then run:
 
-- `public/js/note-route-boot.js`
-- `public/css/note-viewer-fixes.css`
+```bash
+python3 scripts/build_site.py
+```
 
-No change to `public/index.html` or `public/js/tool-base.js` is required for this fix.
+This change:
 
-The updated `main.js` opens the `?note=...` route after the generated notes manifest has loaded. The updated `styles.css` keeps the language label inside the code-window header on narrow screens.
+- Adds a **Builder** button next to the centered **Notes** heading.
+- Links to `./tools/note-builder/`.
+- Removes Note Builder from only the Tools dropdown.
+- Keeps Note Builder available to global search and other generated site features.
+- Adds no new runtime CSS or JavaScript files.
