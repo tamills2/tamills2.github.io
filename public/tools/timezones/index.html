@@ -90,6 +90,15 @@
           </label>
 
           <label class="tool-field">
+            <span>Output format</span>
+            <select class="tool-input" id="output-format">
+              <option value="timezone">Timezone</option>
+              <option value="epoch-seconds">Epoch seconds</option>
+              <option value="epoch-milliseconds">Epoch milliseconds</option>
+            </select>
+          </label>
+
+          <label class="tool-field timezone-output-only">
             <span>To timezone</span>
             <select class="tool-input" id="to-zone"></select>
           </label>
@@ -105,7 +114,7 @@
 
         <div class="conversion-results" id="conversion-results" hidden>
           <div class="conversion-primary">
-            <span class="result-label">Converted time</span>
+            <span class="result-label" id="primary-result-label">Converted time</span>
             <strong id="converted-time">—</strong>
             <span id="converted-zone">—</span>
           </div>

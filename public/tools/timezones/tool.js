@@ -41,7 +41,9 @@
 
   const inputType = document.querySelector("#input-type");
   const fromZone = document.querySelector("#from-zone");
+  const outputFormat = document.querySelector("#output-format");
   const toZone = document.querySelector("#to-zone");
+  const timezoneOutputFields = document.querySelectorAll(".timezone-output-only");
   const datetimeInput = document.querySelector("#datetime-input");
   const epochInput = document.querySelector("#epoch-input");
   const datetimeFields = document.querySelectorAll(".datetime-only");
@@ -51,6 +53,7 @@
   const clearConverterButton = document.querySelector("#clear-converter-button");
   const converterStatus = document.querySelector("#converter-status");
   const conversionResults = document.querySelector("#conversion-results");
+  const primaryResultLabel = document.querySelector("#primary-result-label");
   const convertedTime = document.querySelector("#converted-time");
   const convertedZone = document.querySelector("#converted-zone");
   const isoResult = document.querySelector("#iso-result");
@@ -263,18 +266,39 @@
 
   function renderConversion(date) {
     const targetZone = toZone.value;
+    const seconds = String(Math.floor(date.getTime() / 1000));
+    const milliseconds = String(date.getTime());
 
-    convertedTime.textContent = formatConvertedDate(date, targetZone);
-    convertedZone.textContent =
-      `${targetZone} · ${getOffset(date, targetZone)}`;
+    if (outputFormat.value === "epoch-seconds") {
+      primaryResultLabel.textContent = "Epoch seconds";
+      convertedTime.textContent = seconds;
+      convertedZone.textContent = "Seconds since 1970-01-01 00:00:00 UTC";
+    } else if (outputFormat.value === "epoch-milliseconds") {
+      primaryResultLabel.textContent = "Epoch milliseconds";
+      convertedTime.textContent = milliseconds;
+      convertedZone.textContent = "Milliseconds since 1970-01-01 00:00:00 UTC";
+    } else {
+      primaryResultLabel.textContent = "Converted time";
+      convertedTime.textContent = formatConvertedDate(date, targetZone);
+      convertedZone.textContent = `${targetZone} · ${getOffset(date, targetZone)}`;
+    }
 
     isoResult.textContent = date.toISOString();
     utcResult.textContent = date.toUTCString();
-    epochSecondsResult.textContent = String(Math.floor(date.getTime() / 1000));
-    epochMillisecondsResult.textContent = String(date.getTime());
+    epochSecondsResult.textContent = seconds;
+    epochMillisecondsResult.textContent = milliseconds;
 
     conversionResults.hidden = false;
     setConverterStatus("Converted automatically.");
+  }
+
+  function updateOutputMode() {
+    const showTimezone = outputFormat.value === "timezone";
+    timezoneOutputFields.forEach((field) => {
+      field.hidden = !showTimezone;
+    });
+    swapButton.hidden = inputType.value !== "datetime" || !showTimezone;
+    updateConversion();
   }
 
   function parseConverterInput() {
@@ -345,7 +369,7 @@
       field.hidden = isDateTime;
     });
 
-    swapButton.hidden = !isDateTime;
+    swapButton.hidden = !isDateTime || outputFormat.value !== "timezone";
     updateConversion();
   }
 
@@ -390,6 +414,7 @@
   });
 
   inputType.addEventListener("change", updateInputMode);
+  outputFormat.addEventListener("change", updateOutputMode);
   fromZone.addEventListener("change", updateConversion);
   toZone.addEventListener("change", updateConversion);
   datetimeInput.addEventListener("input", updateConversion);
@@ -420,5 +445,6 @@
 
   updateClocks();
   updateInputMode();
+  updateOutputMode();
   window.setInterval(updateClocks, 1000);
 })();

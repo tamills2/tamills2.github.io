@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cron Expression | Repo</title>
+  <meta name="description" content="Build and explain standard five-field cron expressions offline.">
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+  <main class="tool-main cron-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>Cron Expression</h1>
+      <p>Build a standard five-field cron schedule, or paste one in to see what it means.</p>
+    </div>
+
+    <section class="tool-card cron-block" aria-labelledby="builder-title">
+      <div class="section-copy">
+        <h2 id="builder-title">Expression generator</h2>
+        <p>Choose a common schedule or set each field manually.</p>
+      </div>
+
+      <div class="preset-row" id="preset-row" aria-label="Common cron presets">
+        <button class="tool-secondary-button" type="button" data-cron="* * * * *">Every minute</button>
+        <button class="tool-secondary-button" type="button" data-cron="*/5 * * * *">Every 5 minutes</button>
+        <button class="tool-secondary-button" type="button" data-cron="0 * * * *">Hourly</button>
+        <button class="tool-secondary-button" type="button" data-cron="0 0 * * *">Daily</button>
+        <button class="tool-secondary-button" type="button" data-cron="0 9 * * 1-5">Weekdays at 9:00</button>
+        <button class="tool-secondary-button" type="button" data-cron="0 0 1 * *">Monthly</button>
+      </div>
+
+      <div class="cron-fields">
+        <label class="tool-field"><span>Minute <small>0–59</small></span><input class="tool-input mono" id="minute" value="0"></label>
+        <label class="tool-field"><span>Hour <small>0–23</small></span><input class="tool-input mono" id="hour" value="9"></label>
+        <label class="tool-field"><span>Day of month <small>1–31</small></span><input class="tool-input mono" id="day-month" value="*"></label>
+        <label class="tool-field"><span>Month <small>1–12</small></span><input class="tool-input mono" id="month" value="*"></label>
+        <label class="tool-field"><span>Day of week <small>0–7</small></span><input class="tool-input mono" id="day-week" value="1-5"></label>
+      </div>
+
+      <div class="expression-output">
+        <div>
+          <span class="result-label">Generated expression</span>
+          <code id="generated-expression">0 9 * * 1-5</code>
+        </div>
+        <button class="tool-secondary-button" id="copy-generated" type="button">Copy</button>
+      </div>
+      <p class="cron-status" id="builder-status" aria-live="polite"></p>
+      <div class="explanation-box" id="generated-explanation"></div>
+    </section>
+
+    <section class="tool-card cron-block" aria-labelledby="explainer-title">
+      <div class="section-copy">
+        <h2 id="explainer-title">Expression explainer</h2>
+        <p>Paste a five-field Unix cron expression. Names such as <code>MON</code> and <code>JAN</code> are supported.</p>
+      </div>
+      <label class="tool-field">
+        <span>Cron expression</span>
+        <input class="tool-input mono cron-string-input" id="cron-input" value="0 9 * * 1-5" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="tool-button-row">
+        <button class="tool-secondary-button" id="explain-button" type="button">Explain</button>
+        <button class="tool-secondary-button" id="use-builder-button" type="button">Load into generator</button>
+        <button class="tool-secondary-button" id="clear-button" type="button">Clear</button>
+      </div>
+      <p class="cron-status" id="explainer-status" aria-live="polite"></p>
+      <div class="explanation-box" id="cron-explanation"></div>
+      <div class="field-breakdown" id="field-breakdown"></div>
+    </section>
+
+    <section class="tool-card cron-block reference-block" aria-labelledby="reference-title">
+      <div class="section-copy">
+        <h2 id="reference-title">Field reference</h2>
+        <p>Standard Unix crontab syntax uses five schedule fields followed by the command.</p>
+      </div>
+      <div class="syntax-line"><code>minute hour day-of-month month day-of-week</code></div>
+      <div class="reference-grid">
+        <div><strong>*</strong><span>Any value</span></div>
+        <div><strong>,</strong><span>List: <code>1,15,30</code></span></div>
+        <div><strong>-</strong><span>Range: <code>1-5</code></span></div>
+        <div><strong>/</strong><span>Step: <code>*/10</code></span></div>
+      </div>
+      <p class="reference-note">This tool targets standard five-field Unix cron. Quartz, Jenkins, AWS/EventBridge, and other schedulers may use different field counts or rules.</p>
+    </section>
+  </main>
+</body>
+</html>

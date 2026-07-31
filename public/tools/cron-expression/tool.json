@@ -1,0 +1,9 @@
+{
+  "title": "Cron Expression",
+  "description": "Build standard cron schedules or explain an existing five-field cron expression.",
+  "category": "Date & Time",
+  "keywords": ["cron", "crontab", "schedule", "expression", "generator", "parser", "explain", "Linux", "Unix"],
+  "homepage": true,
+  "order": 45,
+  "hidden": false
+}
