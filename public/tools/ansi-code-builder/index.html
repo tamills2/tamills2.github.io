@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ANSI Codes &amp; Color Builder | Repo</title>
+  <meta name="description" content="Reference ANSI escape codes, build terminal colors, compose sequences, and generate variables and examples for different programming languages.">
+
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+
+  <main class="tool-main ansi-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>ANSI Codes &amp; Color Builder</h1>
+      <p>Find common terminal control sequences, build foreground and background colors, combine operations, and export ready-to-use code.</p>
+    </div>
+
+    <nav class="ansi-tabs" aria-label="Tool sections">
+      <button class="ansi-tab active" type="button" data-panel="reference">Reference</button>
+      <button class="ansi-tab" type="button" data-panel="color">Color builder</button>
+      <button class="ansi-tab" type="button" data-panel="sequence">Sequence &amp; code</button>
+    </nav>
+
+    <section class="ansi-panel active" id="panel-reference" data-panel-name="reference">
+      <div class="tool-card">
+        <div class="section-title-row">
+          <div>
+            <h2>Common ANSI escape codes</h2>
+            <p>Search by name, category, description, or numeric sequence. Add any row to the sequence builder.</p>
+          </div>
+        </div>
+
+        <div class="reference-controls">
+          <label class="tool-field search-field" for="reference-search">
+            <span>Search</span>
+            <input class="tool-input" id="reference-search" type="search" placeholder="cursor, clear, bold, 2J…" autocomplete="off">
+          </label>
+          <label class="tool-field" for="reference-category">
+            <span>Category</span>
+            <select class="tool-select" id="reference-category">
+              <option value="all">All categories</option>
+            </select>
+          </label>
+          <label class="tool-field" for="display-format">
+            <span>Display format</span>
+            <select class="tool-select" id="display-format">
+              <option value="hex">\\x1b</option>
+              <option value="octal">\\033</option>
+              <option value="shell">\\e</option>
+              <option value="esc">ESC</option>
+              <option value="literal">Literal character</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="table-wrap">
+          <table class="ansi-table">
+            <thead>
+              <tr><th>Name</th><th>Category</th><th>Sequence</th><th>Description</th><th><span class="visually-hidden">Actions</span></th></tr>
+            </thead>
+            <tbody id="reference-body"></tbody>
+          </table>
+        </div>
+        <p class="table-status" id="reference-status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="ansi-panel" id="panel-color" data-panel-name="color" hidden>
+      <div class="color-layout">
+        <section class="tool-card color-picker-card" aria-labelledby="picker-title">
+          <div class="section-title-row">
+            <div><h2 id="picker-title">Choose a color</h2><p>Pick a hue and saturation on the wheel, then adjust brightness.</p></div>
+          </div>
+
+          <div class="wheel-grid">
+            <div class="wheel-shell">
+              <canvas id="color-wheel" width="300" height="300" aria-label="Hue and saturation color wheel"></canvas>
+              <span class="wheel-marker" id="wheel-marker" aria-hidden="true"></span>
+            </div>
+            <div class="color-fields">
+              <label class="tool-field" for="brightness"><span>Brightness <output id="brightness-value">100%</output></span><input id="brightness" type="range" min="0" max="100" value="100"></label>
+              <label class="tool-field" for="hex-input"><span>Hex</span><input class="tool-input mono" id="hex-input" value="#4F9DFF" maxlength="7" spellcheck="false"></label>
+              <div class="rgb-grid">
+                <label class="tool-field" for="red-input"><span>R</span><input class="tool-input" id="red-input" type="number" min="0" max="255"></label>
+                <label class="tool-field" for="green-input"><span>G</span><input class="tool-input" id="green-input" type="number" min="0" max="255"></label>
+                <label class="tool-field" for="blue-input"><span>B</span><input class="tool-input" id="blue-input" type="number" min="0" max="255"></label>
+              </div>
+              <div class="swatch" id="color-swatch"><span id="swatch-label">#4F9DFF</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="tool-card color-options-card" aria-labelledby="options-title">
+          <div class="section-title-row"><div><h2 id="options-title">Terminal output</h2><p>Choose where the color applies and which terminal color mode to generate.</p></div></div>
+
+          <fieldset class="choice-group">
+            <legend>Apply color to</legend>
+            <label><input type="radio" name="apply-to" value="foreground" checked> Foreground</label>
+            <label><input type="radio" name="apply-to" value="background"> Background</label>
+            <label><input type="radio" name="apply-to" value="both"> Both</label>
+          </fieldset>
+
+          <div id="background-color-fields" hidden>
+            <label class="tool-field" for="background-hex"><span>Background hex</span><input class="tool-input mono" id="background-hex" value="#101820" maxlength="7" spellcheck="false"></label>
+          </div>
+
+          <fieldset class="choice-group">
+            <legend>Color mode</legend>
+            <label><input type="radio" name="color-mode" value="truecolor" checked> Truecolor (24-bit)</label>
+            <label><input type="radio" name="color-mode" value="ansi256"> ANSI 256</label>
+            <label><input type="radio" name="color-mode" value="ansi16"> Standard 16-color</label>
+          </fieldset>
+
+          <fieldset class="choice-group style-grid">
+            <legend>Styles</legend>
+            <label><input type="checkbox" class="style-option" value="1"> Bold</label>
+            <label><input type="checkbox" class="style-option" value="2"> Dim</label>
+            <label><input type="checkbox" class="style-option" value="3"> Italic</label>
+            <label><input type="checkbox" class="style-option" value="4"> Underline</label>
+            <label><input type="checkbox" class="style-option" value="7"> Inverse</label>
+            <label><input type="checkbox" class="style-option" value="9"> Strikethrough</label>
+          </fieldset>
+
+          <label class="check-row"><input id="include-reset" type="checkbox" checked> Include reset in complete examples</label>
+          <button class="tool-primary-button" id="add-color-sequence" type="button">Add color to sequence builder</button>
+        </section>
+      </div>
+
+      <section class="tool-card output-card" aria-labelledby="color-output-title">
+        <div class="section-title-row"><div><h2 id="color-output-title">Generated color values</h2><p>The closest ANSI 256 and standard 16-color matches are calculated automatically.</p></div></div>
+        <div class="terminal-preview" id="terminal-preview"><span id="preview-text">The quick brown fox jumps over the lazy dog.</span></div>
+        <div class="output-grid" id="color-output-grid"></div>
+      </section>
+    </section>
+
+    <section class="ansi-panel" id="panel-sequence" data-panel-name="sequence" hidden>
+      <div class="sequence-layout">
+        <section class="tool-card" aria-labelledby="sequence-title">
+          <div class="section-title-row">
+            <div><h2 id="sequence-title">Sequence builder</h2><p>Arrange movements, colors, styles, and other controls in the order they should run.</p></div>
+            <button class="tool-secondary-button compact" id="clear-sequence" type="button">Clear</button>
+          </div>
+          <div class="sequence-list" id="sequence-list"></div>
+          <div class="empty-state" id="sequence-empty">Add items from the reference table or color builder.</div>
+        </section>
+
+        <section class="tool-card" aria-labelledby="generator-title">
+          <div class="section-title-row"><div><h2 id="generator-title">Variable &amp; usage generator</h2><p>Export the current sequence as variables, a combined value, or a complete example.</p></div></div>
+
+          <div class="generator-controls">
+            <label class="tool-field" for="language-select"><span>Language</span><select class="tool-select" id="language-select"></select></label>
+            <label class="tool-field" for="variable-name"><span>Variable name</span><input class="tool-input mono" id="variable-name" value="ansi_sequence" spellcheck="false"></label>
+            <label class="tool-field" for="example-text"><span>Example text</span><input class="tool-input" id="example-text" value="Hello world" spellcheck="false"></label>
+            <label class="tool-field" for="output-mode"><span>Output</span><select class="tool-select" id="output-mode"><option value="single">Single combined variable</option><option value="separate">Separate variables</option><option value="complete">Complete runnable example</option><option value="helper">Helper function</option></select></label>
+          </div>
+
+          <div class="notice">ANSI behavior depends on the terminal. Truecolor and some styles may not be supported everywhere. ANSI sequences do not style ordinary browser text.</div>
+          <div class="code-output-shell">
+            <button class="copy-code-button" id="copy-generated" type="button" aria-label="Copy generated code" title="Copy generated code"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"></rect><rect x="4" y="4" width="11" height="11" rx="2"></rect></svg><span>Copy</span></button>
+            <pre><code id="generated-code"></code></pre>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

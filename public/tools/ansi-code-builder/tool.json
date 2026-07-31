@@ -1,0 +1,12 @@
+{
+  "title": "ANSI Codes & Color Builder",
+  "description": "Browse common ANSI escape codes, pick terminal colors, compose sequences, and generate variables and usage examples for popular programming languages.",
+  "category": "Development",
+  "keywords": [
+    "ANSI", "escape codes", "terminal colors", "cursor movement", "clear screen",
+    "foreground", "background", "truecolor", "256 color", "hex", "RGB",
+    "bash", "python", "javascript", "powershell", "C", "variable generator"
+  ],
+  "homepage": true,
+  "order": 35
+}
