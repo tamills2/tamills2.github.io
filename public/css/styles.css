@@ -686,9 +686,10 @@ body.sidebar-collapsed .notes-sidebar {
   color: var(--text-muted);
 }
 
-/* Give the first line of each note the same breathing room as the copy control. */
+/* Keep the gutter flush with the header while adding breathing room inside
+   the first row of the note. */
 .code-table {
-  margin-top: 0.6rem;
+  margin-top: 0;
   width: 100%;
   border-collapse: collapse;
   table-layout: auto;
@@ -706,6 +707,11 @@ body.sidebar-collapsed .notes-sidebar {
 
 .code-table tr:hover {
   background: var(--code-line-hover);
+}
+
+.code-table tr:first-child > .line-number,
+.code-table tr:first-child > .code-line {
+  padding-top: 0.6rem;
 }
 
 .line-number {

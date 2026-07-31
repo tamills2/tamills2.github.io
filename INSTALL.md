@@ -1,13 +1,16 @@
-# Note top-padding tweak
+# Note gutter top alignment fix
 
-Replace this file in your repository:
+Replace:
 
-- `public/css/styles.css`
+```text
+public/css/styles.css
+```
 
-Then rebuild the site:
+Then rebuild:
 
 ```bash
 python3 scripts/build_site.py
 ```
 
-This adds `0.6rem` of space above the first line of the note while leaving the copy button and note header in their existing positions.
+This keeps the line-number gutter and its divider flush against the note header,
+while preserving the extra 0.6rem of breathing room above the first line.
