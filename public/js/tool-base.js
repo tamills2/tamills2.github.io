@@ -204,7 +204,10 @@
 
     for (const node of Array.isArray(nodes) ? nodes : []) {
       const item = document.createElement("li");
+      const row = document.createElement("div");
       const isFolder = node.type === "folder" || node.type === "directory";
+
+      row.className = "tree-row";
 
       if (isFolder) {
         const button = document.createElement("button");
@@ -214,7 +217,7 @@
         button.setAttribute("aria-expanded", "false");
         button.innerHTML = `
           <svg class="tree-chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v10H3z"></path></svg>
+          <svg class="tree-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v10H3z"></path></svg>
           <span class="tree-label"></span>
         `;
         button.querySelector(".tree-label").textContent = node.name;
@@ -224,21 +227,23 @@
           button.setAttribute("aria-expanded", String(!expanded));
           childList.hidden = expanded;
         });
-        item.append(button, childList);
+        row.append(button);
+        item.append(row, childList);
       } else if (node.type === "file") {
         const link = document.createElement("a");
         link.className = "file-button tool-note-link";
         link.href = `${root}?note=${encodeURIComponent(node.path)}`;
         link.innerHTML = `
           <span class="tree-spacer" aria-hidden="true"></span>
-          <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v5h5"></path></svg>
+          <svg class="tree-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6zM14 3v5h5"></path></svg>
           <span class="tree-label"></span>
         `;
         link.querySelector(".tree-label").textContent = node.name;
         link.addEventListener("click", () => {
           localStorage.setItem("repo-sidebar-collapsed", "false");
         });
-        item.append(link);
+        row.append(link);
+        item.append(row);
       }
 
       list.append(item);

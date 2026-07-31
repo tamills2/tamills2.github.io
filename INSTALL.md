@@ -1,4 +1,4 @@
-# Tool sidebar split-layout fix
+# Tool note-tree formatting fix
 
 Replace these files in the repository:
 
@@ -11,4 +11,4 @@ Then rebuild:
 python3 scripts/build_site.py
 ```
 
-On desktop, the Notes sidebar now splits the tool page instead of overlaying it. The heading matches the notes viewer and opening a note preserves the expanded sidebar state.
+The tool-page Notes tree now uses the same `.tree-row`, `.tree-icon`, chevron, spacing, and single-line entry structure as the main notes viewer.
