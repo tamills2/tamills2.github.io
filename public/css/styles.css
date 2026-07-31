@@ -686,7 +686,9 @@ body.sidebar-collapsed .notes-sidebar {
   color: var(--text-muted);
 }
 
+/* Give the first line of each note the same breathing room as the copy control. */
 .code-table {
+  margin-top: 0.6rem;
   width: 100%;
   border-collapse: collapse;
   table-layout: auto;
