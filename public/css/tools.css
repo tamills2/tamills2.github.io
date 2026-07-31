@@ -175,19 +175,26 @@
   bottom: 0;
   left: 0;
   z-index: 190;
-  width: min(88vw, var(--sidebar-width));
-  overflow-y: auto;
+  display: flex;
+  width: min(88vw, var(--sidebar-width, 18rem));
+  flex-direction: column;
+  overflow: hidden;
   border-right: 1px solid var(--border);
   background: var(--surface);
   box-shadow: var(--shadow);
 }
 
+.tool-notes-drawer[hidden],
+.tool-notes-backdrop[hidden] {
+  display: none;
+}
+
 .tool-notes-drawer-heading {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  flex: 0 0 auto;
+  grid-template-columns: minmax(2.5rem, 1fr) auto minmax(2.5rem, 1fr);
   align-items: center;
   min-height: 3.5rem;
   padding: 0.55rem 0.65rem;
@@ -198,13 +205,20 @@
 .tool-notes-drawer-heading h2 {
   grid-column: 2;
   margin: 0;
+  color: var(--text);
   font-size: 0.95rem;
+  line-height: 1.2;
   text-align: center;
 }
 
 .tool-notes-close {
   grid-column: 1;
   justify-self: start;
+}
+
+.tool-notes-close svg {
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .tool-notes-drawer-heading .note-builder-link {
@@ -233,7 +247,11 @@
 }
 
 .tool-notes-tree {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
   padding: 0.75rem 0.55rem 2rem;
+  font-size: 0.9rem;
 }
 
 .tool-notes-tree .tool-note-link {
@@ -247,7 +265,6 @@
 body.tool-notes-open {
   overflow: hidden;
 }
-
 
 /* Keep each header control in its own click area. */
 .tool-page-shell .site-header {
