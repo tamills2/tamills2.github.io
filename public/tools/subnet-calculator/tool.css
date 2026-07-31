@@ -20,7 +20,7 @@
 .result-card > span { display:block; margin-bottom:.5rem; color:var(--text-muted); font-size:.78rem; font-weight:750; letter-spacing:.06em; text-transform:uppercase; }
 .result-card strong { display:block; overflow-wrap:anywhere; font-size:clamp(1.05rem,2.4vw,1.45rem); }
 .result-card small { display:block; margin-top:.45rem; color:var(--text-muted); line-height:1.35; }
-.featured-result { border-color:var(--accent); background:var(--accent-soft); }
+.featured-result { border-color:var(--border); background:var(--surface); }
 .details-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin-top:1rem; }
 .details-card h3 { margin:0 0 .65rem; }
 .result-list { margin:0; }
