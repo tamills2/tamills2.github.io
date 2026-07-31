@@ -1,0 +1,23 @@
+{
+  "title": "HTTP Status Codes",
+  "description": "Search HTTP response codes with causes, troubleshooting steps, related headers, and cache behavior.",
+  "category": "Web",
+  "keywords": [
+    "HTTP",
+    "status code",
+    "response code",
+    "1xx",
+    "2xx",
+    "3xx",
+    "4xx",
+    "5xx",
+    "404",
+    "500",
+    "redirect",
+    "client error",
+    "server error",
+    "web troubleshooting"
+  ],
+  "homepage": true,
+  "order": 10
+}

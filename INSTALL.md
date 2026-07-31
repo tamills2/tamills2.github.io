@@ -1,18 +1,16 @@
-# Regex Generator cleanup
+# HTTP Status Codes tool
 
-This update changes only the Regex Generator.
+Copy the `public` directory into the repository root, preserving paths.
 
-1. Extract this archive into the repository root and replace the included files.
-2. Delete the no-longer-used stylesheet:
-
-```bash
-rm -f public/tools/regex-generator/regex-cleanup.css
-```
-
-3. Rebuild:
+Then rebuild the generated manifests:
 
 ```bash
 python3 scripts/build_site.py
 ```
 
-The existing `tool.css` now contains the Regex Generator's tool-specific layout rules. The temporary `regex-cleanup.css` link, file, preset markup, preset JavaScript, and preset-only CSS are removed.
+Files added:
+
+- `public/tools/http-status-codes/index.html`
+- `public/tools/http-status-codes/tool.css`
+- `public/tools/http-status-codes/tool.js`
+- `public/tools/http-status-codes/tool.json`

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTTP Status Codes | Repo</title>
+  <meta name="description" content="Search and filter HTTP status codes with causes, troubleshooting steps, related headers, and cache behavior.">
+
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+
+  <main class="tool-main http-status-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>HTTP Status Codes</h1>
+      <p>Search HTTP response codes by number, name, meaning, related header, cause, or troubleshooting step.</p>
+    </div>
+
+    <section class="tool-card status-controls" aria-labelledby="lookup-title">
+      <h2 id="lookup-title" class="visually-hidden">HTTP status code filters</h2>
+
+      <div class="status-search-row">
+        <div class="tool-field status-search-field">
+          <label for="status-search">Search</label>
+          <input
+            class="tool-input"
+            id="status-search"
+            type="search"
+            placeholder="Try 404, redirect, Retry-After, authentication…"
+            autocomplete="off"
+            spellcheck="false"
+          >
+        </div>
+
+        <label class="common-toggle" for="common-only">
+          <input id="common-only" type="checkbox">
+          <span>Common codes only</span>
+        </label>
+
+        <button class="tool-secondary-button clear-button" id="clear-filters" type="button">Clear</button>
+      </div>
+
+      <div class="category-tabs" id="category-tabs" role="tablist" aria-label="Status code category">
+        <button class="category-tab is-active" type="button" role="tab" aria-selected="true" data-category="all">All</button>
+        <button class="category-tab" type="button" role="tab" aria-selected="false" data-category="1">1xx Informational</button>
+        <button class="category-tab" type="button" role="tab" aria-selected="false" data-category="2">2xx Success</button>
+        <button class="category-tab" type="button" role="tab" aria-selected="false" data-category="3">3xx Redirection</button>
+        <button class="category-tab" type="button" role="tab" aria-selected="false" data-category="4">4xx Client error</button>
+        <button class="category-tab" type="button" role="tab" aria-selected="false" data-category="5">5xx Server error</button>
+      </div>
+    </section>
+
+    <section class="status-results-section" aria-labelledby="results-title">
+      <div class="status-results-heading">
+        <h2 id="results-title">Status codes</h2>
+        <span id="result-count" aria-live="polite"></span>
+      </div>
+
+      <div class="status-list" id="status-list"></div>
+
+      <div class="status-empty" id="status-empty" hidden>
+        No status codes match the current filters.
+      </div>
+    </section>
+  </main>
+</body>
+</html>
