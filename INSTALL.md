@@ -1,15 +1,14 @@
-# Tool sidebar visibility fix
+# Tool sidebar restored
 
-Replace only:
+Replace these existing files:
 
 - `public/js/tool-base.js`
+- `public/css/tools.css`
 
-Then run:
+Then rebuild:
 
 ```bash
 python3 scripts/build_site.py
 ```
 
-The previous patch referenced `root` outside the scope where it was declared. That caused the drawer initialization to stop with a JavaScript error on every tool page. This version resolves the repository root inside the drawer initializer itself.
-
-No new runtime files are added.
+This restores the shared tool-page header/sidebar implementation and adds the Builder button to the drawer header. No new runtime files are introduced.
