@@ -722,6 +722,7 @@ async function loadNotesManifest() {
 
     state.manifest = await response.json();
     renderNotesTree(state.manifest);
+    await openInitialNoteRoute();
   } catch (error) {
     console.error(error);
     elements.notesTree.innerHTML = `
@@ -731,6 +732,51 @@ async function loadNotesManifest() {
       </p>
     `;
   }
+}
+
+function findNoteByPath(nodes, requestedPath) {
+  const target = String(requestedPath || "").replace(/^\/+/, "");
+
+  for (const node of Array.isArray(nodes) ? nodes : []) {
+    if (node.type === "folder" || node.type === "directory") {
+      const match = findNoteByPath(node.children || [], target);
+      if (match) return match;
+    } else if (String(node.path || "").replace(/^\/+/, "") === target) {
+      return node;
+    }
+  }
+
+  return null;
+}
+
+async function openInitialNoteRoute() {
+  const requestedPath = new URLSearchParams(window.location.search).get("note");
+  if (!requestedPath) return;
+
+  const node = findNoteByPath(state.manifest, requestedPath);
+  if (!node) {
+    elements.homeView.hidden = true;
+    elements.searchPageView.hidden = true;
+    elements.fileView.hidden = false;
+    elements.fileTitle.textContent = "Note not found";
+    elements.codeFileName.textContent = "Note not found";
+    elements.fileLocation.textContent = "Notes";
+    elements.codeTableWrapper.innerHTML =
+      '<p class="viewer-status">The requested note is not present in the notes manifest.</p>';
+    return;
+  }
+
+  const button = document.querySelector(
+    `.file-button[data-path="${CSS.escape(node.path)}"]`
+  );
+  await openNote(node, button || null, { updateRoute: false });
+}
+
+function updateNoteRoute(path) {
+  const url = new URL(window.location.href);
+  url.searchParams.delete("search");
+  url.searchParams.set("note", path);
+  history.replaceState(null, "", url);
 }
 
 function renderNotesTree(nodes) {
@@ -819,9 +865,10 @@ function createFileNode(node) {
   return row;
 }
 
-async function openNote(node, button) {
+async function openNote(node, button, { updateRoute = true } = {}) {
   setActiveFileButton(button);
   showFileLoadingState(node);
+  if (updateRoute) updateNoteRoute(node.path);
 
   try {
     const response = await fetch(encodeURI(`./Notes/${node.path}`), {
@@ -961,6 +1008,11 @@ function showHome() {
   elements.fileView.hidden = true;
   elements.searchPageView.hidden = true;
   elements.homeView.hidden = false;
+
+  const homeUrl = new URL(window.location.href);
+  homeUrl.searchParams.delete("note");
+  homeUrl.searchParams.delete("search");
+  history.replaceState(null, "", homeUrl.pathname);
 
   document.querySelectorAll(".file-button[aria-current]").forEach((button) => {
     button.removeAttribute("aria-current");

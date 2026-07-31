@@ -906,6 +906,20 @@ body.sidebar-collapsed .notes-sidebar {
 
   .code-window-header {
     flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .code-window-header > #code-file-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .language-label {
+    flex: 0 0 auto;
+    margin-left: auto;
+    white-space: nowrap;
   }
 
   .note-search-input-shell {

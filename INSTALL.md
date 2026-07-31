@@ -1,56 +1,15 @@
-# Note Builder and note-viewer fixes
+# Repo note viewer fix
 
-## 1. Replace the Note Builder
+Replace only these existing files:
 
-Copy the complete folder:
+- `public/js/main.js`
+- `public/css/styles.css`
 
-public/tools/note-builder/
+Remove the previously added files and their HTML tags if they are still present:
 
-## 2. Replace the note route helper
+- `public/js/note-route-boot.js`
+- `public/css/note-viewer-fixes.css`
 
-Copy:
+No change to `public/index.html` or `public/js/tool-base.js` is required for this fix.
 
-public/js/note-route-boot.js
-
-into the existing `public/js/` folder.
-
-In `public/index.html`, keep it immediately before the existing deferred
-`main.js` script:
-
-```html
-<script src="./js/note-route-boot.js"></script>
-<script src="./js/main.js" defer></script>
-```
-
-The corrected helper no longer writes `Loading note…` into the viewer, so it
-cannot overwrite a note that `main.js` has already rendered.
-
-## 3. Add the responsive note-viewer stylesheet
-
-Copy:
-
-public/css/note-viewer-fixes.css
-
-into the existing `public/css/` folder, then add this after the normal site
-stylesheets in `public/index.html`:
-
-```html
-<link rel="stylesheet" href="./css/note-viewer-fixes.css">
-```
-
-This keeps the language label, including `Bash`, inside the viewer header on
-small screens.
-
-## 4. Rebuild
-
-```bash
-python3 scripts/build_site.py
-```
-
-## Included Note Builder fixes
-
-- Editor textarea remains dark in dark mode.
-- Editor text and placeholder remain readable in both themes.
-- Save button uses a stable blue background with white text in both themes.
-- Copy button remains available.
-- Saved `.txt` files are UTF-8 with Linux LF (`\n`) line endings.
+The updated `main.js` opens the `?note=...` route after the generated notes manifest has loaded. The updated `styles.css` keeps the language label inside the code-window header on narrow screens.
