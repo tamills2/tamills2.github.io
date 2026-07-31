@@ -1,0 +1,8 @@
+{
+  "title": "Packet Structures Reference",
+  "description": "Explore protocol headers with clickable fields, byte offsets, hex values, and interactive flag bitmasks.",
+  "category": "Networking",
+  "keywords": ["packet", "header", "Ethernet", "ARP", "IPv4", "IPv6", "ICMP", "TCP", "UDP", "DNS", "DHCP", "hex dump", "flags", "bitmask", "Wireshark"],
+  "homepage": true,
+  "order": 40
+}

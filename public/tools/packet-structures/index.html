@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Packet Structures Reference | Repo</title>
+  <meta name="description" content="Explore common packet headers with clickable fields, byte offsets, hex values, and interactive flag bitmasks.">
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+  <main class="tool-main packet-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo tool</p>
+      <h1>Packet Structures Reference</h1>
+      <p>Inspect common protocol headers, select individual fields, and map them directly to packet bytes.</p>
+    </div>
+
+    <section class="tool-card packet-tabs-card" aria-label="Protocol selector">
+      <div class="packet-tabs" id="packet-tabs" role="tablist" aria-label="Protocols"></div>
+    </section>
+
+    <section class="packet-workspace">
+      <article class="tool-card packet-diagram-card">
+        <div class="packet-section-heading">
+          <div>
+            <p class="packet-kicker" id="packet-layer"></p>
+            <h2 id="packet-title"></h2>
+          </div>
+          <span class="packet-size" id="packet-size"></span>
+        </div>
+        <div class="bit-ruler" aria-hidden="true">
+          <span>0</span><span>4</span><span>8</span><span>12</span><span>16</span><span>20</span><span>24</span><span>28</span><span>31</span>
+        </div>
+        <div class="packet-diagram" id="packet-diagram" aria-label="Packet header diagram"></div>
+      </article>
+
+      <article class="tool-card packet-details-card" aria-live="polite">
+        <div id="packet-details"></div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
