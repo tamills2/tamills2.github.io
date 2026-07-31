@@ -1,4 +1,4 @@
-# Common Ports: Ephemeral Port Defaults
+# Common Ports: Layout Polish
 
 Extract this archive into the repository root, replacing the included files, then rebuild:
 
@@ -6,4 +6,9 @@ Extract this archive into the repository root, replacing the included files, the
 python3 scripts/build_site.py
 ```
 
-This update adds Linux and Windows ephemeral-port defaults and copyable commands for viewing or changing the active range. It retains the standardized security badges and the `nc -nvz` Netcat command.
+This update:
+
+- adds consistent spacing between the Common Ports tool's major blocks;
+- widens the shared Tools menu on this tool page so tool names remain on one line;
+- preserves the ephemeral-port section, badge alignment, and `nc -nvz` command;
+- keeps the Important notes section removed.
