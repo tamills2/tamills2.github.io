@@ -75,17 +75,6 @@
   margin-top: 1.5rem;
 }
 
-/* Keep tool names on one line in the shared Tools menu. */
-.tools-menu {
-  width: max-content;
-  min-width: 18rem;
-  max-width: min(92vw, 24rem);
-}
-
-.tools-menu a {
-  white-space: nowrap;
-}
-
 @media (max-width: 680px) {
   .ports-main > .range-strip {
     margin-bottom: 1rem;
