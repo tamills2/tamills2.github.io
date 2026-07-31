@@ -130,9 +130,95 @@
   const languages={bash:"Bash",powershell:"PowerShell",python:"Python",javascript:"JavaScript",typescript:"TypeScript",c:"C",cpp:"C++",csharp:"C#",java:"Java",go:"Go",rust:"Rust",php:"PHP",ruby:"Ruby",perl:"Perl"};
   function ident(value,language){let v=value.trim().replace(/[^a-zA-Z0-9_]/g,"_")||"ansi_sequence";if(/^\d/.test(v))v="ansi_"+v;if(["bash","powershell","c","cpp"].includes(language))return v.toUpperCase();return v}
   function literal(body,language){const encoded="\\x1b"+body.replace(/\\x07/g,"\\x07");if(language==="bash")return `$'${body.startsWith("]")?"\\e":"\\e"}${body}'`;return `"${encoded}"`}
-  function generate(){const lang=$("#language-select").value,name=ident($("#variable-name").value,lang),text=$("#example-text").value.replace(/"/g,'\\"'),mode=$("#output-mode").value,items=state.sequence.length?state.sequence:[{name:"Reset all",body:"[0m"}],combined=items.map(i=>i.body).join(""),reset="[0m";const varLine=(n,b)=>({bash:`${n}=${literal(b,"bash")}`,powershell:`$${n} = "\u001b${b}"`,python:`${n} = ${literal(b,lang)}`,javascript:`const ${n} = ${literal(b,lang)};`,typescript:`const ${n}: string = ${literal(b,lang)};`,c:`const char *${n} = ${literal(b,lang)};`,cpp:`const std::string ${n} = ${literal(b,lang)};`,csharp:`const string ${n} = "\\u001b${b}";`,java:`String ${n} = ${literal(b,lang)};`,go:`${n} := ${literal(b,lang)}`,rust:`let ${n} = ${literal(b,lang)};`,php:`$${n} = ${literal(b,lang)};`,ruby:`${n} = ${literal(b,lang)}`,perl:`my $${n} = ${literal(b,lang)};`}[lang]);if(mode==="separate")return items.map((i,index)=>varLine(ident(i.name,lang)||`${name}_${index+1}`,i.body)).join("\n");if(mode==="single")return `${varLine(name,combined)}\n${varLine(ident("reset",lang),reset)}`;const base=`${varLine(name,combined)}\n${varLine(ident("reset",lang),reset)}`;if(mode==="helper"){return({bash:`ansi() { printf '%s%s%s' "$2" "$1" "$RESET"; }\n\n${base}\nansi "${text}" "$${name}"`,powershell:`function Write-Ansi([string]$Text, [string]$Sequence) { Write-Host "$Sequence$Text$RESET" -NoNewline }\n\n${base}\nWrite-Ansi "${text}" $${name}`,python:`def ansi(text, sequence):\n    return f"{sequence}{text}\\x1b[0m"\n\n${base}\nprint(ansi("${text}", ${name}))`,javascript:`function ansi(text, sequence) {\n  return \`${'${sequence}${text}'}\\x1b[0m\`;\n}\n\n${base}\nconsole.log(ansi("${text}", ${name}));`,typescript:`function ansi(text: string, sequence: string): string {\n  return \`${'${sequence}${text}'}\\x1b[0m\`;\n}\n\n${base}\nconsole.log(ansi("${text}", ${name}));`}[lang]||`${base}\n\n// Use ${name} before text and reset after it.`)}return({bash:`${base}\n\nprintf '%s${text}%s\\n' "$${name}" "$RESET"`,powershell:`${base}\n\nWrite-Host "$${name}${text}$RESET"`,python:`${base}\n\nprint(f"{${name}}${text}{reset}")`,javascript:`${base}\n\nconsole.log(\`${'${'+name+'}'}${text}${'${reset}'}\`);`,typescript:`${base}\n\nconsole.log(\`${'${'+name+'}'}${text}${'${reset}'}\`);`,c:`#include <stdio.h>\n\n${base}\n\nint main(void) {\n    printf("%s${text}%s\\n", ${name}, RESET);\n    return 0;\n}`,cpp:`#include <iostream>\n#include <string>\n\n${base}\n\nint main() {\n    std::cout << ${name} << "${text}" << RESET << '\\n';\n}`,csharp:`${base}\n\nConsole.WriteLine($"{${name}}${text}{RESET}");`,java:`${base}\n\nSystem.out.println(${name} + "${text}" + RESET);`,go:`package main\n\nimport "fmt"\n\nfunc main() {\n    ${base.replace(/\n/g,"\n    ")}\n    fmt.Printf("%s${text}%s\\n", ${name}, RESET)\n}`,rust:`fn main() {\n    ${base.replace(/\n/g,"\n    ")}\n    println!("{}${text}{}", ${name}, RESET);\n}`,php:`<?php\n${base}\n\necho $${name} . "${text}" . $RESET . PHP_EOL;`,ruby:`${base}\n\nputs "#{${name}}${text}#{RESET}"`,perl:`use strict;\nuse warnings;\n\n${base}\n\nprint $${name}, "${text}", $RESET, "\\n";`}[lang])}
+  function generate(){
+    const lang=$("#language-select").value;
+    const name=ident($("#variable-name").value,lang);
+    const text=$("#example-text").value.replace(/"/g,'\\"');
+    const mode=$("#output-mode").value;
+    const resetHandling=$("input[name=reset-handling]:checked")?.value||"separate";
+    const items=state.sequence.length?state.sequence:[{name:"Reset all",body:"[0m"}];
+    const reset="[0m";
+    const resetName=ident("reset",lang);
+    const combined=items.map(i=>i.body).join("");
+    const varLine=(n,b)=>({
+      bash:`${n}=${literal(b,"bash")}`,
+      powershell:`$${n} = "\u001b${b}"`,
+      python:`${n} = ${literal(b,lang)}`,
+      javascript:`const ${n} = ${literal(b,lang)};`,
+      typescript:`const ${n}: string = ${literal(b,lang)};`,
+      c:`const char *${n} = ${literal(b,lang)};`,
+      cpp:`const std::string ${n} = ${literal(b,lang)};`,
+      csharp:`const string ${n} = "\\u001b${b}";`,
+      java:`String ${n} = ${literal(b,lang)};`,
+      go:`${n} := ${literal(b,lang)}`,
+      rust:`let ${n} = ${literal(b,lang)};`,
+      php:`$${n} = ${literal(b,lang)};`,
+      ruby:`${n} = ${literal(b,lang)}`,
+      perl:`my $${n} = ${literal(b,lang)};`
+    }[lang]);
+    const resetLiteral=literal(reset,lang);
+    const declarationBody=resetHandling==="inline"?combined+reset:combined;
+    const resetDeclaration=resetHandling==="separate"?`\n${varLine(resetName,reset)}`:"";
+    const base=`${varLine(name,declarationBody)}${resetDeclaration}`;
+    const inlineReset=resetHandling==="inline"?resetLiteral:null;
+
+    if(mode==="separate"){
+      const parts=items.map((item,index)=>{
+        const body=resetHandling==="inline"&&index===items.length-1?item.body+reset:item.body;
+        return varLine(ident(item.name,lang)||`${name}_${index+1}`,body);
+      });
+      if(resetHandling==="separate")parts.push(varLine(resetName,reset));
+      return parts.join("\n");
+    }
+
+    if(mode==="single")return base;
+
+    const resetRef={
+      bash:resetHandling==="separate"?'$RESET':resetHandling==="inline"?"":"",
+      powershell:resetHandling==="separate"?'$RESET':resetHandling==="inline"?"":"",
+      python:resetHandling==="separate"?'reset':resetHandling==="inline"?'"\\x1b[0m"':"''",
+      javascript:resetHandling==="separate"?'reset':resetHandling==="inline"?'"\\x1b[0m"':'""',
+      typescript:resetHandling==="separate"?'reset':resetHandling==="inline"?'"\\x1b[0m"':'""',
+      c:resetHandling==="separate"?'RESET':resetHandling==="inline"?'"\\x1b[0m"':'""',
+      cpp:resetHandling==="separate"?'RESET':resetHandling==="inline"?'"\\x1b[0m"':'""',
+      csharp:resetHandling==="separate"?'RESET':resetHandling==="inline"?'"\\u001b[0m"':'""',
+      java:resetHandling==="separate"?'RESET':resetHandling==="inline"?'"\\u001b[0m"':'""',
+      go:resetHandling==="separate"?'RESET':resetHandling==="inline"?'"\\x1b[0m"':'""',
+      rust:resetHandling==="separate"?'RESET':resetHandling==="inline"?'"\\x1b[0m"':'""',
+      php:resetHandling==="separate"?'$RESET':resetHandling==="inline"?'"\\x1b[0m"':'""',
+      ruby:resetHandling==="separate"?'RESET':resetHandling==="inline"?'"\\e[0m"':'""',
+      perl:resetHandling==="separate"?'$RESET':resetHandling==="inline"?'"\\e[0m"':'""'
+    }[lang];
+
+    if(mode==="helper"){
+      return ({
+        bash:`ansi() { printf '%s%s%s' "$2" "$1" ${resetHandling==="separate"?'"$RESET"':resetHandling==="inline"?"$'\\e[0m'":"''"}; }\n\n${base}\nansi "${text}" "$${name}"`,
+        powershell:`function Write-Ansi([string]$Text, [string]$Sequence) { Write-Host "$Sequence$Text${resetHandling==="separate"?'$RESET':resetHandling==="inline"?'`e[0m':''}" -NoNewline }\n\n${base}\nWrite-Ansi "${text}" $${name}`,
+        python:`def ansi(text, sequence):\n    return f"{sequence}{text}" + ${resetRef}\n\n${base}\nprint(ansi("${text}", ${name}))`,
+        javascript:`function ansi(text, sequence) {\n  return \`${'${sequence}${text}'}\` + ${resetRef};\n}\n\n${base}\nconsole.log(ansi("${text}", ${name}));`,
+        typescript:`function ansi(text: string, sequence: string): string {\n  return \`${'${sequence}${text}'}\` + ${resetRef};\n}\n\n${base}\nconsole.log(ansi("${text}", ${name}));`
+      }[lang]||`${base}\n\n// Use ${name} before text${resetHandling==="none"?".":" and apply the reset afterwards."}`);
+    }
+
+    return ({
+      bash:`${base}\n\nprintf '%s${text}%s\\n' "$${name}" ${resetHandling==="separate"?'"$RESET"':resetHandling==="inline"?"$'\\e[0m'":"''"}`,
+      powershell:`${base}\n\nWrite-Host "$${name}${text}${resetHandling==="separate"?'$RESET':resetHandling==="inline"?'`e[0m':''}"`,
+      python:`${base}\n\nprint(f"{${name}}${text}" + ${resetRef})`,
+      javascript:`${base}\n\nconsole.log(\`${'${'+name+'}'}${text}\` + ${resetRef});`,
+      typescript:`${base}\n\nconsole.log(\`${'${'+name+'}'}${text}\` + ${resetRef});`,
+      c:`#include <stdio.h>\n\n${base}\n\nint main(void) {\n    printf("%s${text}%s\\n", ${name}, ${resetRef});\n    return 0;\n}`,
+      cpp:`#include <iostream>\n#include <string>\n\n${base}\n\nint main() {\n    std::cout << ${name} << "${text}" << ${resetRef} << '\\n';\n}`,
+      csharp:`${base}\n\nConsole.WriteLine($"{${name}}${text}{${resetRef}}");`,
+      java:`${base}\n\nSystem.out.println(${name} + "${text}" + ${resetRef});`,
+      go:`package main\n\nimport "fmt"\n\nfunc main() {\n    ${base.replace(/\n/g,"\n    ")}\n    fmt.Printf("%s${text}%s\\n", ${name}, ${resetRef})\n}`,
+      rust:`fn main() {\n    ${base.replace(/\n/g,"\n    ")}\n    println!("{}${text}{}", ${name}, ${resetRef});\n}`,
+      php:`<?php\n${base}\n\necho $${name} . "${text}" . ${resetRef} . PHP_EOL;`,
+      ruby:`${base}\n\nputs "#{${name}}${text}#{${resetRef}}"`,
+      perl:`use strict;\nuse warnings;\n\n${base}\n\nprint $${name}, "${text}", ${resetRef}, "\\n";`
+    }[lang]);
+  }
   function updateGenerated(){$("#generated-code").textContent=generate()}
-  function initGenerator(){const select=$("#language-select");Object.entries(languages).forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;select.append(option)});["#language-select","#variable-name","#example-text","#output-mode"].forEach(sel=>$(sel).addEventListener(sel.includes("select")||sel.includes("mode")?"change":"input",updateGenerated));$("#clear-sequence").addEventListener("click",()=>{state.sequence=[];renderSequence()});$("#copy-generated").addEventListener("click",e=>copyText($("#generated-code").textContent,e.currentTarget));renderSequence()}
+  function initGenerator(){const select=$("#language-select");Object.entries(languages).forEach(([value,label])=>{const option=document.createElement("option");option.value=value;option.textContent=label;select.append(option)});["#language-select","#variable-name","#example-text","#output-mode"].forEach(sel=>$(sel).addEventListener(sel.includes("select")||sel.includes("mode")?"change":"input",updateGenerated));$$("input[name=reset-handling]").forEach(input=>input.addEventListener("change",updateGenerated));$("#clear-sequence").addEventListener("click",()=>{state.sequence=[];renderSequence()});$("#copy-generated").addEventListener("click",e=>copyText($("#generated-code").textContent,e.currentTarget));renderSequence()}
 
   initTabs();initReference();initColor();initGenerator();
 })();

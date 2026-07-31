@@ -171,6 +171,13 @@
             <label class="tool-field" for="output-mode"><span>Output</span><select class="tool-select" id="output-mode"><option value="single">Single combined variable</option><option value="separate">Separate variables</option><option value="complete">Complete runnable example</option><option value="helper">Helper function</option></select></label>
           </div>
 
+          <fieldset class="choice-group reset-handling-group">
+            <legend>Reset handling</legend>
+            <label><input type="radio" name="reset-handling" value="separate" checked> Separate RESET variable</label>
+            <label><input type="radio" name="reset-handling" value="inline"> Inline reset</label>
+            <label><input type="radio" name="reset-handling" value="none"> No reset (advanced)</label>
+          </fieldset>
+
           <div class="notice">ANSI behavior depends on the terminal. Truecolor and some styles may not be supported everywhere. ANSI sequences do not style ordinary browser text.</div>
           <div class="code-output-shell">
             <button class="copy-code-button" id="copy-generated" type="button" aria-label="Copy generated code" title="Copy generated code"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"></rect><rect x="4" y="4" width="11" height="11" rx="2"></rect></svg><span>Copy</span></button>
