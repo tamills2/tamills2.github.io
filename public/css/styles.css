@@ -1773,3 +1773,68 @@ textarea:focus {
     display: none;
   }
 }
+
+
+/* Shared Notes navigation button used by the homepage, note viewer, and tools. */
+.notes-nav-button,
+.tool-header-home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.62rem;
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--header-text);
+  font: inherit;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.notes-nav-button:hover,
+.notes-nav-button:focus-visible,
+.tool-header-home:hover,
+.tool-header-home:focus-visible {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.26);
+}
+
+.notes-nav-button:active,
+.tool-header-home:active {
+  transform: translateY(1px);
+}
+
+.notes-nav-button:focus-visible,
+.tool-header-home:focus-visible {
+  outline: 2px solid rgba(209, 255, 249, 0.92);
+  outline-offset: 2px;
+}
+
+.notes-nav-button svg,
+.tool-header-home svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* The label remains visible at narrow widths so header behavior is consistent. */
+@media (max-width: 760px) {
+  .notes-nav-button span,
+  .tool-header-home span {
+    display: inline;
+  }
+}

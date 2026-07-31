@@ -13,7 +13,7 @@
     mount.innerHTML = `
       <header class="site-header">
         <div class="header-left">
-          <button class="tool-header-home" id="tool-notes-button" type="button"
+          <button class="notes-nav-button" id="tool-notes-button" type="button"
             aria-label="Open notes navigation" aria-controls="tool-notes-drawer" aria-expanded="false">
             <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
             <span>Notes</span>
