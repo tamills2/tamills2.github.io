@@ -8,10 +8,56 @@
   const commandInput = document.querySelector("#command-input");
   const resetButton = document.querySelector("#reset-permissions");
 
+  const umaskInput = document.querySelector("#umask-input");
+  const umaskFileOctal = document.querySelector("#umask-file-octal");
+  const umaskFileSymbolic = document.querySelector("#umask-file-symbolic");
+  const umaskDirectoryOctal = document.querySelector("#umask-directory-octal");
+  const umaskDirectorySymbolic = document.querySelector("#umask-directory-symbolic");
+  const umaskSourceType = document.querySelector("#umask-source-type");
+  const umaskSourceMode = document.querySelector("#umask-source-mode");
+  const derivedUmaskValue = document.querySelector("#derived-umask-value");
+  const resetUmaskButton = document.querySelector("#reset-umask");
+
   const classes = ["owner", "group", "other"];
   const permissionValues = { read: 4, write: 2, execute: 1 };
   let commandPath = "path";
   let updating = false;
+
+
+  function modeToSymbolic(mode) {
+    return mode.toString(8).padStart(3, "0").split("").map((digit) => {
+      const value = Number(digit);
+      return `${value & 4 ? "r" : "-"}${value & 2 ? "w" : "-"}${value & 1 ? "x" : "-"}`;
+    }).join("");
+  }
+
+  function normalizeUmask(value) {
+    const clean = value.replace(/[^0-7]/g, "").slice(-3);
+    return clean.length === 3 ? clean : null;
+  }
+
+  function updateUmaskResults() {
+    const normalized = normalizeUmask(umaskInput.value);
+    if (!normalized) return;
+    umaskInput.value = normalized;
+    const mask = parseInt(normalized, 8);
+    const fileMode = 0o666 & ~mask;
+    const directoryMode = 0o777 & ~mask;
+    umaskFileOctal.textContent = fileMode.toString(8).padStart(3, "0");
+    umaskFileSymbolic.textContent = modeToSymbolic(fileMode);
+    umaskDirectoryOctal.textContent = directoryMode.toString(8).padStart(3, "0");
+    umaskDirectorySymbolic.textContent = modeToSymbolic(directoryMode);
+  }
+
+  function updateDerivedUmask() {
+    const clean = umaskSourceMode.value.replace(/[^0-7]/g, "").slice(0, 3);
+    umaskSourceMode.value = clean;
+    const base = umaskSourceType.value === "file" ? 0o666 : 0o777;
+    const mode = clean.length === 3 ? parseInt(clean, 8) : NaN;
+    const valid = Number.isFinite(mode) && (mode & ~base) === 0;
+    derivedUmaskValue.parentElement.classList.toggle("invalid", !valid);
+    derivedUmaskValue.textContent = valid ? ((base & ~mode) & 0o777).toString(8).padStart(3, "0") : "—";
+  }
 
   function getPermissionInput(group, permission) {
     return permissionInputs.find(
@@ -140,6 +186,37 @@
     syncOutputs();
   });
 
+
+  umaskInput.addEventListener("input", () => {
+    umaskInput.value = umaskInput.value.replace(/[^0-7]/g, "").slice(0, 3);
+    updateUmaskResults();
+  });
+
+  umaskInput.addEventListener("blur", () => {
+    if (!normalizeUmask(umaskInput.value)) umaskInput.value = "022";
+    updateUmaskResults();
+  });
+
+  umaskSourceType.addEventListener("change", () => {
+    umaskSourceMode.value = umaskSourceType.value === "file" ? "644" : "755";
+    updateDerivedUmask();
+  });
+  umaskSourceMode.addEventListener("input", updateDerivedUmask);
+  umaskSourceMode.addEventListener("blur", () => {
+    if (umaskSourceMode.value.length !== 3) {
+      umaskSourceMode.value = umaskSourceType.value === "file" ? "644" : "755";
+    }
+    updateDerivedUmask();
+  });
+
+  resetUmaskButton.addEventListener("click", () => {
+    umaskInput.value = "022";
+    umaskSourceType.value = "directory";
+    umaskSourceMode.value = "755";
+    updateUmaskResults();
+    updateDerivedUmask();
+  });
+
   document.querySelectorAll("[data-copy-target]").forEach((button) => {
     button.addEventListener("click", async () => {
       const target = document.getElementById(button.dataset.copyTarget);
@@ -160,4 +237,6 @@
   });
 
   syncOutputs();
+  updateUmaskResults();
+  updateDerivedUmask();
 })();

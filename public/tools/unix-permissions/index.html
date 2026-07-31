@@ -101,6 +101,77 @@
         </div>
       </div>
     </section>
+    <section class="tool-card creation-defaults-card" aria-labelledby="creation-defaults-title">
+      <div class="creation-defaults-heading">
+        <h2 id="creation-defaults-title">Common Linux defaults</h2>
+        <span>Base modes: files <code>666</code>, directories <code>777</code></span>
+      </div>
+
+      <div class="defaults-table" role="table" aria-label="Common Linux umask defaults">
+        <div class="defaults-row defaults-header" role="row">
+          <span role="columnheader">Use</span><span role="columnheader">Umask</span><span role="columnheader">New file</span><span role="columnheader">New directory</span>
+        </div>
+        <div class="defaults-row" role="row">
+          <strong role="cell">Typical</strong><code role="cell">022</code><code role="cell">644</code><code role="cell">755</code>
+        </div>
+        <div class="defaults-row" role="row">
+          <strong role="cell">Group writable</strong><code role="cell">002</code><code role="cell">664</code><code role="cell">775</code>
+        </div>
+        <div class="defaults-row" role="row">
+          <strong role="cell">Private</strong><code role="cell">077</code><code role="cell">600</code><code role="cell">700</code>
+        </div>
+      </div>
+    </section>
+
+    <section class="tool-card umask-card" aria-labelledby="umask-title">
+      <div class="section-title-row umask-title-row">
+        <h2 id="umask-title">Umask calculator</h2>
+        <button class="tool-secondary-button compact-button" id="reset-umask" type="button">Reset</button>
+      </div>
+
+      <div class="umask-layout">
+        <div class="umask-control">
+          <label for="umask-input">Umask</label>
+          <input class="tool-input mono-input" id="umask-input" type="text" inputmode="numeric" value="022" maxlength="4" spellcheck="false" autocomplete="off">
+        </div>
+
+        <div class="umask-results" aria-live="polite">
+          <div class="umask-result">
+            <span>New file</span>
+            <code id="umask-file-octal">644</code>
+            <code id="umask-file-symbolic">rw-r--r--</code>
+          </div>
+          <div class="umask-result">
+            <span>New directory</span>
+            <code id="umask-directory-octal">755</code>
+            <code id="umask-directory-symbolic">rwxr-xr-x</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="umask-divider" aria-hidden="true"></div>
+
+      <div class="reverse-umask">
+        <div class="reverse-heading">Permissions to umask</div>
+        <div class="reverse-controls">
+          <label>
+            <span>Created item</span>
+            <select class="tool-input" id="umask-source-type">
+              <option value="directory">Directory</option>
+              <option value="file">File</option>
+            </select>
+          </label>
+          <label>
+            <span>Permissions</span>
+            <input class="tool-input mono-input" id="umask-source-mode" type="text" inputmode="numeric" value="755" maxlength="3" spellcheck="false" autocomplete="off">
+          </label>
+          <div class="derived-umask">
+            <span>Umask</span>
+            <code id="derived-umask-value">022</code>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 </body>
 </html>
