@@ -314,3 +314,17 @@ html:not([data-site-theme])[data-theme="dark"] .document-editor::placeholder {
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }
+
+
+/* Keep the Matrix rain behind the Note Builder controls rather than inside them. */
+html[data-site-theme="matrix"] .library-pane,
+html[data-site-theme="matrix"] .editor-pane,
+html[data-site-theme="matrix"] .note-group-heading,
+html[data-site-theme="matrix"] .tool-input,
+html[data-site-theme="matrix"] .document-editor {
+  background: var(--surface-opaque, var(--surface));
+}
+
+html[data-site-theme="matrix"] .available-notes {
+  background: var(--surface-opaque, var(--surface));
+}
