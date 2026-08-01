@@ -3475,3 +3475,20 @@ html[data-site-theme="fallout"] .repo-theme-notice {
     display: none;
   }
 }
+
+/* Fallout overlay hierarchy -------------------------------------------------
+   Keep the fixed header and its dropdown above themed page content and CRT
+   effect layers. Do not change the Fallout transparency or visual treatment. */
+html[data-site-theme="fallout"] .site-header {
+  z-index: 100;
+}
+
+html[data-site-theme="fallout"] .header-right,
+html[data-site-theme="fallout"] .dropdown {
+  position: relative;
+  z-index: 101;
+}
+
+html[data-site-theme="fallout"] .tools-menu {
+  z-index: 1000;
+}
