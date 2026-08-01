@@ -28,6 +28,87 @@
   const DRACULA_FOG_ID = "dracula-fog-layer";
   const DRACULA_FOG_REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)");
 
+  const FALLOUT_EFFECT_ID = "fallout-crt-layer";
+  const FALLOUT_REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let falloutFlickerTimer = 0;
+  let falloutPulseTimer = 0;
+
+  function clearFalloutTimers() {
+    window.clearTimeout(falloutFlickerTimer);
+    window.clearTimeout(falloutPulseTimer);
+    falloutFlickerTimer = 0;
+    falloutPulseTimer = 0;
+  }
+
+  function stopFalloutEffects({ remove = false } = {}) {
+    clearFalloutTimers();
+    const layer = document.getElementById(FALLOUT_EFFECT_ID);
+    if (!layer) return;
+    layer.classList.remove("is-active", "screen-pulse");
+    layer.querySelectorAll(".fallout-static-flash").forEach((flash) => flash.remove());
+    if (remove) layer.remove();
+  }
+
+  function scheduleFalloutFlicker(layer) {
+    if (FALLOUT_REDUCED_MOTION.matches || document.hidden) return;
+    const delay = 1200 + Math.random() * 3600;
+    falloutFlickerTimer = window.setTimeout(() => {
+      if (document.documentElement.dataset.siteTheme !== "fallout" || !layer.isConnected) return;
+
+      const flash = document.createElement("span");
+      flash.className = "fallout-static-flash";
+      flash.style.setProperty("--flash-top", `${Math.random() * 92}%`);
+      flash.style.setProperty("--flash-left", `${Math.random() * 62 - 8}%`);
+      flash.style.setProperty("--flash-width", `${28 + Math.random() * 82}%`);
+      flash.style.setProperty("--flash-height", `${2 + Math.random() * 14}px`);
+      flash.style.setProperty("--flash-opacity", `${0.18 + Math.random() * 0.38}`);
+      flash.style.setProperty("--flash-duration", `${260 + Math.random() * 760}ms`);
+      layer.appendChild(flash);
+      flash.addEventListener("animationend", () => flash.remove(), { once: true });
+      scheduleFalloutFlicker(layer);
+    }, delay);
+  }
+
+  function scheduleFalloutPulse(layer) {
+    if (FALLOUT_REDUCED_MOTION.matches || document.hidden) return;
+    const delay = 12000 + Math.random() * 22000;
+    falloutPulseTimer = window.setTimeout(() => {
+      if (document.documentElement.dataset.siteTheme !== "fallout" || !layer.isConnected) return;
+      layer.classList.remove("screen-pulse");
+      void layer.offsetWidth;
+      layer.classList.add("screen-pulse");
+      window.setTimeout(() => layer.classList.remove("screen-pulse"), 900);
+      scheduleFalloutPulse(layer);
+    }, delay);
+  }
+
+  function startFalloutEffects() {
+    stopFalloutEffects();
+    if (document.hidden) return;
+
+    let layer = document.getElementById(FALLOUT_EFFECT_ID);
+    if (!layer) {
+      layer = document.createElement("div");
+      layer.id = FALLOUT_EFFECT_ID;
+      layer.className = "theme-effect-layer fallout-crt-layer";
+      layer.setAttribute("aria-hidden", "true");
+      layer.innerHTML = `
+        <span class="fallout-phosphor-hotspot fallout-phosphor-hotspot-a"></span>
+        <span class="fallout-phosphor-hotspot fallout-phosphor-hotspot-b"></span>
+        <span class="fallout-rolling-band"></span>
+        <span class="fallout-scan-distortion"></span>
+      `;
+      document.body.prepend(layer);
+    }
+
+    layer.classList.toggle("reduce-motion", FALLOUT_REDUCED_MOTION.matches);
+    requestAnimationFrame(() => layer.classList.add("is-active"));
+    if (!FALLOUT_REDUCED_MOTION.matches) {
+      scheduleFalloutFlicker(layer);
+      scheduleFalloutPulse(layer);
+    }
+  }
+
   function stopDraculaFog({ remove = false } = {}) {
     const layer = document.getElementById(DRACULA_FOG_ID);
     if (!layer) return;
@@ -179,6 +260,12 @@
       startDraculaFog();
     } else {
       stopDraculaFog({ remove: true });
+    }
+
+    if (siteTheme === "fallout") {
+      startFalloutEffects();
+    } else {
+      stopFalloutEffects({ remove: true });
     }
   }
 
@@ -395,10 +482,13 @@
         if (document.hidden) {
           stopMatrixRain();
           stopDraculaFog();
+          stopFalloutEffects();
         } else if (siteTheme === "matrix") {
           startMatrixRain();
         } else if (siteTheme === "dracula") {
           startDraculaFog();
+        } else if (siteTheme === "fallout") {
+          startFalloutEffects();
         }
       });
       MATRIX_RAIN_REDUCED_MOTION.addEventListener?.("change", () => {
@@ -411,6 +501,11 @@
         if (document.documentElement.dataset.siteTheme === "dracula") {
           if (DRACULA_FOG_REDUCED_MOTION.matches) stopDraculaFog({ remove: true });
           else startDraculaFog();
+        }
+      });
+      FALLOUT_REDUCED_MOTION.addEventListener?.("change", () => {
+        if (document.documentElement.dataset.siteTheme === "fallout") {
+          startFalloutEffects();
         }
       });
     }
