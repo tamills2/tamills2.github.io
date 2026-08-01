@@ -25,6 +25,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Modern DOS 8x16";
+  src: url("../fonts/modern-dos-8x16.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   color-scheme: light;
   --header-height: 4rem;
@@ -3512,4 +3520,263 @@ html[data-site-theme="fallout"] .dropdown {
 
 html[data-site-theme="fallout"] .tools-menu {
   z-index: 1000;
+}
+
+/* Classic MS-DOS Editor theme refinement */
+html[data-site-theme="dos"] {
+  --font-ui: "Modern DOS 8x16", "Terminal", "Fixedsys Excelsior 3.01", "Lucida Console", "Courier New", monospace;
+  --font-code: "Modern DOS 8x16", "Terminal", "Fixedsys Excelsior 3.01", "Lucida Console", "Courier New", monospace;
+  --font-title: "Modern DOS 8x16", "Terminal", "Fixedsys Excelsior 3.01", "Lucida Console", "Courier New", monospace;
+
+  --bg: #0000aa;
+  --surface: #c0c0c0;
+  --surface-subtle: #a8a8a8;
+  --surface-hover: #d7d7d7;
+  --text: #ffffff;
+  --text-muted: #d8d8d8;
+  --border: #000000;
+  --border-strong: #ffffff;
+  --accent: #00aaaa;
+  --accent-hover: #00cccc;
+  --accent-soft: rgba(0, 170, 170, 0.22);
+  --on-accent: #000000;
+  --shadow: 0.45rem 0.45rem 0 #000000;
+  --switch-track: #808080;
+  --switch-thumb: #c0c0c0;
+  --header-control-hover: #0000aa;
+  --header-focus-ring: #ffffff;
+  --header-border-soft: #000000;
+  --header-surface-soft: #c0c0c0;
+  --header-input-border: #000000;
+  --header-input-bg: #0000aa;
+  --header-input-highlight: #000088;
+  --header-kbd-bg: #000000;
+  --header-focus-border: #ffffff;
+  --header-focus-shadow: transparent;
+}
+
+html[data-site-theme="dos"] body,
+html[data-site-theme="dos"] button,
+html[data-site-theme="dos"] input,
+html[data-site-theme="dos"] select,
+html[data-site-theme="dos"] textarea,
+html[data-site-theme="dos"] table,
+html[data-site-theme="dos"] code,
+html[data-site-theme="dos"] pre {
+  font-family: var(--font-ui) !important;
+  font-weight: 400;
+  text-rendering: geometricPrecision;
+}
+
+html[data-site-theme="dos"] body {
+  background: #0000aa;
+  color: #ffffff;
+  text-shadow: none;
+}
+
+html[data-site-theme="dos"] .site-header {
+  border-bottom: 2px solid #000000;
+  background: #c0c0c0;
+  color: #000000;
+  box-shadow: inset 0 -1px 0 #ffffff;
+}
+
+html[data-site-theme="dos"] .site-header a,
+html[data-site-theme="dos"] .site-header button,
+html[data-site-theme="dos"] .header-section-label,
+html[data-site-theme="dos"] .theme-icon {
+  color: #000000;
+}
+
+html[data-site-theme="dos"] .site-title {
+  padding: 0.1rem 0.75rem;
+  background: #0000aa;
+  color: #ffffff;
+}
+
+html[data-site-theme="dos"] .notes-nav-button,
+html[data-site-theme="dos"] .icon-button,
+html[data-site-theme="dos"] .tools-button,
+html[data-site-theme="dos"] .theme-switch,
+html[data-site-theme="dos"] .secondary-button,
+html[data-site-theme="dos"] button:not(.note-search-button):not(.note-copy-button) {
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  background: #c0c0c0;
+  color: #000000;
+  box-shadow: none;
+}
+
+html[data-site-theme="dos"] .notes-nav-button:hover,
+html[data-site-theme="dos"] .icon-button:hover,
+html[data-site-theme="dos"] .tools-button:hover,
+html[data-site-theme="dos"] .secondary-button:hover,
+html[data-site-theme="dos"] button:not(.note-search-button):not(.note-copy-button):hover {
+  background: #d7d7d7;
+  color: #000000;
+}
+
+html[data-site-theme="dos"] .notes-nav-button:active,
+html[data-site-theme="dos"] .icon-button:active,
+html[data-site-theme="dos"] .tools-button:active,
+html[data-site-theme="dos"] .secondary-button:active,
+html[data-site-theme="dos"] button:not(.note-search-button):not(.note-copy-button):active {
+  border-color: #000000 #ffffff #ffffff #000000;
+  padding-top: calc(var(--button-padding-top, 0px) + 1px);
+  padding-left: calc(var(--button-padding-left, 0px) + 1px);
+}
+
+html[data-site-theme="dos"] .search-input-shell,
+html[data-site-theme="dos"] .site-search-results,
+html[data-site-theme="dos"] .tools-menu {
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  background: #c0c0c0;
+  color: #000000;
+  box-shadow: 0.4rem 0.4rem 0 #000000;
+}
+
+html[data-site-theme="dos"] .search-input-shell {
+  box-shadow: none;
+}
+
+html[data-site-theme="dos"] .search-input-shell input,
+html[data-site-theme="dos"] .site-search input {
+  background: #0000aa;
+  color: #ffffff;
+  caret-color: #ffffff;
+}
+
+html[data-site-theme="dos"] .search-input-shell input::placeholder,
+html[data-site-theme="dos"] .site-search input::placeholder {
+  color: #a8a8a8;
+}
+
+html[data-site-theme="dos"] .tools-menu a,
+html[data-site-theme="dos"] .dropdown-category,
+html[data-site-theme="dos"] .dropdown-empty,
+html[data-site-theme="dos"] .site-search-result {
+  color: #000000;
+}
+
+html[data-site-theme="dos"] .tools-menu a:hover,
+html[data-site-theme="dos"] .tools-menu a:focus-visible,
+html[data-site-theme="dos"] .site-search-result:hover,
+html[data-site-theme="dos"] .site-search-result:focus-visible {
+  background: #0000aa;
+  color: #ffffff;
+}
+
+html[data-site-theme="dos"] .hero,
+html[data-site-theme="dos"] .section-heading,
+html[data-site-theme="dos"] .main-content > h1,
+html[data-site-theme="dos"] .main-content > p,
+html[data-site-theme="dos"] .eyebrow,
+html[data-site-theme="dos"] .file-location {
+  color: #ffffff;
+}
+
+html[data-site-theme="dos"] h1,
+html[data-site-theme="dos"] h2,
+html[data-site-theme="dos"] h3,
+html[data-site-theme="dos"] .site-title {
+  font-family: var(--font-title) !important;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+html[data-site-theme="dos"] :is(
+  .quick-link-card,
+  .panel,
+  .tool-card,
+  .section-card,
+  .result-card,
+  .output-card,
+  fieldset
+) {
+  border: 2px solid;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  background: #c0c0c0;
+  color: #000000;
+  box-shadow: 0.45rem 0.45rem 0 #000000;
+}
+
+html[data-site-theme="dos"] :is(
+  .quick-link-card,
+  .panel,
+  .tool-card,
+  .section-card,
+  .result-card,
+  .output-card,
+  fieldset
+) :is(h1, h2, h3, h4, p, label, strong, small, span) {
+  color: inherit;
+}
+
+html[data-site-theme="dos"] input,
+html[data-site-theme="dos"] select,
+html[data-site-theme="dos"] textarea {
+  border: 2px solid;
+  border-color: #000000 #ffffff #ffffff #000000;
+  background: #0000aa;
+  color: #ffffff;
+  box-shadow: none;
+  caret-color: #ffffff;
+}
+
+html[data-site-theme="dos"] input::placeholder,
+html[data-site-theme="dos"] textarea::placeholder {
+  color: #7f7f7f;
+}
+
+html[data-site-theme="dos"] input:focus,
+html[data-site-theme="dos"] select:focus,
+html[data-site-theme="dos"] textarea:focus,
+html[data-site-theme="dos"] button:focus-visible,
+html[data-site-theme="dos"] a:focus-visible {
+  outline: 1px dotted #ffffff;
+  outline-offset: -4px;
+  box-shadow: none;
+}
+
+html[data-site-theme="dos"] .notes-sidebar {
+  border-right: 2px solid #000000;
+  background: #c0c0c0;
+  color: #000000;
+  box-shadow: inset -1px 0 0 #ffffff;
+}
+
+html[data-site-theme="dos"] .notes-sidebar-header,
+html[data-site-theme="dos"] .notes-sidebar h2 {
+  border-bottom: 2px solid #000000;
+  background: #c0c0c0;
+  color: #000000;
+}
+
+html[data-site-theme="dos"] .folder-button,
+html[data-site-theme="dos"] .file-button,
+html[data-site-theme="dos"] .tree-label,
+html[data-site-theme="dos"] .tree-icon,
+html[data-site-theme="dos"] .tree-chevron {
+  color: #000000;
+}
+
+html[data-site-theme="dos"] .file-button:hover,
+html[data-site-theme="dos"] .folder-button:hover,
+html[data-site-theme="dos"] .file-button[aria-current="page"] {
+  background: #0000aa;
+  color: #ffffff;
+}
+
+html[data-site-theme="dos"] .card-icon,
+html[data-site-theme="dos"] .search-type-badge {
+  border: 1px solid #000000;
+  background: #00aaaa;
+  color: #000000;
+}
+
+html[data-site-theme="dos"] ::selection {
+  background: #00aaaa;
+  color: #000000;
 }
