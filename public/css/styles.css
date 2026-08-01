@@ -1,3 +1,11 @@
+
+@font-face {
+  font-family: "Matrix MZ4P";
+  src: url("../fonts/matrix.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
 :root {
   color-scheme: light;
   --header-height: 4rem;
@@ -2015,10 +2023,10 @@ html[data-site-theme] .site-header {
 
 /* Matrix */
 html[data-site-theme="matrix"] {
-  --font-ui: Consolas, "Liberation Mono", "Courier New", monospace;
-  --font-code: Consolas, "Liberation Mono", "Courier New", monospace;
-  --font-title: Consolas, "Liberation Mono", "Courier New", monospace;
-  --font-notes: Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-ui: "Matrix MZ4P", Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-code: "Matrix MZ4P", Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-title: "Matrix MZ4P", Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-notes: "Matrix MZ4P", Consolas, "Liberation Mono", "Courier New", monospace;
   --syntax-comment: #3f9d55;
   --syntax-command: #8dff9d;
   --syntax-keyword: #eaff63;
@@ -2448,4 +2456,16 @@ html[data-site-theme="blueprint"] .code-window {
 
 html[data-site-theme="crt"] body {
   letter-spacing: 0.025em;
+}
+
+/* Matrix full-font experiment */
+html[data-site-theme="matrix"] body,
+html[data-site-theme="matrix"] button,
+html[data-site-theme="matrix"] input,
+html[data-site-theme="matrix"] select,
+html[data-site-theme="matrix"] textarea,
+html[data-site-theme="matrix"] table,
+html[data-site-theme="matrix"] code,
+html[data-site-theme="matrix"] pre {
+  font-family: "Matrix MZ4P", Consolas, "Courier New", monospace !important;
 }
