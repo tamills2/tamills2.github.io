@@ -2487,11 +2487,30 @@ html[data-site-theme="matrix"] #matrix-rain-canvas.is-active {
 }
 
 html[data-site-theme="matrix"] .site-header,
-html[data-site-theme="matrix"] .app-shell,
 html[data-site-theme="matrix"] .tool-main,
 html[data-site-theme="matrix"] .repo-theme-notice {
   position: relative;
   z-index: 1;
+}
+
+/* Keep the homepage shell in its normal grid flow. Applying positioning to the
+   shell shifted the sticky Notes sidebar downward by an extra header height. */
+html[data-site-theme="matrix"] .main-content {
+  position: relative;
+  z-index: 1;
+}
+
+html[data-site-theme="matrix"] .notes-sidebar {
+  z-index: 1;
+}
+
+/* The header and its dropdown must sit above all Matrix-themed page content. */
+html[data-site-theme="matrix"] .site-header {
+  z-index: 100;
+}
+
+html[data-site-theme="matrix"] .tools-menu {
+  z-index: 1000;
 }
 
 html[data-site-theme="matrix"] .panel,
