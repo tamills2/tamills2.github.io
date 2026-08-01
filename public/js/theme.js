@@ -30,6 +30,22 @@
     return Object.hasOwn(SITE_THEMES, saved) ? saved : DEFAULT_SITE_THEME;
   }
 
+  function isHiddenSiteTheme() {
+    const siteTheme = document.documentElement.dataset.siteTheme;
+    return Boolean(siteTheme && siteTheme !== DEFAULT_SITE_THEME);
+  }
+
+  function updateThemeSwitchAvailability() {
+    const disabled = isHiddenSiteTheme();
+    document.querySelectorAll("[data-theme-switch]").forEach((button) => {
+      if ("disabled" in button) button.disabled = disabled;
+      button.setAttribute("aria-disabled", String(disabled));
+      button.title = disabled
+        ? "Light and dark modes are unavailable in hidden themes"
+        : "Toggle light and dark mode";
+    });
+  }
+
   function updateHighlightTheme(mode) {
     const forceDark = document.documentElement.dataset.siteTheme
       && document.documentElement.dataset.siteTheme !== DEFAULT_SITE_THEME;
@@ -53,6 +69,7 @@
     });
 
     updateHighlightTheme(normalized);
+    updateThemeSwitchAvailability();
 
     window.dispatchEvent(new CustomEvent("repo-theme-change", {
       detail: {
@@ -81,7 +98,14 @@
       }
     }
 
-    updateHighlightTheme(document.documentElement.dataset.theme || getPreferredTheme());
+    if (normalized === DEFAULT_SITE_THEME) {
+      apply(getPreferredTheme());
+    } else {
+      // Hidden themes are complete, single-mode themes. Do not alter the saved
+      // default light/dark preference while forcing their fixed presentation.
+      apply("dark");
+    }
+    updateThemeSwitchAvailability();
 
     if (announce) {
       showThemeNotice(
@@ -97,6 +121,7 @@
   }
 
   function toggle() {
+    if (isHiddenSiteTheme()) return;
     apply(document.documentElement.dataset.theme === "dark" ? "light" : "dark", {
       persist: true,
     });
@@ -188,11 +213,13 @@
   }
 
   function initialise() {
-    applySiteTheme(
-      document.documentElement.dataset.siteTheme || getSavedSiteTheme(),
-    );
-    apply(document.documentElement.dataset.theme || getPreferredTheme());
+    const siteTheme = document.documentElement.dataset.siteTheme || getSavedSiteTheme();
+    applySiteTheme(siteTheme);
+    if (siteTheme === DEFAULT_SITE_THEME) {
+      apply(document.documentElement.dataset.theme || getPreferredTheme());
+    }
     bindThemeSwitches();
+    updateThemeSwitchAvailability();
 
     if (document.documentElement.dataset.themeCommandsBound !== "true") {
       document.documentElement.dataset.themeCommandsBound = "true";

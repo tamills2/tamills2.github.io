@@ -4,6 +4,11 @@
   --sidebar-width: 19rem;
   --content-max-width: 82rem;
 
+  --font-ui: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-code: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --font-title: "Segoe UI", Inter, ui-sans-serif, sans-serif;
+  --font-notes: "Courier New", Courier, monospace;
+
   --bg: #f6f8fa;
   --surface: #ffffff;
   --surface-subtle: #f0f3f6;
@@ -82,11 +87,7 @@ body {
   overflow-x: hidden;
   background: var(--bg);
   color: var(--text);
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family: var(--font-ui);
   line-height: 1.5;
 }
 
@@ -619,14 +620,7 @@ body.sidebar-collapsed .notes-sidebar {
   width: 100%;
   border-collapse: collapse;
   table-layout: auto;
-  font-family:
-    ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    Monaco,
-    Consolas,
-    "Liberation Mono",
-    monospace;
+  font-family: var(--font-notes);
   font-size: 0.84rem;
   line-height: 1.55;
 }
@@ -1563,13 +1557,7 @@ html[data-theme="dark"] {
 }
 
 body {
-  font-family:
-    Inter,
-    ui-sans-serif,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family: var(--font-ui);
   letter-spacing: -0.006em;
 }
 
@@ -1998,7 +1986,27 @@ html[data-site-theme] button,
 html[data-site-theme] input,
 html[data-site-theme] select,
 html[data-site-theme] textarea {
-  font-family: "Courier New", Courier, monospace;
+  font-family: var(--font-ui);
+}
+
+html[data-site-theme] code,
+html[data-site-theme] pre,
+html[data-site-theme] .code-table,
+html[data-site-theme] .packet-hex,
+html[data-site-theme] .hex-dump,
+html[data-site-theme] .ansi-sequence,
+html[data-site-theme] .generated-code {
+  font-family: var(--font-code);
+}
+
+html[data-site-theme] h1,
+html[data-site-theme] h2,
+html[data-site-theme] .site-title {
+  font-family: var(--font-title);
+}
+
+html[data-site-theme] .code-table {
+  font-family: var(--font-notes);
 }
 
 html[data-site-theme] .site-header {
@@ -2007,6 +2015,19 @@ html[data-site-theme] .site-header {
 
 /* Matrix */
 html[data-site-theme="matrix"] {
+  --font-ui: Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-code: Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-title: Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-notes: Consolas, "Liberation Mono", "Courier New", monospace;
+  --syntax-comment: #3f9d55;
+  --syntax-command: #8dff9d;
+  --syntax-keyword: #eaff63;
+  --syntax-string: #71ffb0;
+  --syntax-variable: #c4ff70;
+  --syntax-number: #9ef7ff;
+  --syntax-operator: #ff7b72;
+  --syntax-option: #5dff82;
+  --syntax-path: #71ffb0;
   --bg: #020704;
   --surface: #061108;
   --surface-subtle: #0a190d;
@@ -2055,6 +2076,19 @@ html[data-site-theme="matrix"] body {
 
 /* DOS */
 html[data-site-theme="dos"] {
+  --font-ui: "Courier New", Courier, monospace;
+  --font-code: "Courier New", Courier, monospace;
+  --font-title: "Arial Black", "Courier New", monospace;
+  --font-notes: "Courier New", Courier, monospace;
+  --syntax-comment: #a8a8a8;
+  --syntax-command: #ffffff;
+  --syntax-keyword: #ffff55;
+  --syntax-string: #55ffff;
+  --syntax-variable: #55ff55;
+  --syntax-number: #ff55ff;
+  --syntax-operator: #ff7777;
+  --syntax-option: #55ff55;
+  --syntax-path: #55ffff;
   --bg: #0000aa;
   --surface: #000088;
   --surface-subtle: #000070;
@@ -2112,6 +2146,19 @@ html[data-site-theme="dos"] textarea {
 
 /* Amber terminal */
 html[data-site-theme="amber"] {
+  --font-ui: "Lucida Console", Monaco, "Courier New", monospace;
+  --font-code: "Lucida Console", Monaco, "Courier New", monospace;
+  --font-title: "Lucida Console", Monaco, "Courier New", monospace;
+  --font-notes: "Courier New", Courier, monospace;
+  --syntax-comment: #9c6c24;
+  --syntax-command: #ffc45b;
+  --syntax-keyword: #ffe2a8;
+  --syntax-string: #ffcf7a;
+  --syntax-variable: #fff0bd;
+  --syntax-number: #ff9f43;
+  --syntax-operator: #ff7b55;
+  --syntax-option: #ffd27a;
+  --syntax-path: #ffe2a8;
   --bg: #090603;
   --surface: #130d05;
   --surface-subtle: #1d1307;
@@ -2160,6 +2207,19 @@ html[data-site-theme="amber"] body {
 
 /* Blueprint */
 html[data-site-theme="blueprint"] {
+  --font-ui: "Arial Narrow", "Aptos Narrow", "Trebuchet MS", sans-serif;
+  --font-code: Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-title: "Arial Narrow", "Aptos Narrow", "Trebuchet MS", sans-serif;
+  --font-notes: "Courier New", Courier, monospace;
+  --syntax-comment: #6fa6b5;
+  --syntax-command: #54e6dd;
+  --syntax-keyword: #ffe08a;
+  --syntax-string: #8edfff;
+  --syntax-variable: #83f0c7;
+  --syntax-number: #c5a7ff;
+  --syntax-operator: #ff9eaa;
+  --syntax-option: #83f0c7;
+  --syntax-path: #8edfff;
   --bg: #07192d;
   --surface: #0a223b;
   --surface-subtle: #0d2c4a;
@@ -2214,6 +2274,19 @@ html[data-site-theme="blueprint"] body {
 
 /* Retro CRT */
 html[data-site-theme="crt"] {
+  --font-ui: "Andale Mono", "Courier New", monospace;
+  --font-code: "Andale Mono", "Courier New", monospace;
+  --font-title: "Andale Mono", "Courier New", monospace;
+  --font-notes: "Andale Mono", "Courier New", monospace;
+  --syntax-comment: #5c8764;
+  --syntax-command: #b7e8be;
+  --syntax-keyword: #d9df8c;
+  --syntax-string: #a4d8b0;
+  --syntax-variable: #c7ef9a;
+  --syntax-number: #9fc9c2;
+  --syntax-operator: #f29a9a;
+  --syntax-option: #87d790;
+  --syntax-path: #a4d8b0;
   --bg: #050806;
   --surface: #0a100c;
   --surface-subtle: #0d1710;
@@ -2324,4 +2397,55 @@ html[data-site-theme] [aria-selected="true"] {
   border-color: var(--accent);
   background-color: var(--accent);
   color: var(--on-accent);
+}
+
+
+/* Hidden themes are complete, single-mode themes. */
+html[data-site-theme] [data-theme-switch] {
+  opacity: 0.42;
+  cursor: default;
+  pointer-events: none;
+}
+
+html[data-site-theme] .code-table {
+  font-family: var(--font-notes);
+}
+
+html[data-site-theme="matrix"] h1,
+html[data-site-theme="matrix"] h2,
+html[data-site-theme="matrix"] .site-title {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+html[data-site-theme="dos"] body {
+  letter-spacing: 0;
+}
+
+html[data-site-theme="dos"] h1,
+html[data-site-theme="dos"] h2,
+html[data-site-theme="dos"] .site-title {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+html[data-site-theme="amber"] body {
+  letter-spacing: 0.012em;
+}
+
+html[data-site-theme="blueprint"] h1,
+html[data-site-theme="blueprint"] h2,
+html[data-site-theme="blueprint"] .site-title {
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+}
+
+html[data-site-theme="blueprint"] .panel,
+html[data-site-theme="blueprint"] .tool-card,
+html[data-site-theme="blueprint"] .code-window {
+  border-style: dashed;
+}
+
+html[data-site-theme="crt"] body {
+  letter-spacing: 0.025em;
 }
