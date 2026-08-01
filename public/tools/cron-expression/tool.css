@@ -12,8 +12,8 @@
 .expression-output code { overflow-wrap: anywhere; font-size: clamp(1.05rem,2.4vw,1.45rem); font-weight: 750; }
 .result-label { color: var(--text-muted); font-size: .72rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
 .cron-status { min-height: 1.25rem; margin: .75rem 0 0; color: var(--text-muted); font-size: .84rem; }
-.cron-status.error { color: #b42318; }
-html[data-theme="dark"] .cron-status.error { color: #ff9b8f; }
+.cron-status.error { color: var(--danger); }
+html:not([data-site-theme])[data-theme="dark"] .cron-status.error { color: var(--danger); }
 .explanation-box { margin-top: .8rem; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; background: var(--surface-color); font-size: 1rem; }
 .explanation-box:empty, .field-breakdown:empty { display: none; }
 .cron-string-input { font-size: 1.05rem; }

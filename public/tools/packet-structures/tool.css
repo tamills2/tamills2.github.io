@@ -34,7 +34,7 @@
 .detail-section h3 { color: var(--text); }
 .hex-dump { display: flex; flex-wrap: wrap; gap: 0.25rem 0.38rem; padding: 0.7rem; border: 1px solid var(--border); border-radius: 0.5rem; background: var(--surface-subtle); font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.75rem; line-height: 1.55; }
 .hex-byte { display: inline-grid; min-width: 1.8rem; place-items: center; padding: 0.08rem 0.16rem; border-radius: 0.25rem; }
-.hex-byte.is-highlighted { background: var(--accent); color: #fff; font-weight: 800; }
+.hex-byte.is-highlighted { background: var(--accent); color: var(--on-accent); font-weight: 800; }
 .value-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
 .value-table th, .value-table td { padding: 0.42rem 0.35rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
 .value-table th { color: var(--text-muted); font-size: 0.67rem; letter-spacing: 0.05em; text-transform: uppercase; }

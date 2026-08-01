@@ -88,7 +88,7 @@
 .category-tab.is-active {
   border-color: var(--accent);
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .status-results-section {
@@ -275,41 +275,12 @@
   text-align: center;
 }
 
-.status-entry[data-category="1"] {
-  --status-bg: rgb(37 99 235 / 0.1);
-  --status-border: rgb(37 99 235 / 0.35);
-  --status-text: #1d4ed8;
-}
+.status-entry[data-category="1"] { --status-text: var(--info); --status-bg: var(--info-soft); --status-border: color-mix(in srgb, var(--info) 35%, var(--border)); }
+.status-entry[data-category="2"] { --status-text: var(--success); --status-bg: var(--success-soft); --status-border: color-mix(in srgb, var(--success) 35%, var(--border)); }
+.status-entry[data-category="3"] { --status-text: var(--accent); --status-bg: var(--accent-soft); --status-border: color-mix(in srgb, var(--accent) 35%, var(--border)); }
+.status-entry[data-category="4"] { --status-text: var(--warning); --status-bg: var(--warning-soft); --status-border: color-mix(in srgb, var(--warning) 35%, var(--border)); }
+.status-entry[data-category="5"] { --status-text: var(--danger); --status-bg: var(--danger-soft); --status-border: color-mix(in srgb, var(--danger) 35%, var(--border)); }
 
-.status-entry[data-category="2"] {
-  --status-bg: rgb(22 163 74 / 0.1);
-  --status-border: rgb(22 163 74 / 0.35);
-  --status-text: #15803d;
-}
-
-.status-entry[data-category="3"] {
-  --status-bg: rgb(147 51 234 / 0.1);
-  --status-border: rgb(147 51 234 / 0.35);
-  --status-text: #7e22ce;
-}
-
-.status-entry[data-category="4"] {
-  --status-bg: rgb(217 119 6 / 0.11);
-  --status-border: rgb(217 119 6 / 0.38);
-  --status-text: #b45309;
-}
-
-.status-entry[data-category="5"] {
-  --status-bg: rgb(220 38 38 / 0.1);
-  --status-border: rgb(220 38 38 / 0.35);
-  --status-text: #b91c1c;
-}
-
-html[data-theme="dark"] .status-entry[data-category="1"] { --status-text: #93c5fd; }
-html[data-theme="dark"] .status-entry[data-category="2"] { --status-text: #86efac; }
-html[data-theme="dark"] .status-entry[data-category="3"] { --status-text: #d8b4fe; }
-html[data-theme="dark"] .status-entry[data-category="4"] { --status-text: #fcd34d; }
-html[data-theme="dark"] .status-entry[data-category="5"] { --status-text: #fca5a5; }
 
 @media (max-width: 760px) {
   .http-status-main {

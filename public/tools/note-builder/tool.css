@@ -13,7 +13,7 @@
 .library-pane,
 .editor-pane {
   min-width: 0;
-  border: 1px solid var(--border-color, #c8ccd0);
+  border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--surface-color);
 }
@@ -69,7 +69,7 @@
   flex: 1;
   min-height: 0;
   overflow: auto;
-  border-top: 1px solid var(--border-color, #c8ccd0);
+  border-top: 1px solid var(--border);
 }
 
 .note-group-heading {
@@ -78,7 +78,7 @@
   z-index: 1;
   margin: 0;
   padding: 0.5rem 0.85rem;
-  border-bottom: 1px solid var(--border-color, #c8ccd0);
+  border-bottom: 1px solid var(--border);
   background: var(--surface-color);
   color: var(--text-muted);
   font-size: 0.7rem;
@@ -91,7 +91,7 @@
   width: 100%;
   padding: 0.72rem 0.85rem;
   border: 0;
-  border-bottom: 1px solid var(--border-color, #c8ccd0);
+  border-bottom: 1px solid var(--border);
   background: transparent;
   color: inherit;
   cursor: grab;
@@ -102,7 +102,7 @@
 .note-option:hover,
 .note-option:focus-visible,
 .note-option[aria-selected="true"] {
-  background: var(--surface-hover, rgba(127, 127, 127, 0.08));
+  background: var(--surface-hover);
 }
 
 .note-option:active {
@@ -154,7 +154,7 @@
 .tool-secondary-button {
   min-height: 2.55rem;
   padding: 0 0.9rem;
-  border: 1px solid var(--border-color, #c8ccd0);
+  border: 1px solid var(--border);
   border-radius: 6px;
   cursor: pointer;
   font: inherit;
@@ -165,7 +165,7 @@
 .tool-primary-button {
   border-color: var(--text-color, currentColor);
   background: var(--text-color, currentColor);
-  color: var(--background-color, #fff);
+  color: var(--on-accent);
 }
 
 .tool-secondary-button {
@@ -194,11 +194,11 @@
 }
 
 .status-message.is-error {
-  color: #b42318;
+  color: var(--danger);
 }
 
-html[data-theme="dark"] .status-message.is-error {
-  color: #ff9b8f;
+html:not([data-site-theme])[data-theme="dark"] .status-message.is-error {
+  color: var(--danger);
 }
 
 .document-counts {
@@ -219,10 +219,10 @@ html[data-theme="dark"] .status-message.is-error {
   min-height: 32rem;
   box-sizing: border-box;
   padding: 1rem;
-  border: 1px solid var(--border-color, #c8ccd0);
+  border: 1px solid var(--border);
   border-radius: 6px;
   resize: vertical;
-  background: var(--background-color, #fff);
+  background: var(--on-accent);
   color: inherit;
   font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
   font-size: 0.8rem;
@@ -273,40 +273,40 @@ html[data-theme="dark"] .status-message.is-error {
 
 /* Explicit editor theme colours so the textarea never falls back to white. */
 .document-editor {
-  background: #ffffff;
-  color: #111827;
-  caret-color: #111827;
+  background: var(--surface);
+  color: var(--text);
+  caret-color: var(--text);
 }
 
-html[data-theme="dark"] .document-editor {
-  background: #0d1117;
-  color: #e6edf3;
-  caret-color: #e6edf3;
-  border-color: #30363d;
+html:not([data-site-theme])[data-theme="dark"] .document-editor {
+  background: var(--input-bg);
+  color: var(--text);
+  caret-color: var(--text);
+  border-color: var(--border);
 }
 
 .document-editor::placeholder {
-  color: #6b7280;
+  color: var(--text-muted);
   opacity: 1;
 }
 
-html[data-theme="dark"] .document-editor::placeholder {
-  color: #8b949e;
+html:not([data-site-theme])[data-theme="dark"] .document-editor::placeholder {
+  color: var(--text-muted);
 }
 
 /* Stable contrast in both themes; avoids unresolved site-variable fallbacks. */
 .tool-primary-button,
 #download-button {
-  border-color: #1f6feb;
-  background: #1f6feb;
-  color: #ffffff;
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--surface);
 }
 
 .tool-primary-button:hover:not(:disabled),
 #download-button:hover:not(:disabled) {
-  border-color: #388bfd;
-  background: #388bfd;
-  color: #ffffff;
+  border-color: var(--accent-hover);
+  background: var(--accent-hover);
+  color: var(--surface);
 }
 
 .tool-primary-button:focus-visible,

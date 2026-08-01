@@ -49,11 +49,11 @@
 }
 
 .status-message.error {
-  color: #b42318;
+  color: var(--danger);
 }
 
-html[data-theme="dark"] .status-message.error {
-  color: #ff9b8f;
+html:not([data-site-theme])[data-theme="dark"] .status-message.error {
+  color: var(--danger);
 }
 
 .results-section {

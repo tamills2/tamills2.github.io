@@ -98,7 +98,7 @@
 .tool-primary-button {
   border-color: var(--accent);
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .tool-secondary-button {
@@ -293,7 +293,7 @@ body.tool-notes-open .tool-main {
     position: fixed;
     inset: var(--header-height) 0 0;
     z-index: 180;
-    background: rgb(0 0 0 / 0.32);
+    background: var(--overlay);
   }
 }
 

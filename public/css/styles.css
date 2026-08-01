@@ -896,13 +896,13 @@ body.sidebar-collapsed .notes-sidebar {
 }
 
 .code-search-hit {
-  background: rgba(255, 212, 59, 0.36);
+  background: var(--selection-highlight);
   color: inherit;
   border-radius: 0.15rem;
 }
 
 .code-search-hit.is-current {
-  background: rgba(255, 166, 0, 0.65);
+  background: var(--selection-current);
 }
 
 @media (max-width: 900px) {
@@ -1422,6 +1422,31 @@ body.search-open .site-search {
   --switch-thumb: #ffffff;
   --code-gutter: #edf6f5;
   --code-line-hover: rgba(15, 148, 136, 0.08);
+  --on-accent: #ffffff;
+  --danger: #b42318;
+  --danger-soft: #fde8e6;
+  --success: #087a45;
+  --success-soft: #dff5e9;
+  --warning: #9a6700;
+  --warning-soft: #fff2c7;
+  --info: #1d4ed8;
+  --info-soft: #e5efff;
+  --code-surface: var(--surface);
+  --tooltip-bg: #111827;
+  --tooltip-text: #f8fafc;
+  --overlay: rgba(0, 0, 0, 0.38);
+  --header-control-hover: rgba(0, 0, 0, 0.26);
+  --header-focus-ring: rgba(209, 255, 249, 0.92);
+  --header-border-soft: rgba(255, 255, 255, 0.36);
+  --header-surface-soft: rgba(255, 255, 255, 0.12);
+  --header-input-border: rgba(255, 255, 255, 0.32);
+  --header-input-bg: rgba(255, 255, 255, 0.14);
+  --header-input-highlight: rgba(255, 255, 255, 0.08);
+  --header-kbd-bg: rgba(0, 0, 0, 0.08);
+  --header-focus-border: rgba(255, 255, 255, 0.72);
+  --header-focus-shadow: rgba(209, 255, 249, 0.2);
+  --selection-highlight: rgba(255, 212, 59, 0.36);
+  --selection-current: rgba(255, 166, 0, 0.65);
 }
 
 html[data-theme="dark"] {
@@ -1447,6 +1472,31 @@ html[data-theme="dark"] {
   --switch-thumb: #e8fffb;
   --code-gutter: #0e1c1e;
   --code-line-hover: rgba(56, 212, 194, 0.08);
+  --on-accent: #071311;
+  --danger: #ff9b8f;
+  --danger-soft: rgba(255, 155, 143, 0.13);
+  --success: #6be3a6;
+  --success-soft: rgba(107, 227, 166, 0.12);
+  --warning: #fcd34d;
+  --warning-soft: rgba(252, 211, 77, 0.12);
+  --info: #93c5fd;
+  --info-soft: rgba(147, 197, 253, 0.12);
+  --code-surface: var(--surface);
+  --tooltip-bg: #050807;
+  --tooltip-text: #f8fffd;
+  --overlay: rgba(0, 0, 0, 0.72);
+  --header-control-hover: rgba(0, 0, 0, 0.26);
+  --header-focus-ring: rgba(209, 255, 249, 0.92);
+  --header-border-soft: rgba(255, 255, 255, 0.36);
+  --header-surface-soft: rgba(255, 255, 255, 0.12);
+  --header-input-border: rgba(255, 255, 255, 0.32);
+  --header-input-bg: rgba(255, 255, 255, 0.14);
+  --header-input-highlight: rgba(255, 255, 255, 0.08);
+  --header-kbd-bg: rgba(0, 0, 0, 0.08);
+  --header-focus-border: rgba(255, 255, 255, 0.72);
+  --header-focus-shadow: rgba(209, 255, 249, 0.2);
+  --selection-highlight: rgba(255, 212, 59, 0.28);
+  --selection-current: rgba(255, 166, 0, 0.52);
 }
 
 body {
@@ -1463,7 +1513,7 @@ body {
 .site-header {
   border-bottom-color: color-mix(in srgb, var(--header-end) 68%, var(--border));
   background: linear-gradient(105deg, var(--header-start), var(--header-end));
-  box-shadow: 0 3px 16px rgba(5, 79, 73, 0.2);
+  box-shadow: var(--shadow-soft);
   color: var(--header-text);
   backdrop-filter: blur(14px);
 }
@@ -1478,14 +1528,14 @@ body {
 
 .site-header .icon-button:hover,
 .site-header .tools-button:hover {
-  border-color: rgba(255, 255, 255, 0.36);
-  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--header-border-soft);
+  background: var(--header-surface-soft);
 }
 
 .site-header .search-input-shell {
-  border-color: rgba(255, 255, 255, 0.32);
-  background: rgba(255, 255, 255, 0.14);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-color: var(--header-input-border);
+  background: var(--header-input-bg);
+  box-shadow: inset 0 1px 0 var(--header-input-highlight);
 }
 
 .site-header .search-input-shell input,
@@ -1497,12 +1547,12 @@ body {
 
 .site-header .search-input-shell kbd {
   border-color: rgba(255, 255, 255, 0.28);
-  background: rgba(0, 0, 0, 0.08);
+  background: var(--header-kbd-bg);
 }
 
 .site-header .search-input-shell:focus-within {
-  border-color: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 0 0 3px rgba(209, 255, 249, 0.2);
+  border-color: var(--header-focus-border);
+  box-shadow: 0 0 0 3px var(--header-focus-shadow);
 }
 
 .site-title {
@@ -1806,7 +1856,7 @@ textarea:focus {
 .tool-header-home:hover,
 .tool-header-home:focus-visible {
   border-color: transparent;
-  background: rgba(0, 0, 0, 0.26);
+  background: var(--header-control-hover);
 }
 
 .notes-nav-button:active,
@@ -1816,7 +1866,7 @@ textarea:focus {
 
 .notes-nav-button:focus-visible,
 .tool-header-home:focus-visible {
-  outline: 2px solid rgba(209, 255, 249, 0.92);
+  outline: 2px solid var(--header-focus-ring);
   outline-offset: 2px;
 }
 
@@ -1900,6 +1950,31 @@ html[data-site-theme="matrix"] {
   --switch-thumb: #8dff9d;
   --code-gutter: #020704;
   --code-line-hover: rgba(56, 255, 98, 0.08);
+  --on-accent: #020704;
+  --danger: #ff6b6b;
+  --danger-soft: color-mix(in srgb, var(--danger) 14%, transparent);
+  --success: #38ff62;
+  --success-soft: color-mix(in srgb, var(--success) 14%, transparent);
+  --warning: #eaff63;
+  --warning-soft: color-mix(in srgb, var(--warning) 14%, transparent);
+  --info: #71ffb0;
+  --info-soft: color-mix(in srgb, var(--info) 14%, transparent);
+  --code-surface: var(--surface);
+  --tooltip-bg: var(--surface-hover);
+  --tooltip-text: var(--text);
+  --overlay: color-mix(in srgb, var(--bg) 78%, transparent);
+  --header-control-hover: color-mix(in srgb, var(--text) 12%, transparent);
+  --header-focus-ring: var(--accent);
+  --header-border-soft: color-mix(in srgb, var(--text) 34%, transparent);
+  --header-surface-soft: color-mix(in srgb, var(--text) 10%, transparent);
+  --header-input-border: color-mix(in srgb, var(--text) 30%, transparent);
+  --header-input-bg: color-mix(in srgb, var(--text) 10%, transparent);
+  --header-input-highlight: color-mix(in srgb, var(--text) 8%, transparent);
+  --header-kbd-bg: color-mix(in srgb, var(--bg) 20%, transparent);
+  --header-focus-border: var(--text);
+  --header-focus-shadow: color-mix(in srgb, var(--accent) 22%, transparent);
+  --selection-highlight: color-mix(in srgb, var(--warning) 34%, transparent);
+  --selection-current: color-mix(in srgb, var(--warning) 58%, transparent);
 }
 
 html[data-site-theme="matrix"] body {
@@ -1923,6 +1998,31 @@ html[data-site-theme="dos"] {
   --switch-thumb: #ffffff;
   --code-gutter: #000066;
   --code-line-hover: rgba(255, 255, 255, 0.09);
+  --on-accent: #000088;
+  --danger: #ff7777;
+  --danger-soft: color-mix(in srgb, var(--danger) 14%, transparent);
+  --success: #55ff55;
+  --success-soft: color-mix(in srgb, var(--success) 14%, transparent);
+  --warning: #ffff55;
+  --warning-soft: color-mix(in srgb, var(--warning) 14%, transparent);
+  --info: #55ffff;
+  --info-soft: color-mix(in srgb, var(--info) 14%, transparent);
+  --code-surface: var(--surface);
+  --tooltip-bg: var(--surface-hover);
+  --tooltip-text: var(--text);
+  --overlay: color-mix(in srgb, var(--bg) 78%, transparent);
+  --header-control-hover: color-mix(in srgb, var(--text) 12%, transparent);
+  --header-focus-ring: var(--accent);
+  --header-border-soft: color-mix(in srgb, var(--text) 34%, transparent);
+  --header-surface-soft: color-mix(in srgb, var(--text) 10%, transparent);
+  --header-input-border: color-mix(in srgb, var(--text) 30%, transparent);
+  --header-input-bg: color-mix(in srgb, var(--text) 10%, transparent);
+  --header-input-highlight: color-mix(in srgb, var(--text) 8%, transparent);
+  --header-kbd-bg: color-mix(in srgb, var(--bg) 20%, transparent);
+  --header-focus-border: var(--text);
+  --header-focus-shadow: color-mix(in srgb, var(--accent) 22%, transparent);
+  --selection-highlight: color-mix(in srgb, var(--warning) 34%, transparent);
+  --selection-current: color-mix(in srgb, var(--warning) 58%, transparent);
 }
 
 html[data-site-theme="dos"] *,
@@ -1935,7 +2035,7 @@ html[data-site-theme="dos"] button,
 html[data-site-theme="dos"] input,
 html[data-site-theme="dos"] select,
 html[data-site-theme="dos"] textarea {
-  border-color: #ffffff;
+  border-color: var(--border-strong);
 }
 
 /* Amber terminal */
@@ -1955,6 +2055,31 @@ html[data-site-theme="amber"] {
   --switch-thumb: #ffc45b;
   --code-gutter: #090603;
   --code-line-hover: rgba(255, 174, 43, 0.08);
+  --on-accent: #130d05;
+  --danger: #ff7b55;
+  --danger-soft: color-mix(in srgb, var(--danger) 14%, transparent);
+  --success: #ffd27a;
+  --success-soft: color-mix(in srgb, var(--success) 14%, transparent);
+  --warning: #ffae2b;
+  --warning-soft: color-mix(in srgb, var(--warning) 14%, transparent);
+  --info: #ffe2a8;
+  --info-soft: color-mix(in srgb, var(--info) 14%, transparent);
+  --code-surface: var(--surface);
+  --tooltip-bg: var(--surface-hover);
+  --tooltip-text: var(--text);
+  --overlay: color-mix(in srgb, var(--bg) 78%, transparent);
+  --header-control-hover: color-mix(in srgb, var(--text) 12%, transparent);
+  --header-focus-ring: var(--accent);
+  --header-border-soft: color-mix(in srgb, var(--text) 34%, transparent);
+  --header-surface-soft: color-mix(in srgb, var(--text) 10%, transparent);
+  --header-input-border: color-mix(in srgb, var(--text) 30%, transparent);
+  --header-input-bg: color-mix(in srgb, var(--text) 10%, transparent);
+  --header-input-highlight: color-mix(in srgb, var(--text) 8%, transparent);
+  --header-kbd-bg: color-mix(in srgb, var(--bg) 20%, transparent);
+  --header-focus-border: var(--text);
+  --header-focus-shadow: color-mix(in srgb, var(--accent) 22%, transparent);
+  --selection-highlight: color-mix(in srgb, var(--warning) 34%, transparent);
+  --selection-current: color-mix(in srgb, var(--warning) 58%, transparent);
 }
 
 html[data-site-theme="amber"] body {
@@ -1978,15 +2103,40 @@ html[data-site-theme="blueprint"] {
   --switch-thumb: #e8fbff;
   --code-gutter: #061525;
   --code-line-hover: rgba(84, 230, 221, 0.08);
+  --on-accent: #07192d;
+  --danger: #ff9eaa;
+  --danger-soft: color-mix(in srgb, var(--danger) 14%, transparent);
+  --success: #83f0c7;
+  --success-soft: color-mix(in srgb, var(--success) 14%, transparent);
+  --warning: #ffe08a;
+  --warning-soft: color-mix(in srgb, var(--warning) 14%, transparent);
+  --info: #8edfff;
+  --info-soft: color-mix(in srgb, var(--info) 14%, transparent);
+  --code-surface: var(--surface);
+  --tooltip-bg: var(--surface-hover);
+  --tooltip-text: var(--text);
+  --overlay: color-mix(in srgb, var(--bg) 78%, transparent);
+  --header-control-hover: color-mix(in srgb, var(--text) 12%, transparent);
+  --header-focus-ring: var(--accent);
+  --header-border-soft: color-mix(in srgb, var(--text) 34%, transparent);
+  --header-surface-soft: color-mix(in srgb, var(--text) 10%, transparent);
+  --header-input-border: color-mix(in srgb, var(--text) 30%, transparent);
+  --header-input-bg: color-mix(in srgb, var(--text) 10%, transparent);
+  --header-input-highlight: color-mix(in srgb, var(--text) 8%, transparent);
+  --header-kbd-bg: color-mix(in srgb, var(--bg) 20%, transparent);
+  --header-focus-border: var(--text);
+  --header-focus-shadow: color-mix(in srgb, var(--accent) 22%, transparent);
+  --selection-highlight: color-mix(in srgb, var(--warning) 34%, transparent);
+  --selection-current: color-mix(in srgb, var(--warning) 58%, transparent);
 }
 
 html[data-site-theme="blueprint"] body {
   background-color: var(--bg);
   background-image:
-    linear-gradient(rgba(84, 230, 221, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(84, 230, 221, 0.055) 1px, transparent 1px),
-    linear-gradient(rgba(84, 230, 221, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(84, 230, 221, 0.025) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--accent) 5.5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 5.5%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--accent) 2.5%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 2.5%, transparent) 1px, transparent 1px);
   background-size: 4rem 4rem, 4rem 4rem, 1rem 1rem, 1rem 1rem;
 }
 
@@ -2007,6 +2157,31 @@ html[data-site-theme="crt"] {
   --switch-thumb: #b7e8be;
   --code-gutter: #050806;
   --code-line-hover: rgba(135, 215, 144, 0.07);
+  --on-accent: #050806;
+  --danger: #f29a9a;
+  --danger-soft: color-mix(in srgb, var(--danger) 14%, transparent);
+  --success: #87d790;
+  --success-soft: color-mix(in srgb, var(--success) 14%, transparent);
+  --warning: #d9df8c;
+  --warning-soft: color-mix(in srgb, var(--warning) 14%, transparent);
+  --info: #a4d8b0;
+  --info-soft: color-mix(in srgb, var(--info) 14%, transparent);
+  --code-surface: var(--surface);
+  --tooltip-bg: var(--surface-hover);
+  --tooltip-text: var(--text);
+  --overlay: color-mix(in srgb, var(--bg) 78%, transparent);
+  --header-control-hover: color-mix(in srgb, var(--text) 12%, transparent);
+  --header-focus-ring: var(--accent);
+  --header-border-soft: color-mix(in srgb, var(--text) 34%, transparent);
+  --header-surface-soft: color-mix(in srgb, var(--text) 10%, transparent);
+  --header-input-border: color-mix(in srgb, var(--text) 30%, transparent);
+  --header-input-bg: color-mix(in srgb, var(--text) 10%, transparent);
+  --header-input-highlight: color-mix(in srgb, var(--text) 8%, transparent);
+  --header-kbd-bg: color-mix(in srgb, var(--bg) 20%, transparent);
+  --header-focus-border: var(--text);
+  --header-focus-shadow: color-mix(in srgb, var(--accent) 22%, transparent);
+  --selection-highlight: color-mix(in srgb, var(--warning) 34%, transparent);
+  --selection-current: color-mix(in srgb, var(--warning) 58%, transparent);
 }
 
 html[data-site-theme="crt"] body {
@@ -2023,8 +2198,8 @@ html[data-site-theme="crt"] body::after {
     to bottom,
     transparent 0,
     transparent 2px,
-    rgba(0, 0, 0, 0.13) 3px,
-    rgba(0, 0, 0, 0.13) 4px
+    color-mix(in srgb, var(--bg) 70%, transparent) 3px,
+    color-mix(in srgb, var(--bg) 70%, transparent) 4px
   );
   opacity: 0.42;
 }
@@ -2033,4 +2208,48 @@ html[data-site-theme="crt"] body::after {
   .repo-theme-notice {
     transition: none;
   }
+}
+
+
+/* Theme-variable component normalization ------------------------------------ */
+html[data-site-theme] .ansi-sequence,
+html[data-site-theme] .terminal-preview,
+html[data-site-theme] .code-output-shell,
+html[data-site-theme] .generated-code,
+html[data-site-theme] .result-output,
+html[data-site-theme] .packet-hex,
+html[data-site-theme] .hex-dump,
+html[data-site-theme] pre,
+html[data-site-theme] code {
+  border-color: var(--border);
+  background-color: var(--code-surface);
+  color: var(--text);
+}
+
+html[data-site-theme] button.primary-button,
+html[data-site-theme] .primary-button,
+html[data-site-theme] button[type="submit"],
+html[data-site-theme] .calculate-button,
+html[data-site-theme] .explain-button {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+html[data-site-theme] button.primary-button:hover,
+html[data-site-theme] .primary-button:hover,
+html[data-site-theme] button[type="submit"]:hover,
+html[data-site-theme] .calculate-button:hover,
+html[data-site-theme] .explain-button:hover {
+  border-color: var(--accent-hover, var(--accent));
+  background: var(--accent-hover, var(--accent));
+  color: var(--on-accent);
+}
+
+html[data-site-theme] .hex-byte.is-highlighted,
+html[data-site-theme] .is-selected,
+html[data-site-theme] [aria-selected="true"] {
+  border-color: var(--accent);
+  background-color: var(--accent);
+  color: var(--on-accent);
 }
