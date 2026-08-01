@@ -3131,26 +3131,108 @@ html:is(
 }
 
 /* Dracula atmospheric depth ------------------------------------------------- */
-/* Theme effects use a shared fullscreen-canvas layer. Matrix and Dracula each
-   provide their own renderer in theme.js; future themes can reuse this layer. */
-.theme-effect-canvas,
-#dracula-fog-canvas {
+/* Theme effects share a fixed, pointer-transparent layer. Dracula uses only
+   compositor-friendly transforms and opacity; there is no per-frame canvas
+   drawing or large blurred repaint loop. */
+.theme-effect-layer,
+.dracula-fog-layer {
   position: fixed;
   inset: 0;
   z-index: 0;
-  width: 100vw;
-  height: 100vh;
+  overflow: hidden;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 650ms ease;
+  transition: opacity 700ms ease;
+  contain: strict;
 }
 
-html[data-site-theme="dracula"] #dracula-fog-canvas.is-active {
+html[data-site-theme="dracula"] .dracula-fog-layer.is-active {
   opacity: 1;
 }
 
-/* Keep themed chrome and content above the animated fog while preserving each
-   component's existing positioning model. */
+.dracula-fog-bank {
+  position: absolute;
+  left: -45vw;
+  width: 190vw;
+  height: 38vh;
+  opacity: 0;
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+}
+
+.dracula-fog-bank-1 {
+  top: 8vh;
+  background-image:
+    radial-gradient(ellipse at 12% 60%, rgba(228, 219, 222, 0.21) 0 8%, rgba(169, 154, 160, 0.11) 18%, transparent 42%),
+    radial-gradient(ellipse at 43% 48%, rgba(210, 199, 203, 0.18) 0 10%, rgba(143, 126, 133, 0.09) 22%, transparent 46%),
+    radial-gradient(ellipse at 78% 55%, rgba(222, 211, 214, 0.18) 0 9%, rgba(151, 136, 142, 0.08) 21%, transparent 44%);
+  animation: dracula-fog-drift-a 92s linear infinite, dracula-fog-breathe-a 16s ease-in-out infinite;
+}
+
+.dracula-fog-bank-2 {
+  top: 34vh;
+  height: 46vh;
+  background-image:
+    radial-gradient(ellipse at 18% 44%, rgba(203, 192, 196, 0.16) 0 10%, rgba(134, 119, 126, 0.08) 24%, transparent 48%),
+    radial-gradient(ellipse at 56% 60%, rgba(232, 224, 226, 0.19) 0 9%, rgba(159, 145, 151, 0.09) 23%, transparent 47%),
+    radial-gradient(ellipse at 88% 42%, rgba(202, 190, 195, 0.15) 0 8%, rgba(127, 111, 119, 0.07) 21%, transparent 44%);
+  animation: dracula-fog-drift-b 138s linear infinite, dracula-fog-breathe-b 23s ease-in-out infinite;
+}
+
+.dracula-fog-bank-3 {
+  top: 63vh;
+  height: 34vh;
+  background-image:
+    radial-gradient(ellipse at 8% 52%, rgba(221, 212, 215, 0.15) 0 9%, rgba(148, 133, 140, 0.07) 22%, transparent 46%),
+    radial-gradient(ellipse at 37% 40%, rgba(197, 184, 190, 0.13) 0 11%, rgba(124, 107, 115, 0.06) 25%, transparent 50%),
+    radial-gradient(ellipse at 72% 58%, rgba(228, 218, 221, 0.16) 0 9%, rgba(148, 132, 139, 0.07) 22%, transparent 46%);
+  animation: dracula-fog-drift-c 116s linear infinite reverse, dracula-fog-breathe-a 19s ease-in-out infinite reverse;
+}
+
+.dracula-fog-bank-4 {
+  top: 20vh;
+  height: 70vh;
+  background-image:
+    radial-gradient(ellipse at 24% 50%, rgba(196, 184, 189, 0.09) 0 12%, transparent 44%),
+    radial-gradient(ellipse at 68% 48%, rgba(215, 204, 208, 0.10) 0 12%, transparent 46%);
+  animation: dracula-fog-drift-d 180s linear infinite, dracula-fog-breathe-b 31s ease-in-out infinite;
+}
+
+@keyframes dracula-fog-drift-a {
+  from { transform: translate3d(-8vw, 0, 0) scale(1.02); }
+  to   { transform: translate3d(42vw, 2vh, 0) scale(1.08); }
+}
+
+@keyframes dracula-fog-drift-b {
+  from { transform: translate3d(30vw, 1vh, 0) scale(1.08); }
+  to   { transform: translate3d(-26vw, -2vh, 0) scale(1.02); }
+}
+
+@keyframes dracula-fog-drift-c {
+  from { transform: translate3d(-15vw, -1vh, 0) scale(1.03); }
+  to   { transform: translate3d(37vw, 1.5vh, 0) scale(1.10); }
+}
+
+@keyframes dracula-fog-drift-d {
+  from { transform: translate3d(20vw, 0, 0) scale(1.12); }
+  to   { transform: translate3d(-22vw, 1vh, 0) scale(1.04); }
+}
+
+@keyframes dracula-fog-breathe-a {
+  0%, 100% { opacity: 0.42; }
+  48% { opacity: 0.78; }
+  72% { opacity: 0.56; }
+}
+
+@keyframes dracula-fog-breathe-b {
+  0%, 100% { opacity: 0.30; }
+  44% { opacity: 0.67; }
+  76% { opacity: 0.46; }
+}
+
+/* Keep themed chrome and content above the fog while preserving positioning. */
 html[data-site-theme="dracula"] .site-header,
 html[data-site-theme="dracula"] .main-content,
 html[data-site-theme="dracula"] .tool-main,
@@ -3165,13 +3247,8 @@ html[data-site-theme="dracula"] .repo-theme-notice {
   position: relative;
 }
 
-html[data-site-theme="dracula"] .site-header {
-  z-index: 100;
-}
-
-html[data-site-theme="dracula"] .tools-menu {
-  z-index: 1000;
-}
+html[data-site-theme="dracula"] .site-header { z-index: 100; }
+html[data-site-theme="dracula"] .tools-menu { z-index: 1000; }
 
 /* Keep the wall strongest around the perimeter and quieter behind content. */
 html[data-site-theme="dracula"] body {
@@ -3184,8 +3261,11 @@ html[data-site-theme="dracula"] body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #dracula-fog-canvas {
-    display: none !important;
+  .dracula-fog-bank,
+  .dracula-fog-layer.reduce-motion .dracula-fog-bank {
+    animation: none !important;
+    opacity: 0.32;
+    transform: none;
   }
 }
 
