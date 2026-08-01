@@ -21,6 +21,16 @@
 
   --code-gutter: #f6f8fa;
   --code-line-hover: rgba(175, 184, 193, 0.16);
+
+  --syntax-comment: #6a737d;
+  --syntax-command: #0550ae;
+  --syntax-keyword: #8250df;
+  --syntax-string: #0a3069;
+  --syntax-variable: #953800;
+  --syntax-number: #0550ae;
+  --syntax-operator: #cf222e;
+  --syntax-option: #116329;
+  --syntax-path: #0a3069;
 }
 
 html[data-theme="dark"] {
@@ -42,6 +52,16 @@ html[data-theme="dark"] {
 
   --code-gutter: #0d1117;
   --code-line-hover: rgba(110, 118, 129, 0.14);
+
+  --syntax-comment: #8b949e;
+  --syntax-command: #79c0ff;
+  --syntax-keyword: #ff7b72;
+  --syntax-string: #a5d6ff;
+  --syntax-variable: #ffa657;
+  --syntax-number: #79c0ff;
+  --syntax-operator: #ff7b72;
+  --syntax-option: #7ee787;
+  --syntax-path: #a5d6ff;
 }
 
 *,
@@ -647,6 +667,49 @@ body.sidebar-collapsed .notes-sidebar {
   background: transparent !important;
   color: inherit;
   font: inherit;
+}
+
+.syntax-comment {
+  color: var(--syntax-comment);
+  font-style: italic;
+}
+
+.syntax-command {
+  color: var(--syntax-command);
+  font-weight: 700;
+}
+
+.syntax-keyword {
+  color: var(--syntax-keyword);
+  font-weight: 700;
+}
+
+.syntax-string {
+  color: var(--syntax-string);
+}
+
+.syntax-variable {
+  color: var(--syntax-variable);
+}
+
+.syntax-number {
+  color: var(--syntax-number);
+}
+
+.syntax-operator {
+  color: var(--syntax-operator);
+  font-weight: 700;
+}
+
+.syntax-option {
+  color: var(--syntax-option);
+}
+
+.syntax-path {
+  color: var(--syntax-path);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: 0.15em;
 }
 
 /* Responsive layout */
@@ -1919,6 +1982,15 @@ textarea:focus {
 
 html[data-site-theme] {
   color-scheme: dark;
+  --syntax-comment: var(--text-muted);
+  --syntax-command: var(--accent);
+  --syntax-keyword: var(--warning);
+  --syntax-string: var(--info);
+  --syntax-variable: var(--success);
+  --syntax-number: var(--info);
+  --syntax-operator: var(--danger);
+  --syntax-option: var(--success);
+  --syntax-path: var(--info);
 }
 
 html[data-site-theme] body,

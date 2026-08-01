@@ -987,11 +987,7 @@ function renderCode(content, searchQuery = "") {
     numberCell.setAttribute("aria-hidden", "true");
 
     codeCell.className = "code-line";
-    code.textContent = line || " ";
-
-    if (window.hljs) {
-      window.hljs.highlightElement(code);
-    }
+    renderBashSyntax(code, line || " ");
 
     if (query) {
       highlightSearchMatches(code, query);
@@ -1006,6 +1002,126 @@ function renderCode(content, searchQuery = "") {
   elements.codeTableWrapper.replaceChildren(table);
 }
 
+
+
+const BASH_COMMANDS = new Set([
+  "alias", "awk", "basename", "cat", "cd", "chmod", "chown", "clear",
+  "cp", "curl", "cut", "date", "df", "diff", "dirname", "docker", "du",
+  "echo", "env", "export", "find", "git", "grep", "head", "hostname",
+  "id", "ip", "journalctl", "kill", "kubectl", "less", "ln", "ls", "man",
+  "mkdir", "mktemp", "mount", "mv", "nc", "netstat", "nmap", "passwd",
+  "ping", "printf", "ps", "pwd", "read", "realpath", "rm", "rmdir",
+  "rsync", "scp", "sed", "seq", "sleep", "sort", "source", "ss", "ssh",
+  "stat", "sudo", "systemctl", "tail", "tar", "tee", "test", "touch",
+  "tr", "uname", "uniq", "unzip", "uptime", "wc", "wget", "which",
+  "whoami", "xargs", "zip"
+]);
+
+const BASH_KEYWORDS = new Set([
+  "case", "coproc", "do", "done", "elif", "else", "esac", "fi", "for",
+  "function", "if", "in", "select", "then", "time", "until", "while"
+]);
+
+function appendSyntaxToken(parent, text, className = "") {
+  if (!text) return;
+  if (!className) {
+    parent.append(document.createTextNode(text));
+    return;
+  }
+
+  const token = document.createElement("span");
+  token.className = `syntax-${className}`;
+  token.textContent = text;
+  parent.append(token);
+}
+
+function renderBashSyntax(codeElement, line) {
+  let index = 0;
+
+  while (index < line.length) {
+    const rest = line.slice(index);
+    const char = line[index];
+
+    // Bash comments begin with # outside a quoted string.
+    if (char === "#") {
+      appendSyntaxToken(codeElement, rest, "comment");
+      break;
+    }
+
+    // Single- and double-quoted strings, including escaped characters.
+    if (char === "'" || char === '"') {
+      const quote = char;
+      let end = index + 1;
+      while (end < line.length) {
+        if (quote === '"' && line[end] === "\\") {
+          end += 2;
+          continue;
+        }
+        if (line[end] === quote) {
+          end += 1;
+          break;
+        }
+        end += 1;
+      }
+      appendSyntaxToken(codeElement, line.slice(index, end), "string");
+      index = end;
+      continue;
+    }
+
+    const variable = rest.match(/^\$(?:\{[^}]*\}|[A-Za-z_][A-Za-z0-9_]*|[0-9@#?$!*-])/);
+    if (variable) {
+      appendSyntaxToken(codeElement, variable[0], "variable");
+      index += variable[0].length;
+      continue;
+    }
+
+    const operator = rest.match(/^(?:&&|\|\||>>|<<|&>|2>>|2>|1>>|1>|\|&|[|;&<>])/);
+    if (operator) {
+      appendSyntaxToken(codeElement, operator[0], "operator");
+      index += operator[0].length;
+      continue;
+    }
+
+    const option = rest.match(/^--?[A-Za-z0-9][A-Za-z0-9_-]*/);
+    if (option) {
+      appendSyntaxToken(codeElement, option[0], "option");
+      index += option[0].length;
+      continue;
+    }
+
+    const path = rest.match(/^(?:(?:~|\.{1,2})?\/)[^\s|;&<>]*/);
+    if (path) {
+      appendSyntaxToken(codeElement, path[0], "path");
+      index += path[0].length;
+      continue;
+    }
+
+    const number = rest.match(/^(?:0x[0-9a-fA-F]+|\d+)/);
+    if (number) {
+      appendSyntaxToken(codeElement, number[0], "number");
+      index += number[0].length;
+      continue;
+    }
+
+    const word = rest.match(/^[A-Za-z_][A-Za-z0-9_.-]*/);
+    if (word) {
+      const value = word[0];
+      const normalised = value.toLowerCase();
+      if (BASH_KEYWORDS.has(normalised)) {
+        appendSyntaxToken(codeElement, value, "keyword");
+      } else if (BASH_COMMANDS.has(normalised)) {
+        appendSyntaxToken(codeElement, value, "command");
+      } else {
+        appendSyntaxToken(codeElement, value);
+      }
+      index += value.length;
+      continue;
+    }
+
+    appendSyntaxToken(codeElement, char);
+    index += 1;
+  }
+}
 
 function highlightSearchMatches(codeElement, query) {
   const walker = document.createTreeWalker(
