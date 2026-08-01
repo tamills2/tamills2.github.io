@@ -3129,3 +3129,106 @@ html:is(
   background: rgba(56, 139, 253, 0.16);
   color: #79c0ff;
 }
+
+/* Dracula atmospheric depth ------------------------------------------------- */
+/* Theme effects use a shared fullscreen-canvas layer. Matrix and Dracula each
+   provide their own renderer in theme.js; future themes can reuse this layer. */
+.theme-effect-canvas,
+#dracula-fog-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 650ms ease;
+}
+
+html[data-site-theme="dracula"] #dracula-fog-canvas.is-active {
+  opacity: 1;
+}
+
+/* Keep themed chrome and content above the animated fog while preserving each
+   component's existing positioning model. */
+html[data-site-theme="dracula"] .site-header,
+html[data-site-theme="dracula"] .main-content,
+html[data-site-theme="dracula"] .tool-main,
+html[data-site-theme="dracula"] .notes-sidebar,
+html[data-site-theme="dracula"] .repo-theme-notice {
+  z-index: 1;
+}
+
+html[data-site-theme="dracula"] .main-content,
+html[data-site-theme="dracula"] .tool-main,
+html[data-site-theme="dracula"] .repo-theme-notice {
+  position: relative;
+}
+
+html[data-site-theme="dracula"] .site-header {
+  z-index: 100;
+}
+
+html[data-site-theme="dracula"] .tools-menu {
+  z-index: 1000;
+}
+
+/* Keep the wall strongest around the perimeter and quieter behind content. */
+html[data-site-theme="dracula"] body {
+  background-image:
+    radial-gradient(ellipse at 50% 42%, rgba(8, 5, 6, 0.84) 0 30%, rgba(8, 5, 6, 0.56) 55%, rgba(0, 0, 0, 0.82) 100%),
+    linear-gradient(rgba(8, 5, 6, 0.40), rgba(2, 2, 3, 0.72)),
+    url("../images/dracula-wall.webp");
+  background-position: center;
+  background-size: cover;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #dracula-fog-canvas {
+    display: none !important;
+  }
+}
+
+/* Candle-and-crimson response on interactive surfaces. */
+html[data-site-theme="dracula"] :is(
+  button,
+  .quick-link-card,
+  .tool-card,
+  .panel,
+  .tool-section,
+  .tree-row,
+  .tools-menu a
+) {
+  transition:
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 320ms ease,
+    text-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+html[data-site-theme="dracula"] :is(
+  button,
+  .quick-link-card,
+  .tool-card,
+  .tree-row,
+  .tools-menu a
+):hover {
+  border-color: color-mix(in srgb, var(--accent) 74%, #8b642e);
+  box-shadow:
+    0 0 0 1px rgba(181, 31, 50, 0.16),
+    0 8px 28px rgba(83, 4, 17, 0.30),
+    0 0 24px rgba(150, 40, 28, 0.13),
+    inset 0 1px rgba(255, 218, 164, 0.035);
+  text-shadow:
+    0 0 0.8rem rgba(181, 31, 50, 0.46),
+    0 0 1.4rem rgba(166, 101, 40, 0.15);
+}
+
+html[data-site-theme="dracula"] :is(h1, h2, h3, .site-title) {
+  text-shadow:
+    0 2px 16px rgba(181, 31, 50, 0.46),
+    0 0 42px rgba(110, 5, 22, 0.28),
+    0 0 70px rgba(80, 0, 12, 0.16);
+}
+

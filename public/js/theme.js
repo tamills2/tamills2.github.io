@@ -25,6 +25,138 @@
   let matrixRainAnimation = 0;
   let matrixRainResizeTimer = 0;
 
+  const DRACULA_FOG_ID = "dracula-fog-canvas";
+  const DRACULA_FOG_REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let draculaFogAnimation = 0;
+  let draculaFogResizeTimer = 0;
+
+  function stopDraculaFog({ remove = false } = {}) {
+    if (draculaFogAnimation) {
+      window.cancelAnimationFrame(draculaFogAnimation);
+      draculaFogAnimation = 0;
+    }
+    window.clearTimeout(draculaFogResizeTimer);
+    draculaFogResizeTimer = 0;
+
+    const canvas = document.getElementById(DRACULA_FOG_ID);
+    if (canvas) {
+      canvas.classList.remove("is-active");
+      if (remove) canvas.remove();
+    }
+  }
+
+  function startDraculaFog() {
+    stopDraculaFog();
+
+    if (DRACULA_FOG_REDUCED_MOTION.matches || document.hidden) return;
+
+    let canvas = document.getElementById(DRACULA_FOG_ID);
+    if (!canvas) {
+      canvas = document.createElement("canvas");
+      canvas.id = DRACULA_FOG_ID;
+      canvas.className = "theme-effect-canvas";
+      canvas.setAttribute("aria-hidden", "true");
+      document.body.prepend(canvas);
+    }
+
+    const context = canvas.getContext("2d", { alpha: true });
+    if (!context) return;
+
+    let width = 0;
+    let height = 0;
+    let particles = [];
+    const particleCount = 34;
+
+    function createParticle(index) {
+      const depth = index % 3;
+      const baseRadius = Math.max(width, height) * (0.10 + Math.random() * 0.10);
+      return {
+        x: Math.random() * width,
+        y: height * (0.12 + Math.random() * 0.82),
+        radiusX: baseRadius * (1.5 + Math.random() * 1.6),
+        radiusY: baseRadius * (0.34 + Math.random() * 0.38),
+        speed: (0.055 + Math.random() * 0.12) * (depth === 0 ? 1.15 : depth === 1 ? 0.78 : 0.52),
+        drift: 9 + Math.random() * 28,
+        phase: Math.random() * Math.PI * 2,
+        alpha: (0.025 + Math.random() * 0.045) * (depth === 0 ? 1 : depth === 1 ? 0.78 : 0.60),
+        depth,
+      };
+    }
+
+    function resize() {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.floor(width * ratio);
+      canvas.height = Math.floor(height * ratio);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      particles = Array.from({ length: particleCount }, (_, index) => createParticle(index));
+      context.clearRect(0, 0, width, height);
+    }
+
+    function drawFogParticle(particle, timestamp) {
+      const wobble = Math.sin(timestamp * 0.00011 + particle.phase) * particle.drift;
+      const vertical = Math.cos(timestamp * 0.000075 + particle.phase * 1.7) * particle.drift * 0.34;
+      const x = particle.x + wobble;
+      const y = particle.y + vertical;
+
+      context.save();
+      context.translate(x, y);
+      context.scale(particle.radiusX, particle.radiusY);
+      const gradient = context.createRadialGradient(0, 0, 0, 0, 0, 1);
+      gradient.addColorStop(0, `rgba(218, 210, 211, ${particle.alpha})`);
+      gradient.addColorStop(0.42, `rgba(168, 155, 159, ${particle.alpha * 0.72})`);
+      gradient.addColorStop(1, "rgba(105, 91, 97, 0)");
+      context.fillStyle = gradient;
+      context.beginPath();
+      context.arc(0, 0, 1, 0, Math.PI * 2);
+      context.fill();
+      context.restore();
+    }
+
+    function draw(timestamp) {
+      if (document.documentElement.dataset.siteTheme !== "dracula" || document.hidden) {
+        stopDraculaFog();
+        return;
+      }
+
+      context.clearRect(0, 0, width, height);
+      context.globalCompositeOperation = "screen";
+      context.filter = "blur(18px)";
+
+      for (const particle of particles) {
+        particle.x += particle.speed;
+        if (particle.x - particle.radiusX > width + 80) {
+          particle.x = -particle.radiusX - Math.random() * width * 0.18;
+          particle.y = height * (0.10 + Math.random() * 0.84);
+        }
+        drawFogParticle(particle, timestamp);
+      }
+
+      context.filter = "none";
+      context.globalCompositeOperation = "source-over";
+      draculaFogAnimation = window.requestAnimationFrame(draw);
+    }
+
+    resize();
+    canvas.classList.add("is-active");
+    draculaFogAnimation = window.requestAnimationFrame(draw);
+
+    if (canvas.dataset.resizeBound !== "true") {
+      canvas.dataset.resizeBound = "true";
+      window.addEventListener("resize", () => {
+        if (document.documentElement.dataset.siteTheme !== "dracula") return;
+        window.clearTimeout(draculaFogResizeTimer);
+        draculaFogResizeTimer = window.setTimeout(() => {
+          stopDraculaFog();
+          startDraculaFog();
+        }, 140);
+      });
+    }
+  }
+
   function stopMatrixRain({ remove = false } = {}) {
     if (matrixRainAnimation) {
       window.cancelAnimationFrame(matrixRainAnimation);
@@ -137,6 +269,12 @@
       startMatrixRain();
     } else {
       stopMatrixRain({ remove: true });
+    }
+
+    if (siteTheme === "dracula") {
+      startDraculaFog();
+    } else {
+      stopDraculaFog({ remove: true });
     }
   }
 
@@ -349,16 +487,26 @@
       document.documentElement.dataset.themeCommandsBound = "true";
       document.addEventListener("keydown", handleThemeCommandKeydown);
       document.addEventListener("visibilitychange", () => {
+        const siteTheme = document.documentElement.dataset.siteTheme;
         if (document.hidden) {
           stopMatrixRain();
-        } else if (document.documentElement.dataset.siteTheme === "matrix") {
+          stopDraculaFog();
+        } else if (siteTheme === "matrix") {
           startMatrixRain();
+        } else if (siteTheme === "dracula") {
+          startDraculaFog();
         }
       });
       MATRIX_RAIN_REDUCED_MOTION.addEventListener?.("change", () => {
         if (document.documentElement.dataset.siteTheme === "matrix") {
           if (MATRIX_RAIN_REDUCED_MOTION.matches) stopMatrixRain({ remove: true });
           else startMatrixRain();
+        }
+      });
+      DRACULA_FOG_REDUCED_MOTION.addEventListener?.("change", () => {
+        if (document.documentElement.dataset.siteTheme === "dracula") {
+          if (DRACULA_FOG_REDUCED_MOTION.matches) stopDraculaFog({ remove: true });
+          else startDraculaFog();
         }
       });
     }
