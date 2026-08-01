@@ -17,6 +17,126 @@
   let commandBuffer = "";
   let commandTimer = 0;
 
+  const MATRIX_RAIN_ID = "matrix-rain-canvas";
+  const MATRIX_RAIN_REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let matrixRainAnimation = 0;
+  let matrixRainResizeTimer = 0;
+
+  function stopMatrixRain({ remove = false } = {}) {
+    if (matrixRainAnimation) {
+      window.cancelAnimationFrame(matrixRainAnimation);
+      matrixRainAnimation = 0;
+    }
+    window.clearTimeout(matrixRainResizeTimer);
+    matrixRainResizeTimer = 0;
+
+    const canvas = document.getElementById(MATRIX_RAIN_ID);
+    if (canvas) {
+      canvas.classList.remove("is-active");
+      if (remove) canvas.remove();
+    }
+  }
+
+  function startMatrixRain() {
+    stopMatrixRain();
+
+    if (MATRIX_RAIN_REDUCED_MOTION.matches || document.hidden) return;
+
+    let canvas = document.getElementById(MATRIX_RAIN_ID);
+    if (!canvas) {
+      canvas = document.createElement("canvas");
+      canvas.id = MATRIX_RAIN_ID;
+      canvas.setAttribute("aria-hidden", "true");
+      document.body.prepend(canvas);
+    }
+
+    const context = canvas.getContext("2d", { alpha: true });
+    if (!context) return;
+
+    const fontSize = 16;
+    const frameInterval = 58;
+    let columns = 0;
+    let drops = [];
+    let lastFrame = 0;
+
+    function resize() {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      canvas.width = Math.floor(width * ratio);
+      canvas.height = Math.floor(height * ratio);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      columns = Math.ceil(width / fontSize);
+      drops = Array.from({ length: columns }, (_, index) =>
+        drops[index] ?? Math.floor(Math.random() * -45),
+      );
+      context.clearRect(0, 0, width, height);
+    }
+
+    function draw(timestamp) {
+      if (document.documentElement.dataset.siteTheme !== "matrix" || document.hidden) {
+        stopMatrixRain();
+        return;
+      }
+
+      if (timestamp - lastFrame >= frameInterval) {
+        lastFrame = timestamp;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        context.fillStyle = "rgba(2, 7, 4, 0.115)";
+        context.fillRect(0, 0, width, height);
+        context.font = `${fontSize}px "Matrix MZ4P", Consolas, monospace`;
+        context.textAlign = "center";
+
+        for (let index = 0; index < columns; index += 1) {
+          const x = index * fontSize + fontSize / 2;
+          const y = drops[index] * fontSize;
+          const digit = Math.random() > 0.5 ? "1" : "0";
+
+          context.fillStyle = Math.random() > 0.965
+            ? "rgba(220, 255, 225, 0.88)"
+            : "rgba(56, 255, 98, 0.58)";
+          context.fillText(digit, x, y);
+
+          if (y > height && Math.random() > 0.973) {
+            drops[index] = Math.floor(Math.random() * -24);
+          } else {
+            drops[index] += 1;
+          }
+        }
+      }
+
+      matrixRainAnimation = window.requestAnimationFrame(draw);
+    }
+
+    resize();
+    canvas.classList.add("is-active");
+    matrixRainAnimation = window.requestAnimationFrame(draw);
+
+    if (canvas.dataset.resizeBound !== "true") {
+      canvas.dataset.resizeBound = "true";
+      window.addEventListener("resize", () => {
+        if (document.documentElement.dataset.siteTheme !== "matrix") return;
+        window.clearTimeout(matrixRainResizeTimer);
+        matrixRainResizeTimer = window.setTimeout(() => {
+          stopMatrixRain();
+          startMatrixRain();
+        }, 120);
+      });
+    }
+  }
+
+  function syncThemeEffects(siteTheme) {
+    if (siteTheme === "matrix") {
+      startMatrixRain();
+    } else {
+      stopMatrixRain({ remove: true });
+    }
+  }
+
   function getPreferredTheme() {
     const saved = localStorage.getItem(MODE_STORAGE_KEY);
     if (saved === "light" || saved === "dark") return saved;
@@ -106,6 +226,7 @@
       apply("dark");
     }
     updateThemeSwitchAvailability();
+    syncThemeEffects(normalized);
 
     if (announce) {
       showThemeNotice(
@@ -224,6 +345,19 @@
     if (document.documentElement.dataset.themeCommandsBound !== "true") {
       document.documentElement.dataset.themeCommandsBound = "true";
       document.addEventListener("keydown", handleThemeCommandKeydown);
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          stopMatrixRain();
+        } else if (document.documentElement.dataset.siteTheme === "matrix") {
+          startMatrixRain();
+        }
+      });
+      MATRIX_RAIN_REDUCED_MOTION.addEventListener?.("change", () => {
+        if (document.documentElement.dataset.siteTheme === "matrix") {
+          if (MATRIX_RAIN_REDUCED_MOTION.matches) stopMatrixRain({ remove: true });
+          else startMatrixRain();
+        }
+      });
     }
   }
 

@@ -2037,9 +2037,9 @@ html[data-site-theme="matrix"] {
   --syntax-option: #5dff82;
   --syntax-path: #71ffb0;
   --bg: #020704;
-  --surface: #061108;
-  --surface-subtle: #0a190d;
-  --surface-hover: #102819;
+  --surface: rgba(6, 17, 8, 0.94);
+  --surface-subtle: rgba(10, 25, 13, 0.91);
+  --surface-hover: rgba(16, 40, 25, 0.95);
   --text: #8dff9d;
   --text-muted: #4fcf68;
   --border: #174d24;
@@ -2468,4 +2468,44 @@ html[data-site-theme="matrix"] table,
 html[data-site-theme="matrix"] code,
 html[data-site-theme="matrix"] pre {
   font-family: "Matrix MZ4P", Consolas, "Courier New", monospace !important;
+}
+
+/* Matrix digital-rain background */
+#matrix-rain-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+html[data-site-theme="matrix"] #matrix-rain-canvas.is-active {
+  opacity: 0.42;
+}
+
+html[data-site-theme="matrix"] .site-header,
+html[data-site-theme="matrix"] .app-shell,
+html[data-site-theme="matrix"] .tool-main,
+html[data-site-theme="matrix"] .repo-theme-notice {
+  position: relative;
+  z-index: 1;
+}
+
+html[data-site-theme="matrix"] .panel,
+html[data-site-theme="matrix"] .tool-card,
+html[data-site-theme="matrix"] .code-window,
+html[data-site-theme="matrix"] .notes-sidebar,
+html[data-site-theme="matrix"] .note-viewer,
+html[data-site-theme="matrix"] .viewer-panel,
+html[data-site-theme="matrix"] .tool-section {
+  backdrop-filter: blur(1.5px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #matrix-rain-canvas {
+    display: none !important;
+  }
 }
