@@ -17,6 +17,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Fixedsys Excelsior";
+  src: url("../fonts/fixedsys-excelsior.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   color-scheme: light;
   --header-height: 4rem;
@@ -2442,10 +2450,10 @@ html[data-site-theme="nord"] .site-header {
 
 /* Fallout terminal ---------------------------------------------------------- */
 html[data-site-theme="fallout"] {
-  --font-ui: "Lucida Console", Monaco, "Courier New", monospace;
-  --font-code: "Lucida Console", Monaco, "Courier New", monospace;
-  --font-title: "Arial Narrow", "Lucida Console", monospace;
-  --font-notes: "Courier New", Courier, monospace;
+  --font-ui: "Fixedsys Excelsior", "Lucida Console", Monaco, "Courier New", monospace;
+  --font-code: "Fixedsys Excelsior", "Lucida Console", Monaco, "Courier New", monospace;
+  --font-title: "Fixedsys Excelsior", "Lucida Console", Monaco, "Courier New", monospace;
+  --font-notes: "Fixedsys Excelsior", "Lucida Console", Monaco, "Courier New", monospace;
   --syntax-comment: #6f8d39;
   --syntax-command: #d5f56a;
   --syntax-keyword: #ffd166;
@@ -2532,6 +2540,19 @@ html[data-site-theme="fallout"] .site-title,
 html[data-site-theme="fallout"] button {
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+
+/* Fallout full-font treatment */
+html[data-site-theme="fallout"] body,
+html[data-site-theme="fallout"] button,
+html[data-site-theme="fallout"] input,
+html[data-site-theme="fallout"] select,
+html[data-site-theme="fallout"] textarea,
+html[data-site-theme="fallout"] table,
+html[data-site-theme="fallout"] code,
+html[data-site-theme="fallout"] pre {
+  font-family: "Fixedsys Excelsior", "Lucida Console", Monaco, "Courier New", monospace !important;
 }
 
 /* Gothic Dracula ------------------------------------------------------------ */
