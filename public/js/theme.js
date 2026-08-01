@@ -12,6 +12,9 @@
     amber: "Amber terminal",
     blueprint: "Blueprint",
     crt: "Retro CRT",
+    nord: "Nord",
+    fallout: "Fallout terminal",
+    dracula: "Dracula castle",
   });
 
   let commandBuffer = "";

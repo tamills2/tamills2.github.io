@@ -2365,6 +2365,265 @@ html[data-site-theme="crt"] body::after {
 }
 
 
+
+
+/* Nord ---------------------------------------------------------------------- */
+html[data-site-theme="nord"] {
+  --font-ui: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-code: "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-title: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-notes: "Courier New", Courier, monospace;
+  --syntax-comment: #616e88;
+  --syntax-command: #88c0d0;
+  --syntax-keyword: #81a1c1;
+  --syntax-string: #a3be8c;
+  --syntax-variable: #ebcb8b;
+  --syntax-number: #b48ead;
+  --syntax-operator: #bf616a;
+  --syntax-option: #8fbcbb;
+  --syntax-path: #88c0d0;
+  --bg: #242933;
+  --surface: #2e3440;
+  --surface-opaque: #2e3440;
+  --surface-subtle: #353c4a;
+  --surface-hover: #3b4352;
+  --text: #eceff4;
+  --text-muted: #aeb8c8;
+  --border: #434c5e;
+  --border-strong: #5e6b80;
+  --accent: #88c0d0;
+  --accent-soft: rgba(136, 192, 208, 0.16);
+  --shadow: 0 12px 32px rgba(11, 15, 22, 0.28);
+  --switch-track: #434c5e;
+  --switch-thumb: #d8dee9;
+  --code-gutter: #252a34;
+  --code-line-hover: rgba(136, 192, 208, 0.08);
+  --on-accent: #242933;
+  --danger: #bf616a;
+  --danger-soft: color-mix(in srgb, var(--danger) 15%, transparent);
+  --success: #a3be8c;
+  --success-soft: color-mix(in srgb, var(--success) 15%, transparent);
+  --warning: #ebcb8b;
+  --warning-soft: color-mix(in srgb, var(--warning) 15%, transparent);
+  --info: #81a1c1;
+  --info-soft: color-mix(in srgb, var(--info) 15%, transparent);
+  --code-surface: #2b303b;
+  --tooltip-bg: #3b4352;
+  --tooltip-text: #eceff4;
+  --overlay: rgba(20, 24, 31, 0.78);
+  --header-control-hover: rgba(136, 192, 208, 0.12);
+  --header-focus-ring: #88c0d0;
+  --header-border-soft: rgba(216, 222, 233, 0.24);
+  --header-surface-soft: rgba(216, 222, 233, 0.08);
+  --header-input-border: rgba(216, 222, 233, 0.24);
+  --header-input-bg: rgba(216, 222, 233, 0.07);
+  --header-input-highlight: rgba(136, 192, 208, 0.09);
+  --header-kbd-bg: rgba(20, 24, 31, 0.32);
+  --header-focus-border: #88c0d0;
+  --header-focus-shadow: rgba(136, 192, 208, 0.22);
+  --selection-highlight: rgba(235, 203, 139, 0.26);
+  --selection-current: rgba(235, 203, 139, 0.46);
+}
+
+html[data-site-theme="nord"] .site-header {
+  background: rgba(46, 52, 64, 0.96);
+}
+
+/* Fallout terminal ---------------------------------------------------------- */
+html[data-site-theme="fallout"] {
+  --font-ui: "Lucida Console", Monaco, "Courier New", monospace;
+  --font-code: "Lucida Console", Monaco, "Courier New", monospace;
+  --font-title: "Arial Narrow", "Lucida Console", monospace;
+  --font-notes: "Courier New", Courier, monospace;
+  --syntax-comment: #6f8d39;
+  --syntax-command: #d5f56a;
+  --syntax-keyword: #ffd166;
+  --syntax-string: #b8dc5b;
+  --syntax-variable: #efff9a;
+  --syntax-number: #f4ba4a;
+  --syntax-operator: #ff7b54;
+  --syntax-option: #9fd35a;
+  --syntax-path: #d5f56a;
+  --bg: #080b05;
+  --surface: rgba(20, 27, 12, 0.96);
+  --surface-opaque: #141b0c;
+  --surface-subtle: rgba(29, 39, 17, 0.96);
+  --surface-hover: rgba(43, 58, 24, 0.98);
+  --text: #d5f56a;
+  --text-muted: #8faa43;
+  --border: #52662a;
+  --border-strong: #8eae45;
+  --accent: #b6e354;
+  --accent-soft: rgba(182, 227, 84, 0.15);
+  --shadow: inset 0 0 0 1px rgba(182, 227, 84, 0.08), 0 12px 32px rgba(0, 0, 0, 0.44);
+  --switch-track: #34431d;
+  --switch-thumb: #d5f56a;
+  --code-gutter: #0d1208;
+  --code-line-hover: rgba(182, 227, 84, 0.08);
+  --on-accent: #101506;
+  --danger: #ff765e;
+  --danger-soft: color-mix(in srgb, var(--danger) 14%, transparent);
+  --success: #b6e354;
+  --success-soft: color-mix(in srgb, var(--success) 14%, transparent);
+  --warning: #f4ba4a;
+  --warning-soft: color-mix(in srgb, var(--warning) 14%, transparent);
+  --info: #d5f56a;
+  --info-soft: color-mix(in srgb, var(--info) 14%, transparent);
+  --code-surface: #101607;
+  --tooltip-bg: #263414;
+  --tooltip-text: #e6ff87;
+  --overlay: rgba(4, 6, 2, 0.82);
+  --header-control-hover: rgba(182, 227, 84, 0.13);
+  --header-focus-ring: #b6e354;
+  --header-border-soft: rgba(213, 245, 106, 0.28);
+  --header-surface-soft: rgba(182, 227, 84, 0.08);
+  --header-input-border: rgba(213, 245, 106, 0.28);
+  --header-input-bg: rgba(182, 227, 84, 0.07);
+  --header-input-highlight: rgba(182, 227, 84, 0.09);
+  --header-kbd-bg: rgba(4, 6, 2, 0.35);
+  --header-focus-border: #d5f56a;
+  --header-focus-shadow: rgba(182, 227, 84, 0.24);
+  --selection-highlight: rgba(244, 186, 74, 0.28);
+  --selection-current: rgba(244, 186, 74, 0.52);
+}
+
+html[data-site-theme="fallout"] body {
+  background-image:
+    radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, 0.48) 100%),
+    repeating-linear-gradient(0deg, rgba(213, 245, 106, 0.022) 0 1px, transparent 1px 4px);
+  text-shadow: 0 0 0.32rem rgba(182, 227, 84, 0.14);
+}
+
+html[data-site-theme="fallout"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.012), transparent 48%, rgba(0, 0, 0, 0.025)),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, 0.07) 3px 4px);
+  mix-blend-mode: screen;
+  opacity: 0.38;
+}
+
+html[data-site-theme="fallout"] .panel,
+html[data-site-theme="fallout"] .tool-card,
+html[data-site-theme="fallout"] .tool-section,
+html[data-site-theme="fallout"] .code-window {
+  border-width: 2px;
+  box-shadow: inset 0 0 1.1rem rgba(182, 227, 84, 0.025), var(--shadow);
+}
+
+html[data-site-theme="fallout"] h1,
+html[data-site-theme="fallout"] h2,
+html[data-site-theme="fallout"] .site-title,
+html[data-site-theme="fallout"] button {
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Gothic Dracula ------------------------------------------------------------ */
+html[data-site-theme="dracula"] {
+  --font-ui: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-code: "Courier New", Courier, monospace;
+  --font-title: Georgia, "Times New Roman", serif;
+  --font-notes: "Courier New", Courier, monospace;
+  --syntax-comment: #82666b;
+  --syntax-command: #e7c7bd;
+  --syntax-keyword: #d7565e;
+  --syntax-string: #c99a8c;
+  --syntax-variable: #d9b56f;
+  --syntax-number: #bd7a87;
+  --syntax-operator: #ff6771;
+  --syntax-option: #ad857a;
+  --syntax-path: #d6aaa0;
+  --bg: #090607;
+  --surface: rgba(24, 12, 15, 0.96);
+  --surface-opaque: #180c0f;
+  --surface-subtle: rgba(34, 16, 20, 0.96);
+  --surface-hover: rgba(52, 20, 26, 0.98);
+  --text: #eadfda;
+  --text-muted: #a98d8d;
+  --border: #54242b;
+  --border-strong: #8a303b;
+  --accent: #b51f32;
+  --accent-soft: rgba(181, 31, 50, 0.17);
+  --shadow: 0 16px 40px rgba(0, 0, 0, 0.56), inset 0 1px rgba(255, 238, 230, 0.025);
+  --switch-track: #3b171d;
+  --switch-thumb: #e2d4ce;
+  --code-gutter: #0c0809;
+  --code-line-hover: rgba(181, 31, 50, 0.09);
+  --on-accent: #fff3ed;
+  --danger: #d53040;
+  --danger-soft: color-mix(in srgb, var(--danger) 15%, transparent);
+  --success: #8f9c6b;
+  --success-soft: color-mix(in srgb, var(--success) 15%, transparent);
+  --warning: #b8955f;
+  --warning-soft: color-mix(in srgb, var(--warning) 15%, transparent);
+  --info: #ad7882;
+  --info-soft: color-mix(in srgb, var(--info) 15%, transparent);
+  --code-surface: #120a0c;
+  --tooltip-bg: #32151a;
+  --tooltip-text: #eadfda;
+  --overlay: rgba(4, 2, 3, 0.84);
+  --header-control-hover: rgba(181, 31, 50, 0.16);
+  --header-focus-ring: #c92a3e;
+  --header-border-soft: rgba(234, 223, 218, 0.2);
+  --header-surface-soft: rgba(181, 31, 50, 0.08);
+  --header-input-border: rgba(234, 223, 218, 0.2);
+  --header-input-bg: rgba(181, 31, 50, 0.07);
+  --header-input-highlight: rgba(181, 31, 50, 0.1);
+  --header-kbd-bg: rgba(0, 0, 0, 0.34);
+  --header-focus-border: #c92a3e;
+  --header-focus-shadow: rgba(181, 31, 50, 0.28);
+  --selection-highlight: rgba(181, 31, 50, 0.32);
+  --selection-current: rgba(181, 31, 50, 0.56);
+}
+
+html[data-site-theme="dracula"] body {
+  background-color: #090607;
+  background-image:
+    radial-gradient(ellipse at center, transparent 28%, rgba(0, 0, 0, 0.68) 100%),
+    linear-gradient(rgba(78, 20, 29, 0.08), rgba(0, 0, 0, 0.12)),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(108, 35, 44, 0.13) 31px 33px),
+    repeating-linear-gradient(90deg, rgba(64, 22, 27, 0.09) 0 2px, transparent 2px 66px);
+  background-attachment: fixed;
+}
+
+html[data-site-theme="dracula"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 65px, rgba(0, 0, 0, 0.16) 65px 67px),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(0, 0, 0, 0.14) 31px 33px);
+  transform: skewY(-0.18deg);
+  opacity: 0.48;
+}
+
+html[data-site-theme="dracula"] h1,
+html[data-site-theme="dracula"] h2,
+html[data-site-theme="dracula"] .site-title {
+  font-weight: 500;
+  letter-spacing: 0.045em;
+  text-shadow: 0 2px 18px rgba(181, 31, 50, 0.2);
+}
+
+html[data-site-theme="dracula"] .panel,
+html[data-site-theme="dracula"] .tool-card,
+html[data-site-theme="dracula"] .tool-section {
+  border-color: color-mix(in srgb, var(--border) 86%, black);
+  box-shadow: var(--shadow);
+}
+
+html[data-site-theme="dracula"] a:hover,
+html[data-site-theme="dracula"] button:hover {
+  text-shadow: 0 0 0.8rem rgba(181, 31, 50, 0.34);
+}
+
 /* Theme-variable component normalization ------------------------------------ */
 html[data-site-theme] .ansi-sequence,
 html[data-site-theme] .terminal-preview,
@@ -2567,7 +2826,10 @@ html:is(
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .code-window {
   --surface: #161b22;
   --surface-subtle: #21262d;
@@ -2606,21 +2868,30 @@ html:is(
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .code-window,
 html:is(
   [data-site-theme="matrix"],
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .code-window button,
 html:is(
   [data-site-theme="matrix"],
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .code-window input {
   font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
   text-shadow: none;
@@ -2631,14 +2902,20 @@ html:is(
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .code-window .code-table,
 html:is(
   [data-site-theme="matrix"],
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .code-window .code-table code {
   font-family: "Courier New", Courier, monospace !important;
   text-shadow: none;
@@ -2649,7 +2926,10 @@ html:is(
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .code-window-header {
   border-color: #30363d;
   background: #21262d;
@@ -2661,14 +2941,20 @@ html:is(
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .code-table-wrapper,
 html:is(
   [data-site-theme="matrix"],
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .code-window-body {
   background: #161b22;
 }
@@ -2678,7 +2964,10 @@ html:is(
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .line-number {
   border-color: #30363d;
   background: #0d1117;
@@ -2690,7 +2979,10 @@ html:is(
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .note-search-input-shell {
   border-color: #484f58;
   border-radius: 0.45rem !important;
@@ -2703,7 +2995,10 @@ html:is(
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .note-search-input-shell:focus-within {
   border-color: #58a6ff;
   box-shadow: 0 0 0 3px rgba(56, 139, 253, 0.16);
@@ -2714,7 +3009,10 @@ html:is(
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .note-search-input-shell input {
   background: transparent;
   color: #e6edf3;
@@ -2725,14 +3023,20 @@ html:is(
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .note-search-button,
 html:is(
   [data-site-theme="matrix"],
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .note-copy-button {
   border-color: #484f58;
   border-radius: 0.45rem !important;
@@ -2745,14 +3049,20 @@ html:is(
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .note-search-button:hover,
 html:is(
   [data-site-theme="matrix"],
   [data-site-theme="dos"],
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
-  [data-site-theme="crt"]
+  [data-site-theme="crt"],
+  [data-site-theme="nord"],
+  [data-site-theme="fallout"],
+  [data-site-theme="dracula"]
 ) .note-copy-button:hover {
   border-color: #58a6ff;
   background: rgba(56, 139, 253, 0.16);
