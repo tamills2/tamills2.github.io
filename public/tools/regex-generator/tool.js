@@ -258,7 +258,6 @@ updateTests();
 
 
 const explainInput = document.querySelector("#explain-input");
-const explainFlags = document.querySelector("#explain-flags");
 const explainerStatus = document.querySelector("#explainer-status");
 const explainerResults = document.querySelector("#explainer-results");
 const tokenList = document.querySelector("#token-list");
@@ -498,11 +497,11 @@ function candidateExamples(pattern, flags) {
 function renderExplanation() {
   let pattern = explainInput.value.trim();
   const slashMatch = pattern.match(/^\/(.*)\/([dgimsuvy]*)$/);
+  let flags = "";
   if (slashMatch) {
     pattern = slashMatch[1];
-    if (!explainFlags.value.trim()) explainFlags.value = slashMatch[2];
+    flags = [...new Set(slashMatch[2].split(""))].join("");
   }
-  const flags = [...new Set(explainFlags.value.trim().split(""))].join("");
   tokenList.replaceChildren();
   exampleMatchList.replaceChildren();
   explainerStatus.textContent = "";
@@ -557,7 +556,6 @@ function renderExplanation() {
 document.querySelector("#explain-button").addEventListener("click", renderExplanation);
 document.querySelector("#explain-clear").addEventListener("click", () => {
   explainInput.value = "";
-  explainFlags.value = "";
   explainerStatus.textContent = "";
   explainerResults.hidden = true;
   tokenList.replaceChildren();

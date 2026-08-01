@@ -221,13 +221,12 @@
 
 .explainer-input-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 7rem auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 0.75rem;
   align-items: end;
 }
 
-.regex-explain-input,
-.flag-field input {
+.regex-explain-input {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
@@ -294,9 +293,6 @@
     grid-template-columns: 1fr;
   }
 
-  .flag-field {
-    max-width: 10rem;
-  }
 
   .explain-button {
     justify-self: start;
