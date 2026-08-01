@@ -1838,3 +1838,199 @@ textarea:focus {
     display: inline;
   }
 }
+
+/* Global hidden-command themes ------------------------------------------------ */
+
+.repo-theme-notice {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1000;
+  max-width: min(24rem, calc(100vw - 2rem));
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.65rem;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(0.5rem);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.repo-theme-notice.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+html[data-site-theme] {
+  color-scheme: dark;
+}
+
+html[data-site-theme] body,
+html[data-site-theme] button,
+html[data-site-theme] input,
+html[data-site-theme] select,
+html[data-site-theme] textarea {
+  font-family: "Courier New", Courier, monospace;
+}
+
+html[data-site-theme] .site-header {
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+}
+
+/* Matrix */
+html[data-site-theme="matrix"] {
+  --bg: #020704;
+  --surface: #061108;
+  --surface-subtle: #0a190d;
+  --surface-hover: #102819;
+  --text: #8dff9d;
+  --text-muted: #4fcf68;
+  --border: #174d24;
+  --border-strong: #2f8f43;
+  --accent: #38ff62;
+  --accent-soft: rgba(56, 255, 98, 0.14);
+  --shadow: 0 10px 30px rgba(0, 255, 64, 0.09);
+  --switch-track: #174d24;
+  --switch-thumb: #8dff9d;
+  --code-gutter: #020704;
+  --code-line-hover: rgba(56, 255, 98, 0.08);
+}
+
+html[data-site-theme="matrix"] body {
+  text-shadow: 0 0 0.35rem rgba(56, 255, 98, 0.16);
+}
+
+/* DOS */
+html[data-site-theme="dos"] {
+  --bg: #0000aa;
+  --surface: #000088;
+  --surface-subtle: #000070;
+  --surface-hover: #1b1ba8;
+  --text: #f2f2f2;
+  --text-muted: #c7c7c7;
+  --border: #bfc0c0;
+  --border-strong: #ffffff;
+  --accent: #ffff55;
+  --accent-soft: rgba(255, 255, 85, 0.16);
+  --shadow: 0.3rem 0.3rem 0 #000044;
+  --switch-track: #808080;
+  --switch-thumb: #ffffff;
+  --code-gutter: #000066;
+  --code-line-hover: rgba(255, 255, 255, 0.09);
+}
+
+html[data-site-theme="dos"] *,
+html[data-site-theme="dos"] *::before,
+html[data-site-theme="dos"] *::after {
+  border-radius: 0 !important;
+}
+
+html[data-site-theme="dos"] button,
+html[data-site-theme="dos"] input,
+html[data-site-theme="dos"] select,
+html[data-site-theme="dos"] textarea {
+  border-color: #ffffff;
+}
+
+/* Amber terminal */
+html[data-site-theme="amber"] {
+  --bg: #090603;
+  --surface: #130d05;
+  --surface-subtle: #1d1307;
+  --surface-hover: #2b1d0a;
+  --text: #ffc45b;
+  --text-muted: #c88927;
+  --border: #5a3a0b;
+  --border-strong: #a96d13;
+  --accent: #ffae2b;
+  --accent-soft: rgba(255, 174, 43, 0.15);
+  --shadow: 0 10px 30px rgba(255, 153, 0, 0.08);
+  --switch-track: #5a3a0b;
+  --switch-thumb: #ffc45b;
+  --code-gutter: #090603;
+  --code-line-hover: rgba(255, 174, 43, 0.08);
+}
+
+html[data-site-theme="amber"] body {
+  text-shadow: 0 0 0.38rem rgba(255, 174, 43, 0.18);
+}
+
+/* Blueprint */
+html[data-site-theme="blueprint"] {
+  --bg: #07192d;
+  --surface: #0a223b;
+  --surface-subtle: #0d2c4a;
+  --surface-hover: #123b61;
+  --text: #e8fbff;
+  --text-muted: #91c8d4;
+  --border: #2a6175;
+  --border-strong: #55a8ba;
+  --accent: #54e6dd;
+  --accent-soft: rgba(84, 230, 221, 0.14);
+  --shadow: 0 10px 30px rgba(0, 8, 18, 0.34);
+  --switch-track: #2a6175;
+  --switch-thumb: #e8fbff;
+  --code-gutter: #061525;
+  --code-line-hover: rgba(84, 230, 221, 0.08);
+}
+
+html[data-site-theme="blueprint"] body {
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(84, 230, 221, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(84, 230, 221, 0.055) 1px, transparent 1px),
+    linear-gradient(rgba(84, 230, 221, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(84, 230, 221, 0.025) 1px, transparent 1px);
+  background-size: 4rem 4rem, 4rem 4rem, 1rem 1rem, 1rem 1rem;
+}
+
+/* Retro CRT */
+html[data-site-theme="crt"] {
+  --bg: #050806;
+  --surface: #0a100c;
+  --surface-subtle: #0d1710;
+  --surface-hover: #142219;
+  --text: #b7e8be;
+  --text-muted: #72a97b;
+  --border: #274c2e;
+  --border-strong: #4f8659;
+  --accent: #87d790;
+  --accent-soft: rgba(135, 215, 144, 0.13);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --switch-track: #274c2e;
+  --switch-thumb: #b7e8be;
+  --code-gutter: #050806;
+  --code-line-hover: rgba(135, 215, 144, 0.07);
+}
+
+html[data-site-theme="crt"] body {
+  text-shadow: 0 0 0.28rem rgba(135, 215, 144, 0.16);
+}
+
+html[data-site-theme="crt"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    rgba(0, 0, 0, 0.13) 3px,
+    rgba(0, 0, 0, 0.13) 4px
+  );
+  opacity: 0.42;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .repo-theme-notice {
+    transition: none;
+  }
+}
