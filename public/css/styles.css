@@ -2559,3 +2559,202 @@ html[data-site-theme="matrix"] .site-header {
   inset: 0 0 auto;
   z-index: 100;
 }
+
+/* Hidden themes: keep the surrounding page themed, but render the actual
+   Notes Viewer window as a stable default-dark code editor. */
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .code-window {
+  --surface: #161b22;
+  --surface-subtle: #21262d;
+  --surface-hover: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --border: #30363d;
+  --border-strong: #484f58;
+  --accent: #58a6ff;
+  --accent-soft: rgba(56, 139, 253, 0.16);
+  --code-gutter: #0d1117;
+  --code-line-hover: rgba(110, 118, 129, 0.14);
+  --syntax-comment: #8b949e;
+  --syntax-command: #79c0ff;
+  --syntax-keyword: #ff7b72;
+  --syntax-string: #a5d6ff;
+  --syntax-variable: #ffa657;
+  --syntax-number: #79c0ff;
+  --syntax-operator: #ff7b72;
+  --syntax-option: #7ee787;
+  --syntax-path: #a5d6ff;
+  --selection-highlight: rgba(187, 128, 9, 0.38);
+  --selection-current: rgba(210, 153, 34, 0.62);
+
+  border-color: #30363d;
+  border-style: solid;
+  border-radius: 0.65rem !important;
+  background: #161b22;
+  color: #e6edf3;
+  text-shadow: none;
+  backdrop-filter: none;
+}
+
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .code-window,
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .code-window button,
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .code-window input {
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  text-shadow: none;
+}
+
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .code-window .code-table,
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .code-window .code-table code {
+  font-family: "Courier New", Courier, monospace !important;
+  text-shadow: none;
+}
+
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .code-window-header {
+  border-color: #30363d;
+  background: #21262d;
+  color: #e6edf3;
+}
+
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .code-table-wrapper,
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .code-window-body {
+  background: #161b22;
+}
+
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .line-number {
+  border-color: #30363d;
+  background: #0d1117;
+  color: #8b949e;
+}
+
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .note-search-input-shell {
+  border-color: #484f58;
+  border-radius: 0.45rem !important;
+  background: #0d1117;
+  color: #e6edf3;
+}
+
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .note-search-input-shell:focus-within {
+  border-color: #58a6ff;
+  box-shadow: 0 0 0 3px rgba(56, 139, 253, 0.16);
+}
+
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .note-search-input-shell input {
+  background: transparent;
+  color: #e6edf3;
+}
+
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .note-search-button,
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .note-copy-button {
+  border-color: #484f58;
+  border-radius: 0.45rem !important;
+  background: #21262d;
+  color: #8b949e;
+}
+
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .note-search-button:hover,
+html:is(
+  [data-site-theme="matrix"],
+  [data-site-theme="dos"],
+  [data-site-theme="amber"],
+  [data-site-theme="blueprint"],
+  [data-site-theme="crt"]
+) .note-copy-button:hover {
+  border-color: #58a6ff;
+  background: rgba(56, 139, 253, 0.16);
+  color: #79c0ff;
+}
