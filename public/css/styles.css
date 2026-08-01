@@ -3780,3 +3780,172 @@ html[data-site-theme="dos"] ::selection {
   background: #00aaaa;
   color: #000000;
 }
+
+/* Classic DOS contrast pass -------------------------------------------------
+   DOS uses two primary planes: blue work areas with white text and gray
+   dialog/window surfaces with black text. Keep gray components readable even
+   when individual tools assign muted or inverted semantic colors. */
+html[data-site-theme="dos"] :is(
+  .quick-link-card,
+  .panel,
+  .tool-card,
+  .section-card,
+  .result-card,
+  .output-card,
+  .status-card,
+  .summary-card,
+  .stat-card,
+  .metric-card,
+  .info-card,
+  .reference-card,
+  .tool-section,
+  .results-panel,
+  .result-panel,
+  .output-panel,
+  .details-panel,
+  .lookup-panel,
+  .generator-panel,
+  .explainer-panel,
+  .converter-panel,
+  .breakdown-panel,
+  .permission-panel,
+  .packet-panel,
+  .packet-diagram,
+  .http-code-card,
+  .status-code-card,
+  .hash-output-row,
+  .output-row,
+  fieldset,
+  table
+) {
+  color: #000000;
+}
+
+html[data-site-theme="dos"] :is(
+  .quick-link-card,
+  .panel,
+  .tool-card,
+  .section-card,
+  .result-card,
+  .output-card,
+  .status-card,
+  .summary-card,
+  .stat-card,
+  .metric-card,
+  .info-card,
+  .reference-card,
+  .tool-section,
+  .results-panel,
+  .result-panel,
+  .output-panel,
+  .details-panel,
+  .lookup-panel,
+  .generator-panel,
+  .explainer-panel,
+  .converter-panel,
+  .breakdown-panel,
+  .permission-panel,
+  .packet-panel,
+  .packet-diagram,
+  .http-code-card,
+  .status-code-card,
+  .hash-output-row,
+  .output-row,
+  fieldset,
+  table
+) :is(h1, h2, h3, h4, h5, h6, p, label, legend, strong, small, span, dt, dd, th, td, li, code) {
+  color: inherit;
+}
+
+/* Gray table/list surfaces must use black text, including muted labels and
+   generated values that normally use light text in dark themes. */
+html[data-site-theme="dos"] :is(
+  table,
+  thead,
+  tbody,
+  tr,
+  th,
+  td,
+  .result-list,
+  .results-list,
+  .reference-list,
+  .status-list,
+  .output-list,
+  .detail-row,
+  .result-row,
+  .output-row,
+  .permission-row,
+  .packet-field,
+  .packet-field-button,
+  .ansi-row,
+  .port-row,
+  .http-code-card,
+  .status-code-card
+) {
+  color: #000000;
+}
+
+html[data-site-theme="dos"] :is(
+  .text-muted,
+  .muted,
+  .helper-text,
+  .field-help,
+  .description,
+  .result-description,
+  .status-description,
+  .output-description,
+  .detail-label,
+  .result-label,
+  .output-label,
+  .stat-label,
+  .metric-label,
+  .table-label,
+  .empty-state,
+  .placeholder-text
+) {
+  color: #000000;
+}
+
+/* Preserve white-on-blue form and output fields after the gray-surface pass. */
+html[data-site-theme="dos"] :is(input, select, textarea, .text-output, .code-output, .command-output, .value-output, .output-value) {
+  color: #ffffff;
+}
+
+html[data-site-theme="dos"] :is(input, textarea)::placeholder {
+  color: #808080;
+  opacity: 1;
+}
+
+/* Reassert intentionally colored DOS badges and status chips. */
+html[data-site-theme="dos"] :is(.card-icon, .search-type-badge, .status-badge, .code-badge, .category-badge) {
+  color: #000000;
+}
+
+/* The Notes Viewer is intentionally isolated as a default-dark editor. The
+   global DOS input bevel must not leak into its compact search control. */
+html[data-site-theme="dos"] .code-window .note-search-input-shell {
+  border: 1px solid #484f58 !important;
+  border-radius: 0.45rem !important;
+  background: #0d1117 !important;
+  color: #e6edf3 !important;
+  box-shadow: none !important;
+}
+
+html[data-site-theme="dos"] .code-window .note-search-input-shell:focus-within {
+  border-color: #58a6ff !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(56, 139, 253, 0.16) !important;
+}
+
+html[data-site-theme="dos"] .code-window .note-search-input-shell input {
+  border: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  color: #e6edf3 !important;
+  box-shadow: none !important;
+  caret-color: #e6edf3 !important;
+}
+
+html[data-site-theme="dos"] .code-window .note-search-input-shell input::placeholder {
+  color: #8b949e !important;
+}
