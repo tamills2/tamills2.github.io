@@ -4078,3 +4078,88 @@ html[data-site-theme="dos"] .code-window .syntax-number,
 html[data-site-theme="dos"] .code-window .syntax-path {
   color: #79c0ff !important;
 }
+
+/* DOS targeted component cleanup -------------------------------------------
+   These selectors cover the remaining tool-specific colors shown in the
+   review screenshots without changing the default-dark Notes Viewer. */
+
+/* Header brand sits on the blue DOS title tile. */
+html[data-site-theme="dos"] .site-header .site-title {
+  color: #ffffff !important;
+}
+
+/* Common Ports: summary tiles and generated command cards are gray windows. */
+html[data-site-theme="dos"] .range-strip article,
+html[data-site-theme="dos"] .range-strip article *,
+html[data-site-theme="dos"] .command-output,
+html[data-site-theme="dos"] .command-output *,
+html[data-site-theme="dos"] .ephemeral-command-grid .command-output,
+html[data-site-theme="dos"] .ephemeral-command-grid .command-output * {
+  color: #000000 !important;
+}
+
+/* Packet diagram: use a DOS bevel instead of the modern white outline. */
+html[data-site-theme="dos"] .packet-diagram {
+  border: 2px solid !important;
+  border-color: #ffffff #000000 #000000 #ffffff !important;
+  border-radius: 0 !important;
+  background: #000000 !important;
+  box-shadow: 6px 6px 0 #000000 !important;
+}
+
+/* Unix Permissions column labels belong to the gray window. */
+html[data-site-theme="dos"] .permissions-grid .column-heading,
+html[data-site-theme="dos"] .permissions-grid .grid-corner {
+  color: #000000 !important;
+}
+
+/* Character Inspector empty output is printed directly on the blue workspace. */
+html[data-site-theme="dos"] .character-output-section,
+html[data-site-theme="dos"] .character-output-section .section-title-row,
+html[data-site-theme="dos"] .character-output-section .section-title-row *,
+html[data-site-theme="dos"] .character-output-section .empty-state {
+  color: #ffffff !important;
+}
+
+/* URL query table empty message is inside a gray panel. */
+html[data-site-theme="dos"] .query-table-wrap,
+html[data-site-theme="dos"] .query-table,
+html[data-site-theme="dos"] .query-table *,
+html[data-site-theme="dos"] .query-empty {
+  color: #000000 !important;
+}
+
+/* Note Builder library and the shared Notes sidebar are gray DOS windows. */
+html[data-site-theme="dos"] .notes-sidebar,
+html[data-site-theme="dos"] .notes-sidebar *,
+html[data-site-theme="dos"] .library-pane,
+html[data-site-theme="dos"] .library-pane *,
+html[data-site-theme="dos"] .available-notes,
+html[data-site-theme="dos"] .available-notes *,
+html[data-site-theme="dos"] .note-builder-main .empty-message {
+  color: #000000 !important;
+}
+
+/* Keep Note Builder's blue editing/input planes white-on-blue. */
+html[data-site-theme="dos"] .note-builder-main :is(input, textarea),
+html[data-site-theme="dos"] .note-builder-main :is(input, textarea)::placeholder,
+html[data-site-theme="dos"] .note-builder-main .editor-pane,
+html[data-site-theme="dos"] .note-builder-main .editor-pane * {
+  color: #ffffff !important;
+}
+
+/* Reassert the fixed dark Notes Viewer after the sidebar/library rules. */
+html[data-site-theme="dos"] .code-window,
+html[data-site-theme="dos"] .code-window * {
+  color: #e6edf3;
+}
+html[data-site-theme="dos"] .code-window .line-number { color: #8b949e !important; }
+html[data-site-theme="dos"] .code-window .syntax-comment { color: #8b949e !important; }
+html[data-site-theme="dos"] .code-window .syntax-command,
+html[data-site-theme="dos"] .code-window .syntax-option { color: #7ee787 !important; }
+html[data-site-theme="dos"] .code-window .syntax-keyword,
+html[data-site-theme="dos"] .code-window .syntax-operator { color: #ff7b72 !important; }
+html[data-site-theme="dos"] .code-window .syntax-string { color: #a5d6ff !important; }
+html[data-site-theme="dos"] .code-window .syntax-variable { color: #d2a8ff !important; }
+html[data-site-theme="dos"] .code-window .syntax-number,
+html[data-site-theme="dos"] .code-window .syntax-path { color: #79c0ff !important; }
