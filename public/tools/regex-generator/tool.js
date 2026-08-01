@@ -563,7 +563,7 @@ document.querySelector("#explain-clear").addEventListener("click", () => {
   explainInput.focus();
 });
 explainInput.addEventListener("keydown", (event) => {
-  if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+  if (event.key === "Enter") {
     event.preventDefault();
     renderExplanation();
   }
