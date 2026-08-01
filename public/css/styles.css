@@ -3949,3 +3949,132 @@ html[data-site-theme="dos"] .code-window .note-search-input-shell input {
 html[data-site-theme="dos"] .code-window .note-search-input-shell input::placeholder {
   color: #8b949e !important;
 }
+
+/* Final DOS readability corrections ----------------------------------------
+   Keep gray DOS windows black-on-gray, blue work areas white-on-blue, and
+   fully isolate the dark Notes Viewer from DOS foreground overrides. */
+html[data-site-theme="dos"] :is(
+  [class*="legend"],
+  [class*="command-card"],
+  [class*="command-item"],
+  [class*="range-card"],
+  [class*="range-item"],
+  [class*="summary-item"],
+  [class*="empty-state"],
+  [class*="empty-message"],
+  [class*="placeholder"],
+  [class*="field-detail"],
+  [class*="packet-detail"],
+  [class*="query-parameter"],
+  [class*="encoding-helper"],
+  [class*="default-row"],
+  [class*="result-item"]
+) {
+  --text: #000000;
+  --text-muted: #000000;
+  --output-text: #000000;
+  color: #000000;
+}
+
+html[data-site-theme="dos"] :is(
+  [class*="legend"],
+  [class*="command-card"],
+  [class*="command-item"],
+  [class*="range-card"],
+  [class*="range-item"],
+  [class*="summary-item"],
+  [class*="empty-state"],
+  [class*="empty-message"],
+  [class*="placeholder"],
+  [class*="field-detail"],
+  [class*="packet-detail"],
+  [class*="query-parameter"],
+  [class*="encoding-helper"],
+  [class*="default-row"],
+  [class*="result-item"]
+) :is(h1, h2, h3, h4, h5, h6, p, span, small, strong, label, code, dt, dd, th, td, li) {
+  color: inherit;
+}
+
+/* Text directly on the blue DOS workspace must remain white. */
+html[data-site-theme="dos"] :is(
+  .main-content > .empty-state,
+  .main-content > .empty-message,
+  .main-content > .placeholder-text,
+  .main-content > [class*="empty"],
+  .main-content > [class*="placeholder"]
+) {
+  color: #ffffff;
+}
+
+/* Blue form/output planes are always white-on-blue. */
+html[data-site-theme="dos"] :is(
+  input,
+  select,
+  textarea,
+  .text-output,
+  .code-output,
+  .command-output,
+  .value-output,
+  .output-value,
+  [class*="input-value"],
+  [class*="output-value"]
+) {
+  --text: #ffffff;
+  --text-muted: #c0c0c0;
+  color: #ffffff;
+}
+
+/* Restore the complete fixed dark editor palette after every DOS rule. */
+html[data-site-theme="dos"] .code-window {
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  color: #e6edf3 !important;
+}
+
+html[data-site-theme="dos"] .code-window :is(
+  .code-window-header,
+  .code-table-wrapper,
+  .code-table,
+  .code-table tbody,
+  .code-table tr,
+  .code-line,
+  .code-line code,
+  .language-label,
+  .note-search-count,
+  .viewer-status
+) {
+  color: #e6edf3 !important;
+}
+
+html[data-site-theme="dos"] .code-window .line-number {
+  color: #8b949e !important;
+}
+
+html[data-site-theme="dos"] .code-window .syntax-comment {
+  color: #8b949e !important;
+  font-style: italic;
+}
+
+html[data-site-theme="dos"] .code-window .syntax-command,
+html[data-site-theme="dos"] .code-window .syntax-option {
+  color: #7ee787 !important;
+}
+
+html[data-site-theme="dos"] .code-window .syntax-keyword,
+html[data-site-theme="dos"] .code-window .syntax-operator {
+  color: #ff7b72 !important;
+}
+
+html[data-site-theme="dos"] .code-window .syntax-string {
+  color: #a5d6ff !important;
+}
+
+html[data-site-theme="dos"] .code-window .syntax-variable {
+  color: #d2a8ff !important;
+}
+
+html[data-site-theme="dos"] .code-window .syntax-number,
+html[data-site-theme="dos"] .code-window .syntax-path {
+  color: #79c0ff !important;
+}
