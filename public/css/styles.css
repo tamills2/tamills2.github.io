@@ -2471,6 +2471,25 @@ html[data-site-theme="matrix"] pre {
   font-family: "Matrix MZ4P", Consolas, "Courier New", monospace !important;
 }
 
+
+/* Homepage sidebar positioning
+   The home dashboard uses a fixed sidebar below the fixed header. This avoids
+   the sticky grid item inheriting an extra vertical offset only on the home
+   view, while leaving the note viewer's established sidebar behavior intact. */
+@media (min-width: 761px) {
+  body.is-home-view:not(.sidebar-collapsed) .notes-sidebar {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    width: var(--sidebar-width);
+    height: calc(100vh - var(--header-height));
+  }
+
+  body.is-home-view:not(.sidebar-collapsed) .main-content {
+    grid-column: 2;
+  }
+}
+
 /* Matrix digital-rain background */
 #matrix-rain-canvas {
   position: fixed;

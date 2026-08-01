@@ -15,6 +15,7 @@ const elements = {};
 
 document.addEventListener("DOMContentLoaded", () => {
   cacheElements();
+  setPageView("home");
   initialiseSidebar();
   initialiseToolsMenu();
   initialiseHomeButton();
@@ -57,6 +58,11 @@ function cacheElements() {
   elements.noteSearchCount = document.querySelector("#note-search-count");
   elements.noteSearchPrevious = document.querySelector("#note-search-previous");
   elements.noteSearchNext = document.querySelector("#note-search-next");
+}
+
+
+function setPageView(view) {
+  elements.body.classList.toggle("is-home-view", view === "home");
 }
 
 function initialiseSidebar() {
@@ -446,6 +452,7 @@ function showSearchPage(rawQuery) {
 
   const matches = getSiteSearchMatches(query);
   state.selectedPath = null;
+  setPageView("other");
 
   elements.homeView.hidden = true;
   elements.fileView.hidden = true;
@@ -809,6 +816,7 @@ async function openInitialNoteRoute() {
 
   const node = findNoteByPath(state.manifest, requestedPath);
   if (!node) {
+    setPageView("other");
     elements.homeView.hidden = true;
     elements.searchPageView.hidden = true;
     elements.fileView.hidden = false;
@@ -951,6 +959,7 @@ async function openNote(node, button, { updateRoute = true } = {}) {
 
 function showFileLoadingState(node) {
   state.selectedPath = node.path;
+  setPageView("other");
 
   elements.homeView.hidden = true;
   elements.searchPageView.hidden = true;
@@ -1174,6 +1183,7 @@ function setActiveFileButton(activeButton) {
 }
 
 function showHome() {
+  setPageView("home");
   setSidebarCollapsed(true);
   state.selectedPath = null;
   state.currentNoteContent = "";
