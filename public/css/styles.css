@@ -2550,3 +2550,12 @@ html[data-site-theme="matrix"] .tool-section {
     display: none !important;
   }
 }
+
+/* Matrix rain layering must not change the fixed-header layout.
+   The earlier grouped rule set position: relative on .site-header, placing the
+   header back in document flow while pages still reserved header space. */
+html[data-site-theme="matrix"] .site-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+}
