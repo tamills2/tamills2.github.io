@@ -255,3 +255,318 @@ examplesInput.addEventListener("keydown", (event) => {
 });
 
 updateTests();
+
+
+const explainInput = document.querySelector("#explain-input");
+const explainFlags = document.querySelector("#explain-flags");
+const explainerStatus = document.querySelector("#explainer-status");
+const explainerResults = document.querySelector("#explainer-results");
+const tokenList = document.querySelector("#token-list");
+const exampleMatchList = document.querySelector("#example-match-list");
+
+const TOKEN_DESCRIPTIONS = {
+  "^": "Start of string",
+  "$": "End of string",
+  ".": "Any character except a line break",
+  "\\d": "Digit from 0 through 9",
+  "\\D": "Any character that is not a digit",
+  "\\w": "Letter, digit, or underscore",
+  "\\W": "Any character that is not a word character",
+  "\\s": "Whitespace character",
+  "\\S": "Any character that is not whitespace",
+  "\\b": "Word boundary",
+  "\\B": "Position that is not a word boundary",
+  "|": "Alternation; matches the expression on either side",
+  "*": "Zero or more of the preceding item",
+  "+": "One or more of the preceding item",
+  "?": "Zero or one of the preceding item",
+};
+
+function readCharacterClass(pattern, start) {
+  let index = start + 1;
+  let escaped = false;
+  while (index < pattern.length) {
+    const character = pattern[index];
+    if (!escaped && character === "]") return index + 1;
+    if (!escaped && character === "\\") escaped = true;
+    else escaped = false;
+    index += 1;
+  }
+  return pattern.length;
+}
+
+function readQuantifier(pattern, start) {
+  const end = pattern.indexOf("}", start + 1);
+  return end === -1 ? start + 1 : end + 1;
+}
+
+function describeGroupPrefix(token) {
+  if (token === "(") return "Start of capturing group";
+  if (token === "(?:") return "Start of non-capturing group";
+  if (token === "(?=") return "Start of positive lookahead";
+  if (token === "(?!") return "Start of negative lookahead";
+  if (token === "(?<=") return "Start of positive lookbehind";
+  if (token === "(?<!") return "Start of negative lookbehind";
+  if (token.startsWith("(?<") && token.endsWith(">")) {
+    return `Start of named capturing group “${token.slice(3, -1)}”`;
+  }
+  return "Start of group";
+}
+
+function tokeniseRegex(pattern) {
+  const tokens = [];
+  let index = 0;
+  let groupNumber = 0;
+
+  while (index < pattern.length) {
+    const character = pattern[index];
+
+    if (character === "\\") {
+      const token = pattern.slice(index, Math.min(index + 2, pattern.length));
+      let description = TOKEN_DESCRIPTIONS[token] || `Escaped literal ${token.slice(1) || "backslash"}`;
+      if (/^\\[1-9]$/.test(token)) description = `Backreference to capturing group ${token.slice(1)}`;
+      tokens.push({ token, description });
+      index += token.length;
+      continue;
+    }
+
+    if (character === "[") {
+      const end = readCharacterClass(pattern, index);
+      const token = pattern.slice(index, end);
+      const negated = token.startsWith("[^");
+      tokens.push({ token, description: negated ? "Negated character class" : "Character class; matches one listed character" });
+      index = end;
+      continue;
+    }
+
+    if (character === "{") {
+      const end = readQuantifier(pattern, index);
+      const token = pattern.slice(index, end);
+      const inner = token.slice(1, -1);
+      let description = "Repetition quantifier";
+      if (/^\d+$/.test(inner)) description = `Exactly ${inner} repetitions of the preceding item`;
+      else if (/^\d+,$/.test(inner)) description = `At least ${inner.slice(0, -1)} repetitions of the preceding item`;
+      else if (/^\d+,\d+$/.test(inner)) {
+        const [minimum, maximum] = inner.split(",");
+        description = `Between ${minimum} and ${maximum} repetitions of the preceding item`;
+      }
+      tokens.push({ token, description });
+      index = end;
+      continue;
+    }
+
+    if (character === "(") {
+      let token = "(";
+      if (pattern.startsWith("(?:", index) || pattern.startsWith("(?=", index) || pattern.startsWith("(?!", index)) {
+        token = pattern.slice(index, index + 3);
+      } else if (pattern.startsWith("(?<=", index) || pattern.startsWith("(?<!", index)) {
+        token = pattern.slice(index, index + 4);
+      } else if (pattern.startsWith("(?<", index)) {
+        const close = pattern.indexOf(">", index + 3);
+        if (close !== -1) token = pattern.slice(index, close + 1);
+      }
+      const capturing = token === "(" || (token.startsWith("(?<") && !token.startsWith("(?<=") && !token.startsWith("(?<!"));
+      if (capturing) groupNumber += 1;
+      const description = capturing ? `${describeGroupPrefix(token)} (group ${groupNumber})` : describeGroupPrefix(token);
+      tokens.push({ token, description });
+      index += token.length;
+      continue;
+    }
+
+    if (character === ")") {
+      tokens.push({ token: character, description: "End of group" });
+      index += 1;
+      continue;
+    }
+
+    if (TOKEN_DESCRIPTIONS[character]) {
+      tokens.push({ token: character, description: TOKEN_DESCRIPTIONS[character] });
+      index += 1;
+      continue;
+    }
+
+    let end = index + 1;
+    while (end < pattern.length && !"\\[]{}()^$.*+?|".includes(pattern[end])) end += 1;
+    const token = pattern.slice(index, end);
+    tokens.push({ token, description: `Literal text “${token}”` });
+    index = end;
+  }
+
+  return tokens;
+}
+
+function sampleForClass(token) {
+  if (token.startsWith("[^")) return "x";
+  const body = token.slice(1, -1);
+  if (body.includes("A-Z")) return "A";
+  if (body.includes("a-z")) return "a";
+  if (body.includes("0-9") || body.includes("\\d")) return "0";
+  const cleaned = body.replace(/^\^/, "").replace(/\\(.)/g, "$1");
+  return cleaned[0] || "x";
+}
+
+function parseQuantifierAt(pattern, index) {
+  if (pattern[index] === "*") return { count: 1, end: index + 1 };
+  if (pattern[index] === "+") return { count: 2, end: index + 1 };
+  if (pattern[index] === "?") return { count: 0, end: index + 1 };
+  if (pattern[index] === "{") {
+    const end = pattern.indexOf("}", index + 1);
+    if (end !== -1) {
+      const first = pattern.slice(index + 1, end).split(",")[0];
+      return { count: Math.min(Number(first) || 1, 12), end: end + 1 };
+    }
+  }
+  return { count: 1, end: index };
+}
+
+function generateSimpleSample(pattern, alternate = false) {
+  let output = "";
+  let index = 0;
+  while (index < pattern.length) {
+    const character = pattern[index];
+    if (character === "^" || character === "$") { index += 1; continue; }
+    if (character === "\\") {
+      const code = pattern[index + 1] || "";
+      const base = ({ d: alternate ? "7" : "0", w: alternate ? "Z" : "a", s: " " })[code] ?? code;
+      const quantifier = parseQuantifierAt(pattern, index + 2);
+      output += base.repeat(quantifier.count);
+      index = quantifier.end === index + 2 ? index + 2 : quantifier.end;
+      continue;
+    }
+    if (character === "[") {
+      const end = readCharacterClass(pattern, index);
+      const base = sampleForClass(pattern.slice(index, end));
+      const quantifier = parseQuantifierAt(pattern, end);
+      output += base.repeat(quantifier.count);
+      index = quantifier.end === end ? end : quantifier.end;
+      continue;
+    }
+    if (character === ".") {
+      const quantifier = parseQuantifierAt(pattern, index + 1);
+      output += (alternate ? "b" : "x").repeat(quantifier.count);
+      index = quantifier.end === index + 1 ? index + 1 : quantifier.end;
+      continue;
+    }
+    if (character === "(") {
+      if (pattern.startsWith("(?:", index)) index += 3;
+      else if (pattern.startsWith("(?=", index) || pattern.startsWith("(?!", index)) { index += 3; continue; }
+      else if (pattern.startsWith("(?<=", index) || pattern.startsWith("(?<!", index)) { index += 4; continue; }
+      else if (pattern.startsWith("(?<", index)) {
+        const close = pattern.indexOf(">", index + 3);
+        index = close === -1 ? index + 1 : close + 1;
+      } else index += 1;
+      continue;
+    }
+    if (character === ")") { index += 1; continue; }
+    if (character === "|") {
+      while (index < pattern.length && pattern[index] !== ")" && pattern[index] !== "$") index += 1;
+      continue;
+    }
+    if ("*+?{}".includes(character)) { index += 1; continue; }
+    const quantifier = parseQuantifierAt(pattern, index + 1);
+    output += character.repeat(quantifier.count);
+    index = quantifier.end === index + 1 ? index + 1 : quantifier.end;
+  }
+  return output;
+}
+
+function candidateExamples(pattern, flags) {
+  const candidates = [];
+  for (const alternate of [false, true]) {
+    const value = generateSimpleSample(pattern, alternate);
+    if (value && !candidates.includes(value)) candidates.push(value);
+  }
+  const bank = [
+    "test", "hello", "abc", "ABC", "123", "12345", "A123", "user@example.com",
+    "https://example.com", "http://www.example.com/path", "192.168.1.1", "2026-08-01",
+    "foo-bar", "name_01", "/index.html", "example.com"
+  ];
+  let regex;
+  try { regex = new RegExp(pattern, flags.replace(/[gy]/g, "")); }
+  catch { return []; }
+  for (const value of [...candidates, ...bank]) {
+    regex.lastIndex = 0;
+    if (regex.test(value) && !candidates.includes(value)) candidates.push(value);
+    if (candidates.length >= 3) break;
+  }
+  return candidates.filter((value) => {
+    regex.lastIndex = 0;
+    return regex.test(value);
+  }).slice(0, 3);
+}
+
+function renderExplanation() {
+  let pattern = explainInput.value.trim();
+  const slashMatch = pattern.match(/^\/(.*)\/([dgimsuvy]*)$/);
+  if (slashMatch) {
+    pattern = slashMatch[1];
+    if (!explainFlags.value.trim()) explainFlags.value = slashMatch[2];
+  }
+  const flags = [...new Set(explainFlags.value.trim().split(""))].join("");
+  tokenList.replaceChildren();
+  exampleMatchList.replaceChildren();
+  explainerStatus.textContent = "";
+
+  if (!pattern) {
+    explainerResults.hidden = true;
+    explainerStatus.textContent = "Enter a regular expression.";
+    explainInput.focus();
+    return;
+  }
+
+  try { new RegExp(pattern, flags); }
+  catch (error) {
+    explainerResults.hidden = true;
+    explainerStatus.textContent = error.message;
+    return;
+  }
+
+  tokeniseRegex(pattern).forEach(({ token, description }) => {
+    const row = document.createElement("div");
+    row.className = "token-row";
+    const code = document.createElement("code");
+    code.textContent = token;
+    const text = document.createElement("span");
+    text.textContent = description;
+    row.append(code, text);
+    tokenList.append(row);
+  });
+
+  const examples = candidateExamples(pattern, flags);
+  if (!examples.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty-message";
+    empty.textContent = "No reliable sample could be generated for this expression.";
+    exampleMatchList.append(empty);
+  } else {
+    examples.forEach((example) => {
+      const row = document.createElement("div");
+      row.className = "example-match";
+      const mark = document.createElement("strong");
+      mark.textContent = "MATCH";
+      const code = document.createElement("code");
+      code.textContent = example;
+      row.append(mark, code);
+      exampleMatchList.append(row);
+    });
+  }
+
+  explainerResults.hidden = false;
+}
+
+document.querySelector("#explain-button").addEventListener("click", renderExplanation);
+document.querySelector("#explain-clear").addEventListener("click", () => {
+  explainInput.value = "";
+  explainFlags.value = "";
+  explainerStatus.textContent = "";
+  explainerResults.hidden = true;
+  tokenList.replaceChildren();
+  exampleMatchList.replaceChildren();
+  explainInput.focus();
+});
+explainInput.addEventListener("keydown", (event) => {
+  if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+    event.preventDefault();
+    renderExplanation();
+  }
+});

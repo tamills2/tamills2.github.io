@@ -107,6 +107,40 @@
 
       </div>
     </div>
+    <section class="tool-card explainer-card" aria-labelledby="explainer-title">
+      <div class="section-title-row">
+        <div>
+          <h2 id="explainer-title">Regex explainer</h2>
+          <p>Enter a regular expression to break it into parts and generate example matches.</p>
+        </div>
+        <button class="tool-secondary-button compact-button" id="explain-clear" type="button">Clear</button>
+      </div>
+
+      <div class="explainer-input-row">
+        <div class="tool-field">
+          <label for="explain-input">Regular expression</label>
+          <input class="tool-input regex-explain-input" id="explain-input" type="text" placeholder="^(?:https?):\/\/(?:www\.)?([^\/]+)(\/.*)?$" spellcheck="false" autocomplete="off">
+        </div>
+        <div class="tool-field flag-field">
+          <label for="explain-flags">Flags</label>
+          <input class="tool-input" id="explain-flags" type="text" placeholder="i" maxlength="8" spellcheck="false" autocomplete="off">
+        </div>
+        <button class="tool-primary-button explain-button" id="explain-button" type="button">Explain</button>
+      </div>
+
+      <p class="explainer-status" id="explainer-status" aria-live="polite"></p>
+
+      <div class="explainer-results" id="explainer-results" hidden>
+        <div>
+          <h3>Breakdown</h3>
+          <div class="token-list" id="token-list"></div>
+        </div>
+        <div>
+          <h3>Example matches</h3>
+          <div class="example-match-list" id="example-match-list"></div>
+        </div>
+      </div>
+    </section>
   </main>
 </body>
 </html>
