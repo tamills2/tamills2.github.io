@@ -298,8 +298,8 @@ html[data-theme="dark"] .theme-switch-thumb {
 .app-shell {
   display: grid;
   grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
-  min-height: 100vh;
-  padding-top: var(--header-height);
+  min-height: calc(100vh - var(--header-height));
+  margin-top: var(--header-height);
   transition: grid-template-columns 180ms ease;
 }
 
@@ -2494,15 +2494,12 @@ html[data-site-theme="matrix"] .repo-theme-notice {
   z-index: 1;
 }
 
-/* Keep the homepage shell in its normal grid flow. Applying positioning to the
-   shell shifted the sticky Notes sidebar downward by an extra header height. */
-html[data-site-theme="matrix"] .main-content {
-  position: relative;
-  z-index: 1;
-}
-
+/* Keep homepage content and the Notes sidebar above the rain. The shared
+   shell now accounts for the fixed header with margin rather than padding, so
+   the sidebar can use the same sticky header offset in every theme and route. */
+html[data-site-theme="matrix"] .main-content,
 html[data-site-theme="matrix"] .notes-sidebar {
-  top: 0;
+  position: relative;
   z-index: 1;
 }
 
