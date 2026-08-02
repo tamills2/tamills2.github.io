@@ -4196,3 +4196,50 @@ html[data-site-theme="dos"] .notes-sidebar :is(.file-button:hover, .folder-butto
 html[data-site-theme="dos"] .notes-sidebar :is(.file-button:hover, .folder-button:hover, .file-button[aria-current="page"]) * {
   color: #fff !important;
 }
+
+/* DOS: tool-page Notes drawer must match the Notes Viewer sidebar. */
+html[data-site-theme="dos"] .tool-notes-drawer {
+  border-right: 1px solid #000 !important;
+  background: #c0c0c0 !important;
+  color: #000 !important;
+}
+html[data-site-theme="dos"] .tool-notes-drawer-heading {
+  border-bottom: 1px solid #000 !important;
+  background: #c0c0c0 !important;
+  color: #000 !important;
+}
+html[data-site-theme="dos"] .tool-notes-drawer-heading h2 {
+  color: #000 !important;
+  text-decoration: underline;
+  text-underline-offset: .3rem;
+}
+html[data-site-theme="dos"] .tool-notes-drawer-heading .note-builder-link {
+  border: 2px solid !important;
+  border-color: #fff #000 #000 #fff !important;
+  border-radius: 0 !important;
+  background: #a6c4c4 !important;
+  color: #000 !important;
+  box-shadow: 1px 1px 0 #000 !important;
+}
+html[data-site-theme="dos"] .tool-notes-drawer-heading .note-builder-link:active {
+  border-color: #000 #fff #fff #000 !important;
+  box-shadow: none !important;
+}
+html[data-site-theme="dos"] .tool-notes-tree,
+html[data-site-theme="dos"] .tool-notes-tree * {
+  color: #000 !important;
+}
+html[data-site-theme="dos"] .tool-notes-tree .tree-row > :is(button, a) {
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #000 !important;
+}
+html[data-site-theme="dos"] .tool-notes-tree .tree-row > :is(button, a):hover,
+html[data-site-theme="dos"] .tool-notes-tree .tree-row > :is(button, a)[aria-current="page"] {
+  background: #0000aa !important;
+  color: #fff !important;
+}
+html[data-site-theme="dos"] .tool-notes-tree .tree-row > :is(button, a):hover *,
+html[data-site-theme="dos"] .tool-notes-tree .tree-row > :is(button, a)[aria-current="page"] * {
+  color: #fff !important;
+}

@@ -315,75 +315,48 @@ html:not([data-site-theme])[data-theme="dark"] .document-editor::placeholder {
   outline-offset: 2px;
 }
 
-/* DOS theme: Note Builder is a gray DOS application window with blue edit fields. */
-html[data-site-theme="dos"] :is(.library-pane, .editor-pane) {
-  background: #c0c0c0 !important;
-  color: #000 !important;
-  border: 2px solid !important;
-  border-color: #fff #000 #000 #fff !important;
-  border-radius: 0 !important;
-  box-shadow: 7px 7px 0 #000 !important;
-}
-html[data-site-theme="dos"] :is(
-  .library-pane,
-  .library-pane *,
-  .editor-pane,
-  .editor-pane *,
-  .pane-heading,
-  .pane-heading *,
-  .library-help,
-  .editor-help,
-  .available-notes,
-  .note-option,
-  .note-option *,
-  .empty-message,
+/* DOS: readable gray editor pane and note metadata. */
+html[data-site-theme="dos"] .note-builder-main .editor-pane,
+html[data-site-theme="dos"] .note-builder-main .editor-pane :is(
+  .editor-label,
   .status-message,
   .document-counts,
-  .editor-label
+  .editor-help,
+  .tool-field > span
 ) {
   color: #000 !important;
 }
-html[data-site-theme="dos"] .note-group-heading {
-  position: sticky;
+html[data-site-theme="dos"] .note-builder-main .editor-pane {
   background: #c0c0c0 !important;
+}
+html[data-site-theme="dos"] .note-builder-main .tool-secondary-button,
+html[data-site-theme="dos"] .note-builder-main .tool-primary-button {
   color: #000 !important;
-  border-color: #000 !important;
 }
-html[data-site-theme="dos"] .note-option {
+html[data-site-theme="dos"] .note-builder-main .tool-primary-button {
+  background: #a6c4c4 !important;
+}
+html[data-site-theme="dos"] .note-builder-main .note-option,
+html[data-site-theme="dos"] .note-builder-main .note-option-title,
+html[data-site-theme="dos"] .note-builder-main .note-option-path {
+  color: #000 !important;
+}
+html[data-site-theme="dos"] .note-builder-main .note-option {
   background: #c0c0c0 !important;
-  border-color: #000 !important;
 }
-html[data-site-theme="dos"] .note-option:hover,
-html[data-site-theme="dos"] .note-option:focus-visible,
-html[data-site-theme="dos"] .note-option[aria-selected="true"] {
-  background: #a8a8a8 !important;
-}
-html[data-site-theme="dos"] :is(
-  .note-search-field input,
-  .filename-field input,
-  .document-editor
-) {
+html[data-site-theme="dos"] .note-builder-main .note-option:hover,
+html[data-site-theme="dos"] .note-builder-main .note-option:focus-visible,
+html[data-site-theme="dos"] .note-builder-main .note-option[aria-selected="true"] {
   background: #0000aa !important;
   color: #fff !important;
-  border-radius: 0 !important;
-  border: 2px solid !important;
-  border-color: #000 #fff #fff #000 !important;
-  box-shadow: none !important;
 }
-html[data-site-theme="dos"] :is(.note-search-field input, .filename-field input, .document-editor)::placeholder {
-  color: #aaa !important;
+html[data-site-theme="dos"] .note-builder-main .note-option:hover *,
+html[data-site-theme="dos"] .note-builder-main .note-option:focus-visible *,
+html[data-site-theme="dos"] .note-builder-main .note-option[aria-selected="true"] * {
+  color: #fff !important;
 }
-html[data-site-theme="dos"] :is(.tool-primary-button, .tool-secondary-button) {
-  color: #000 !important;
-}
-html[data-site-theme="dos"] :is(.tool-primary-button, .tool-secondary-button):disabled {
-  color: #707070 !important;
-}
-/* The shared sidebar must remain black-on-gray on the builder route too. */
-html[data-site-theme="dos"] .notes-sidebar,
-html[data-site-theme="dos"] .notes-sidebar * {
-  color: #000 !important;
-}
-html[data-site-theme="dos"] .notes-sidebar :is(.sidebar-header, .sidebar-header *) {
-  color: #000 !important;
+/* Blue editing planes stay white-on-blue. */
+html[data-site-theme="dos"] .note-builder-main :is(.document-editor, input),
+html[data-site-theme="dos"] .note-builder-main :is(.document-editor, input)::placeholder {
+  color: #fff !important;
 }
