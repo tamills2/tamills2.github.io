@@ -4416,3 +4416,18 @@ html[data-site-theme] body .ascii-frame .ascii-art-stage > pre.ascii-art {
   text-transform: none !important;
   text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 32%, transparent) !important;
 }
+
+/* Homepage gallery title spacing ------------------------------------------
+   Visually center the scene title between the fixed site header and the
+   artwork frame without moving the frame itself. A transform is intentional:
+   it changes only the title's painted position and preserves the existing
+   gallery layout below it. */
+.ascii-home > h1#ascii-home-title {
+  transform: translateY(clamp(-2.5rem, -3vw, -1.75rem));
+}
+
+@media (max-width: 680px) {
+  .ascii-home > h1#ascii-home-title {
+    transform: translateY(-1rem);
+  }
+}
