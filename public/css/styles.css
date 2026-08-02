@@ -4250,3 +4250,14 @@ html[data-site-theme="dos"] .notes-sidebar .note-builder-link,
 html[data-site-theme="dos"] .tool-notes-drawer-heading .note-builder-link {
   font-weight: 400 !important;
 }
+
+/* DOS: normalize the shared homepage/Notes Viewer Builder label without changing its raised button styling. */
+html[data-site-theme="dos"] .notes-sidebar-header > a.note-builder-link,
+html[data-site-theme="dos"] .notes-sidebar-header > a.note-builder-link:link,
+html[data-site-theme="dos"] .notes-sidebar-header > a.note-builder-link:visited,
+html[data-site-theme="dos"] .notes-sidebar-header > a.note-builder-link:hover,
+html[data-site-theme="dos"] .notes-sidebar-header > a.note-builder-link:focus-visible,
+html[data-site-theme="dos"] .notes-sidebar-header > a.note-builder-link:active {
+  font-weight: normal !important;
+  font-synthesis: none !important;
+}
