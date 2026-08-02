@@ -4168,3 +4168,31 @@ html[data-site-theme="dos"] .code-window .syntax-path { color: #79c0ff !importan
 html[data-site-theme="dos"] .site-header .site-title { color: #fff !important; }
 html[data-site-theme="dos"] body:has(.note-builder-main) .notes-sidebar,
 html[data-site-theme="dos"] body:has(.note-builder-main) .notes-sidebar * { color: #000 !important; }
+
+/* DOS: keep the shared Notes sidebar consistent on every route. */
+html[data-site-theme="dos"] .notes-sidebar,
+html[data-site-theme="dos"] .notes-sidebar :is(
+  .notes-sidebar-header,
+  .notes-sidebar-header *,
+  .sidebar-header,
+  .sidebar-header *,
+  h1, h2, h3,
+  button, a, span, p,
+  .folder-button,
+  .file-button,
+  .tree-label,
+  .tree-icon,
+  .tree-chevron
+) {
+  color: #000 !important;
+}
+html[data-site-theme="dos"] .notes-sidebar {
+  background: #c0c0c0 !important;
+}
+html[data-site-theme="dos"] .notes-sidebar :is(.file-button:hover, .folder-button:hover, .file-button[aria-current="page"]) {
+  background: #0000aa !important;
+  color: #fff !important;
+}
+html[data-site-theme="dos"] .notes-sidebar :is(.file-button:hover, .folder-button:hover, .file-button[aria-current="page"]) * {
+  color: #fff !important;
+}

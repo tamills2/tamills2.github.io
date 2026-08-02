@@ -109,3 +109,35 @@ html[data-site-theme="dos"] .packet-diagram {
 html[data-site-theme="dos"] :is(.packet-axis, .packet-axis span, .packet-field-width) {
   color: #000 !important;
 }
+
+/* DOS correction: one clean raised frame and readable bit ruler. */
+html[data-site-theme="dos"] .bit-ruler,
+html[data-site-theme="dos"] .bit-ruler span,
+html[data-site-theme="dos"] .packet-field-width {
+  color: #000 !important;
+}
+
+html[data-site-theme="dos"] .packet-diagram {
+  padding: 4px !important;
+  gap: 2px !important;
+  border: 2px solid !important;
+  border-color: #fff #000 #000 #fff !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+  background: #c0c0c0 !important;
+  box-shadow: 7px 7px 0 #000 !important;
+  overflow: visible !important;
+}
+
+html[data-site-theme="dos"] .packet-row {
+  gap: 2px !important;
+  background: #c0c0c0 !important;
+}
+
+html[data-site-theme="dos"] .packet-field {
+  border: 1px solid #000 !important;
+  border-radius: 0 !important;
+  background: #c0c0c0 !important;
+  color: #000 !important;
+  box-shadow: none !important;
+}
