@@ -4226,15 +4226,6 @@ html[data-site-theme="dos"] .notes-sidebar-header .note-builder-link:active {
   text-align: center;
 }
 
-.ascii-home-kicker {
-  min-height: 1.2em;
-  margin: 0 0 0.65rem;
-  color: var(--accent);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
 
 .ascii-home h1 {
   min-height: 1em;
@@ -4248,7 +4239,7 @@ html[data-site-theme="dos"] .notes-sidebar-header .note-builder-link:active {
 
 .ascii-home-subtitle {
   min-height: 1.35em;
-  margin: 0 0 clamp(1.5rem, 4vw, 2.75rem);
+  margin: 1rem 0 0;
   color: var(--text-muted);
   font-family: var(--font-code);
   font-size: clamp(0.78rem, 1.4vw, 1rem);
@@ -4326,12 +4317,6 @@ html[data-site-theme="dos"] .notes-sidebar-header .note-builder-link:active {
   background: color-mix(in srgb, var(--accent) 20%, #0a0d0b);
 }
 
-.ascii-home-hint {
-  margin: 1rem 0 0;
-  color: var(--text-muted);
-  font-family: var(--font-code);
-  font-size: 0.78rem;
-}
 
 html[data-site-theme="dos"] .ascii-frame,
 html[data-site-theme="dos"] .ascii-next-button {
@@ -4365,7 +4350,7 @@ html[data-site-theme="dracula"] .ascii-frame {
   }
 
   .ascii-home-subtitle {
-    margin-bottom: 1.25rem;
+    margin-top: 0.85rem;
   }
 
   .ascii-art-stage {

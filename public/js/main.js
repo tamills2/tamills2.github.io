@@ -60,7 +60,6 @@ function cacheElements() {
   elements.noteSearchPrevious = document.querySelector("#note-search-previous");
   elements.noteSearchNext = document.querySelector("#note-search-next");
   elements.asciiHomeTitle = document.querySelector("#ascii-home-title");
-  elements.asciiIntro = document.querySelector("#ascii-intro");
   elements.asciiSubtitle = document.querySelector("#ascii-subtitle");
   elements.asciiArt = document.querySelector("#ascii-art");
   elements.asciiArtLabel = document.querySelector("#ascii-art-label");
@@ -78,7 +77,7 @@ let asciiPrintTimer = 0;
 let asciiIntroTimers = [];
 
 async function initialiseAsciiHomepage() {
-  if (!elements.asciiHomeTitle || !elements.asciiIntro || !elements.asciiSubtitle || !elements.asciiArt || !elements.asciiArtLabel || !elements.asciiNextButton) return;
+  if (!elements.asciiHomeTitle || !elements.asciiSubtitle || !elements.asciiArt || !elements.asciiArtLabel || !elements.asciiNextButton) return;
 
   elements.asciiNextButton.disabled = true;
   elements.asciiNextButton.addEventListener("click", () => showRandomAsciiArtwork());
@@ -99,7 +98,6 @@ async function initialiseAsciiHomepage() {
     showRandomAsciiArtwork();
   } catch (error) {
     console.error("Unable to load ASCII artwork:", error);
-    elements.asciiIntro.textContent = "ARCHIVE UNAVAILABLE";
     elements.asciiHomeTitle.textContent = "Transmission Lost";
     elements.asciiSubtitle.textContent = "The artwork archive could not be loaded.";
     elements.asciiArt.textContent = "[ NO SIGNAL ]";
@@ -141,24 +139,43 @@ function showRandomAsciiArtwork() {
   const longestLine = Math.max(...lines.map((line) => [...line].length), 1);
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  elements.asciiArt.style.setProperty("--ascii-columns", longestLine);
-  elements.asciiHomeTitle.textContent = reducedMotion ? artwork.heading : "";
-  elements.asciiSubtitle.textContent = reducedMotion ? artwork.subtitle : "";
-  elements.asciiIntro.textContent = reducedMotion ? "ARCHIVE READY" : "Initializing...";
-  elements.asciiArt.textContent = reducedMotion ? artwork.art : "";
   elements.asciiArtLabel.textContent = `${artwork.heading} · Artwork ${nextIndex + 1} of ${asciiArtworks.length}`;
-  if (reducedMotion) return;
 
-  [[260, "Loading artwork..."], [560, "Locating archive..."], [860, `> ${artwork.heading}`]].forEach(([delay, message]) => {
+  if (reducedMotion) {
+    elements.asciiArt.style.setProperty("--ascii-columns", longestLine);
+    elements.asciiHomeTitle.textContent = artwork.heading;
+    elements.asciiSubtitle.textContent = artwork.subtitle;
+    elements.asciiArt.textContent = artwork.art;
+    return;
+  }
+
+  const loadingMessages = [
+    "Initializing...",
+    "Loading artwork...",
+    "Locating archive...",
+  ];
+  const loadingWidth = Math.max(...loadingMessages.map((message) => message.length));
+
+  elements.asciiArt.style.setProperty("--ascii-columns", loadingWidth);
+  elements.asciiHomeTitle.textContent = "";
+  elements.asciiSubtitle.textContent = "";
+  elements.asciiArt.textContent = loadingMessages[0];
+
+  loadingMessages.slice(1).forEach((message, index) => {
     asciiIntroTimers.push(window.setTimeout(() => {
-      if (sequenceToken === asciiSequenceToken) elements.asciiIntro.textContent = message;
-    }, delay));
+      if (sequenceToken !== asciiSequenceToken) return;
+      elements.asciiArt.textContent += `\n${message}`;
+    }, 300 * (index + 1)));
   });
 
   asciiIntroTimers.push(window.setTimeout(() => {
     if (sequenceToken !== asciiSequenceToken) return;
+
+    elements.asciiArt.style.setProperty("--ascii-columns", longestLine);
     elements.asciiHomeTitle.textContent = artwork.heading;
     elements.asciiSubtitle.textContent = artwork.subtitle;
+    elements.asciiArt.textContent = "";
+
     let lineIndex = 0;
     asciiPrintTimer = window.setInterval(() => {
       if (sequenceToken !== asciiSequenceToken) return window.clearInterval(asciiPrintTimer);
@@ -166,7 +183,7 @@ function showRandomAsciiArtwork() {
       lineIndex += 1;
       if (lineIndex >= lines.length) window.clearInterval(asciiPrintTimer);
     }, Math.max(18, Math.floor(420 / Math.max(lines.length, 1))));
-  }, 1080));
+  }, 1050));
 }
 
 function setPageView(view) {
