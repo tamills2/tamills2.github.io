@@ -59,6 +59,9 @@ function cacheElements() {
   elements.noteSearchCount = document.querySelector("#note-search-count");
   elements.noteSearchPrevious = document.querySelector("#note-search-previous");
   elements.noteSearchNext = document.querySelector("#note-search-next");
+  elements.asciiHomeTitle = document.querySelector("#ascii-home-title");
+  elements.asciiIntro = document.querySelector("#ascii-intro");
+  elements.asciiSubtitle = document.querySelector("#ascii-subtitle");
   elements.asciiArt = document.querySelector("#ascii-art");
   elements.asciiArtLabel = document.querySelector("#ascii-art-label");
   elements.asciiNextButton = document.querySelector("#ascii-next-button");
@@ -67,75 +70,76 @@ function cacheElements() {
 
 
 const ASCII_ARTWORKS = Object.freeze([
-  {
-    "title": "Core Router",
-    "art": "                 .-----------------------.\n                 |  CORE ROUTER // 01  |\n        .--------+-----------------------+--------.\n        |   [ WAN ]   [ LAN ]   [ DMZ ]   [ VPN ] |\n        |      o         o         o         o    |\n        '---+-------------+-------------+-------------'\n            |             |             |\n         .--+--.       .--+--.       .--+--.\n         | SW1 |       | SW2 |       | FW01|\n         '-----'       '-----'       '-----'"
-  },
-  {
-    "title": "Rack 07",
-    "art": "          ______________________________________\n         /_____________________________________/|\n        |  [:::::::::::: RACK 07 ::::::::::::] | |\n        |  [====]  [====]  [====]  [====]     | |\n        |  [____]  [____]  [____]  [____]     | |\n        |  ----------------------------------  | |\n        |  [########]  [########]  [########] | |\n        |  ----------------------------------  | |\n        |  [ o o o o ]  [ o o o o ]  [ PWR ] | /\n        '--------------------------------------'"
-  },
-  {
-    "title": "Ground Station",
-    "art": "                         .-.\n                        /___\\\n                   .---'   '---.\n                .-'             '-.\n              .'        ___        '.\n             /        .-'   '-.       \\\n            /        /  .-.  \\        \\\n           ;        |  (   )  |        ;\n           |         \\  '-'  /         |\n           ;          '-._.-'          ;\n            \\            |            /\n             '.          |          .'\n               '-._______|_______.-'\n                         |\n                    _____|_____"
-  },
-  {
-    "title": "Signal Lost",
-    "art": "        .------------------------------------------------.\n        | RX  10110110  00101101  11100010  01010101 |\n        |                                                |\n        |       >>>>>>>>>  SIGNAL LOST  <<<<<<<<<         |\n        |                                                |\n        | TX  00000000  00000000  00000000  00000000 |\n        '------------------------------------------------'\n                    \\   |   /\n                     \\  |  /\n                      \\ | /\n                       \\|/\n                        V"
-  },
-  {
-    "title": "Fortress",
-    "art": "              |>>>                    |>>>\n              |                        |\n          _  _|_  _                _  _|_  _\n         |;|_|;|_|;|              |;|_|;|_|;|\n         \\\\.    .  /              \\\\.    .  /\n          \\\\:  .  /                \\\\:  .  /\n           ||:   |                  ||:   |\n           ||:.  |                  ||:.  |\n           ||:  .|__________________||:  .|\n           ||: , |      REPO        ||: , |\n           ||: . |                  ||: . |\n        __ ||_   |__________________||_   | __"
-  },
-  {
-    "title": "Terminal Ready",
-    "art": "     +------------------------------------------------------+\n     | repo@localhost:~$ ./start                              |\n     |                                                        |\n     | [ OK ] notes manifest                                  |\n     | [ OK ] tool registry                                   |\n     | [ OK ] hidden themes                                   |\n     | [ OK ] local storage                                   |\n     |                                                        |\n     | SYSTEM READY_                                          |\n     +------------------------------------------------------+"
-  },
-  {
-    "title": "Deep Space Relay",
-    "art": "                              *\n                     .       .          .\n               *          .---.                    .\n                         .'     ' .\n             .          /  .-.  \\        *\n                       |  /   \\  |\n                 *     | |  o  | |     .\n                       |  \\___/  |\n                        \\       /\n                 .       '.___.'       .\n                           /|\\\n                          /_|_\\\n                        _/  |  \\_\n                       /____|____\\"
-  },
-  {
-    "title": "World Tree",
-    "art": "                         &&& &&  & &&\n                    && &\\/&\\|& ()|/ @, &&\n                    &\\/(/&/&||/& /_/)_&/_&\n                 &() &\\/&|()|/&\\/ '%\" & ()\n                &_\\_&&_\\ |& |&&/&__%_/_& &&\n              &&   && & &| &| /& & % ()& /&&\n               ()&_---()&\\&\\|&&-&&--%---()~\n                   &&     \\|||\n                           |||\n                           |||\n                           |||\n                     , -=-~  .-^- _"
-  }
+  {"id": "dragon", "heading": "The Dragon's Hoard", "subtitle": "Fortune favors the bold.", "art": "                         / \\  //\\\n                  |\\___/|      /   \\//  \\\\\n                  /0  0  \\__  /    //  | \\ \\\n                 /     /  \\/_/    //   |  \\  \\\n                 @_^_@'/   \\/_   //    |   \\   \\\n                 //_^_/     \\/_ //     |    \\    \\\n              ( //) |        \\///      |     \\     \\\n            ( / /) _|_ /   )  //       |      \\     _\\\n          ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~"},
+  {"id": "castle", "heading": "The Forgotten Keep", "subtitle": "Some doors remember who opened them.", "art": "                         |>>>                    |>>>\n                         |                        |\n                     _  _|_  _                _  _|_  _\n                    |;|_|;|_|;|              |;|_|;|_|;|\n                    \\\\.    .  /              \\\\.    .  /\n                     \\\\:  .  /                \\\\:  .  /\n                      ||:   |                  ||:   |\n                      ||:.  |                  ||:.  |\n                      ||:  .|__________________||:  .|\n                   __ ||_   |__________________||_   | __"},
+  {"id": "pirate", "heading": "The Black Tide", "subtitle": "No map marks the way back.", "art": "                              |\\\n                              | \\\n                              |  \\\n                         _____|___\\____\n                        /              /\\\n                 ______/______________/  \\____\n                \\                         ___/\n          ~~~~~~~\\_______________________/~~~~~~~~\n       ~~~~~  ~~~~~   ~~~~~   ~~~~~   ~~~~~  ~~~~~"},
+  {"id": "wolf", "heading": "The Hunt Begins", "subtitle": "The forest is listening.", "art": "                         .     .\n                         |\\_---_/|\n                        /   o_o   \\\n                       |    (_)    |\n                        \\  .---.  /\n                         '-|   |-'\n                           |   |\n                     _..---'   '---.._\n                  .-'                 '-.\n                 /      /|       |\\      \\\n                /______/ |_______| \\______\\"},
+  {"id": "skull", "heading": "Memento Mori", "subtitle": "Every system reaches an end state.", "art": "                         ______\n                      .-\"      \"-.\n                     /            \\\n                    |              |\n                    |,  .-.  .-.  ,|\n                    | )(_o/  \\o_)( |\n                    |/     /\\     \\|\n                    (_     ^^     _)\n                     \\__|IIIIII|__/\n                        \\      /\n                         `----`"},
+  {"id": "spaceship", "heading": "Beyond the Horizon", "subtitle": "Every journey begins with a single launch.", "art": "                              /\\\n                             /  \\\n                            / /\\ \\\n                           / /  \\ \\\n                          /_/____\\_\\\n                            |  |\n                         ___|  |___\n                        /   |  |   \\\n                       /____|__|____\\\n                         /  /\\  \\\n                        /__/  \\__\\\n                       *          *"},
+  {"id": "tree", "heading": "The Elder Grove", "subtitle": "Old roots hold newer secrets.", "art": "                           &&& &&  & &&\n                      && &\\/&\\|& ()|/ @, &&\n                      &\\/(/&/&||/& /_/)_&/_&\n                   &() &\\/&|()|/&\\/ '%\" & ()\n                  &_\\_&&_\\ |& |&&/&__%_/_& &&\n                &&   && & &| &| /& & % ()& /&&\n                 ()&_---()&\\&\\|&&-&&--%---()~\n                     &&     \\|||\n                             |||\n                             |||\n                       , -=-~  .-^- _"},
+  {"id": "mountain", "heading": "The Long Ascent", "subtitle": "The summit keeps its own counsel.", "art": "                              /\\\n                             /  \\\n                            / /\\ \\\n                           / /  \\ \\\n                    /\\    /_/____\\_\\     /\\\n                   /  \\      /\\         /  \\\n              /\\  /    \\    /  \\   /\\ /    \\\n             /  \\/      \\__/    \\_/  V      \\\n            /__________________________________\\"},
+  {"id": "phoenix", "heading": "From the Ashes", "subtitle": "Begin again, but remember the fire.", "art": "                          .-\"\"\"-.\n                         /  .-.  \\\n                    .---|  /   \\  |---.\n                  .'    \\  \\_/  /    '.\n                 /       '.___.'       \\\n                /   .-._    |    _.-.   \\\n               /_.-'    '-._|_.-'    '-._\\\n                         _/ | \\_\n                    _.-'   |   '-._\n                 .-'      / \\      '-.\n                /________/___\\________\\"},
+  {"id": "raven", "heading": "Nevermore", "subtitle": "A black wing crosses the archive.", "art": "                             ___\n                         .-\"   \"-.\n                        /  .-. .-.\\\n                       |  /   Y   \\ |\n                       |  \\ 0 | 0 / |\n                        \\  '._^_.'  /\n                         '._     _.'\n                            |   |\n                       _____|   |_____\n                      /      \\_/      \\\n                     /_________________\\"},
+  {"id": "kraken", "heading": "Into the Abyss", "subtitle": "The deep answers slowly.", "art": "                        .-\"\"\"\"\"-.\n                      .'  _   _  '.\n                     /   (o) (o)   \\\n                    |       ^       |\n                    |    .-----.    |\n                     \\  '-------'  /\n                      '._       _.'\n                         \\| | |/\n                     _.-' | | '-._\n                  .-'    /| |\\    '-.\n                 /______/ | | \\______\\"},
+  {"id": "terminal", "heading": "System Initialization", "subtitle": "All modules report ready.", "art": "     +------------------------------------------------------+\n     | repo@localhost:~$ ./start                              |\n     |                                                        |\n     | [ OK ] notes manifest                                  |\n     | [ OK ] tool registry                                   |\n     | [ OK ] hidden themes                                   |\n     | [ OK ] local storage                                   |\n     |                                                        |\n     | SYSTEM READY_                                          |\n     +------------------------------------------------------+"},
+  {"id": "circuit", "heading": "Digital Genesis", "subtitle": "Signal becomes structure.", "art": "          o----[R1]----o----------o----[R2]----o\n          |            |          |            |\n        [C1]         .-+-.      [CPU]         [C2]\n          |          |   |        |            |\n          o----o-----+---+--------o-----o------o\n               |                      |\n             [RAM]                  [ROM]\n               |                      |\n          o----o----------------------o----o\n          |                                |\n        [I/O]----------------------------[NET]"},
+  {"id": "hourglass", "heading": "The Sands of Time", "subtitle": "Every process has a timeout.", "art": "                        ___________\n                       \\         /\n                        \\       /\n                         \\     /\n                          \\   /\n                           \\ /\n                           / \\\n                          /   \\\n                         /  .  \\\n                        / .::.  \\\n                       /:::::::::\\\n                      /___________\\"},
+  {"id": "owl", "heading": "Keeper of Secrets", "subtitle": "Wisdom watches from the dark.", "art": "                           ,_,\n                          (O,O)\n                          (   )\n                           \"-\"\n                       ___/   \\___\n                    .-'           '-.\n                   /    /|     |\\    \\\n                  /____/ |_____| \\____\\\n                     /     |     \\\n                    /______|______\\"},
+  {"id": "lighthouse", "heading": "Beacon in the Storm", "subtitle": "One light is enough to navigate by.", "art": "                            |\\\n                         ___|_\\___\n                        /   |   /\\\n                       /____|__/  \\\n                          ||\n                        __||__\n                       /  ||  \\\n                      /___||___\\\n                         /||\\\n                        /_||_\\\n                   ~~~~~~~||~~~~~~~~\n                ~~~~~  ~~~||~~~  ~~~~~"}
 ]);
 
 let currentAsciiArtworkIndex = -1;
+let asciiSequenceToken = 0;
 let asciiPrintTimer = 0;
+let asciiIntroTimers = [];
 
 function initialiseAsciiHomepage() {
-  if (!elements.asciiArt || !elements.asciiArtLabel || !elements.asciiNextButton) return;
-
+  if (!elements.asciiHomeTitle || !elements.asciiIntro || !elements.asciiSubtitle || !elements.asciiArt || !elements.asciiArtLabel || !elements.asciiNextButton) return;
   elements.asciiNextButton.addEventListener("click", () => showRandomAsciiArtwork());
   showRandomAsciiArtwork();
 }
 
-function showRandomAsciiArtwork() {
+function clearAsciiSequence() {
+  asciiSequenceToken += 1;
   window.clearInterval(asciiPrintTimer);
+  asciiIntroTimers.forEach((timer) => window.clearTimeout(timer));
+  asciiIntroTimers = [];
+}
 
+function showRandomAsciiArtwork() {
+  clearAsciiSequence();
+  const sequenceToken = asciiSequenceToken;
   let nextIndex = Math.floor(Math.random() * ASCII_ARTWORKS.length);
   if (ASCII_ARTWORKS.length > 1 && nextIndex === currentAsciiArtworkIndex) {
     nextIndex = (nextIndex + 1 + Math.floor(Math.random() * (ASCII_ARTWORKS.length - 1))) % ASCII_ARTWORKS.length;
   }
   currentAsciiArtworkIndex = nextIndex;
-
   const artwork = ASCII_ARTWORKS[nextIndex];
   const lines = artwork.art.replace(/^\n|\n$/g, "").split("\n");
-  elements.asciiArt.textContent = "";
-  elements.asciiArtLabel.textContent = `${artwork.title} · Artwork ${nextIndex + 1} of ${ASCII_ARTWORKS.length}`;
-
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    elements.asciiArt.textContent = lines.join("\n");
-    return;
-  }
-
-  let lineIndex = 0;
-  asciiPrintTimer = window.setInterval(() => {
-    elements.asciiArt.textContent += `${lineIndex ? "\n" : ""}${lines[lineIndex]}`;
-    lineIndex += 1;
-    if (lineIndex >= lines.length) window.clearInterval(asciiPrintTimer);
-  }, Math.max(18, Math.floor(360 / Math.max(lines.length, 1))));
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  elements.asciiHomeTitle.textContent = reducedMotion ? artwork.heading : "";
+  elements.asciiSubtitle.textContent = reducedMotion ? artwork.subtitle : "";
+  elements.asciiIntro.textContent = reducedMotion ? "ARCHIVE READY" : "Initializing...";
+  elements.asciiArt.textContent = reducedMotion ? lines.join("\n") : "";
+  elements.asciiArtLabel.textContent = `${artwork.heading} · Artwork ${nextIndex + 1} of ${ASCII_ARTWORKS.length}`;
+  if (reducedMotion) return;
+  [[260, "Loading artwork..."], [560, "Locating archive..."], [860, `> ${artwork.heading}`]].forEach(([delay, message]) => {
+    asciiIntroTimers.push(window.setTimeout(() => {
+      if (sequenceToken === asciiSequenceToken) elements.asciiIntro.textContent = message;
+    }, delay));
+  });
+  asciiIntroTimers.push(window.setTimeout(() => {
+    if (sequenceToken !== asciiSequenceToken) return;
+    elements.asciiHomeTitle.textContent = artwork.heading;
+    elements.asciiSubtitle.textContent = artwork.subtitle;
+    let lineIndex = 0;
+    asciiPrintTimer = window.setInterval(() => {
+      if (sequenceToken !== asciiSequenceToken) return window.clearInterval(asciiPrintTimer);
+      elements.asciiArt.textContent += `${lineIndex ? "\n" : ""}${lines[lineIndex]}`;
+      lineIndex += 1;
+      if (lineIndex >= lines.length) window.clearInterval(asciiPrintTimer);
+    }, Math.max(18, Math.floor(420 / Math.max(lines.length, 1))));
+  }, 1080));
 }
 
 function setPageView(view) {
