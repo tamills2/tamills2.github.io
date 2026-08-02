@@ -34,8 +34,28 @@
   function cleanPath(path) {
     return String(path || "")
       .trim()
+      .replace(/\\/g, "/")
       .replace(/^\.\//, "")
-      .replace(/^\/+/, "");
+      .replace(/^\/+/, "")
+      .replace(/^public\//i, "")
+      .replace(/^notes\//i, "");
+  }
+
+  function parentDirectory(path) {
+    const parts = cleanPath(path).split("/").filter(Boolean);
+    parts.pop();
+    return parts.length ? parts.join("/") : "ROOT";
+  }
+
+  function compareDirectoryPaths(a, b) {
+    if (a === b) return 0;
+    if (a === "ROOT") return -1;
+    if (b === "ROOT") return 1;
+
+    return a.localeCompare(b, undefined, {
+      sensitivity: "base",
+      numeric: true
+    });
   }
 
   function titleFromPath(path) {
@@ -113,20 +133,22 @@
         id: item.id || path,
         title: item.title || item.name || item.label || titleFromPath(path),
         path,
-        folder:
-          item.category ||
-          item.section ||
-          item.folder ||
-          inheritedFolder ||
-          "Notes"
+        folder: parentDirectory(path)
       });
     }
 
     walk(input);
 
     return output.sort((a, b) =>
-      a.folder.localeCompare(b.folder) ||
-      a.title.localeCompare(b.title)
+      compareDirectoryPaths(a.folder, b.folder) ||
+      a.title.localeCompare(b.title, undefined, {
+        sensitivity: "base",
+        numeric: true
+      }) ||
+      a.path.localeCompare(b.path, undefined, {
+        sensitivity: "base",
+        numeric: true
+      })
     );
   }
 
