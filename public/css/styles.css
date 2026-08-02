@@ -4261,3 +4261,34 @@ html[data-site-theme="dos"] .notes-sidebar-header > a.note-builder-link:active {
   font-weight: normal !important;
   font-synthesis: none !important;
 }
+
+/* DOS: use the same raised Builder control in the shared homepage/Notes Viewer sidebar. */
+html[data-site-theme="dos"] .notes-sidebar-header .note-builder-link,
+html[data-site-theme="dos"] .notes-sidebar-header .note-builder-link:link,
+html[data-site-theme="dos"] .notes-sidebar-header .note-builder-link:visited {
+  border: 2px solid !important;
+  border-color: #ffffff #000000 #000000 #ffffff !important;
+  border-radius: 0 !important;
+  background: #a6c4c4 !important;
+  color: #000000 !important;
+  box-shadow: 1px 1px 0 #000000 !important;
+  font-weight: 400 !important;
+  font-synthesis: none !important;
+}
+
+html[data-site-theme="dos"] .notes-sidebar-header .note-builder-link:hover,
+html[data-site-theme="dos"] .notes-sidebar-header .note-builder-link:focus-visible {
+  border-color: #ffffff #000000 #000000 #ffffff !important;
+  background: #b8d1d1 !important;
+  color: #000000 !important;
+  box-shadow: 1px 1px 0 #000000 !important;
+  outline: 1px dotted #000000 !important;
+  outline-offset: -4px !important;
+}
+
+html[data-site-theme="dos"] .notes-sidebar-header .note-builder-link:active {
+  border-color: #000000 #ffffff #ffffff #000000 !important;
+  background: #9bb7b7 !important;
+  box-shadow: none !important;
+  transform: translate(1px, 1px);
+}
