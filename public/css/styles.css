@@ -2394,67 +2394,6 @@ html[data-site-theme="crt"] body::after {
 
 
 
-/* Nord ---------------------------------------------------------------------- */
-html[data-site-theme="nord"] {
-  --font-ui: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-code: "Cascadia Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  --font-title: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-notes: "Courier New", Courier, monospace;
-  --syntax-comment: #616e88;
-  --syntax-command: #88c0d0;
-  --syntax-keyword: #81a1c1;
-  --syntax-string: #a3be8c;
-  --syntax-variable: #ebcb8b;
-  --syntax-number: #b48ead;
-  --syntax-operator: #bf616a;
-  --syntax-option: #8fbcbb;
-  --syntax-path: #88c0d0;
-  --bg: #242933;
-  --surface: #2e3440;
-  --surface-opaque: #2e3440;
-  --surface-subtle: #353c4a;
-  --surface-hover: #3b4352;
-  --text: #eceff4;
-  --text-muted: #aeb8c8;
-  --border: #434c5e;
-  --border-strong: #5e6b80;
-  --accent: #88c0d0;
-  --accent-soft: rgba(136, 192, 208, 0.16);
-  --shadow: 0 12px 32px rgba(11, 15, 22, 0.28);
-  --switch-track: #434c5e;
-  --switch-thumb: #d8dee9;
-  --code-gutter: #252a34;
-  --code-line-hover: rgba(136, 192, 208, 0.08);
-  --on-accent: #242933;
-  --danger: #bf616a;
-  --danger-soft: color-mix(in srgb, var(--danger) 15%, transparent);
-  --success: #a3be8c;
-  --success-soft: color-mix(in srgb, var(--success) 15%, transparent);
-  --warning: #ebcb8b;
-  --warning-soft: color-mix(in srgb, var(--warning) 15%, transparent);
-  --info: #81a1c1;
-  --info-soft: color-mix(in srgb, var(--info) 15%, transparent);
-  --code-surface: #2b303b;
-  --tooltip-bg: #3b4352;
-  --tooltip-text: #eceff4;
-  --overlay: rgba(20, 24, 31, 0.78);
-  --header-control-hover: rgba(136, 192, 208, 0.12);
-  --header-focus-ring: #88c0d0;
-  --header-border-soft: rgba(216, 222, 233, 0.24);
-  --header-surface-soft: rgba(216, 222, 233, 0.08);
-  --header-input-border: rgba(216, 222, 233, 0.24);
-  --header-input-bg: rgba(216, 222, 233, 0.07);
-  --header-input-highlight: rgba(136, 192, 208, 0.09);
-  --header-kbd-bg: rgba(20, 24, 31, 0.32);
-  --header-focus-border: #88c0d0;
-  --header-focus-shadow: rgba(136, 192, 208, 0.22);
-  --selection-highlight: rgba(235, 203, 139, 0.26);
-  --selection-current: rgba(235, 203, 139, 0.46);
-}
-
-html[data-site-theme="nord"] .site-header {
-  background: rgba(46, 52, 64, 0.96);
-}
 
 /* Fallout terminal ---------------------------------------------------------- */
 html[data-site-theme="fallout"] {
@@ -2917,7 +2856,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .code-window {
@@ -2959,7 +2897,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .code-window,
@@ -2969,7 +2906,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .code-window button,
@@ -2979,7 +2915,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .code-window input {
@@ -2993,7 +2928,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .code-window .code-table,
@@ -3003,7 +2937,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .code-window .code-table code {
@@ -3017,7 +2950,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .code-window-header {
@@ -3032,7 +2964,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .code-table-wrapper,
@@ -3042,7 +2973,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .code-window-body {
@@ -3055,7 +2985,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .line-number {
@@ -3070,7 +2999,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .note-search-input-shell {
@@ -3086,7 +3014,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .note-search-input-shell:focus-within {
@@ -3100,7 +3027,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .note-search-input-shell input {
@@ -3114,7 +3040,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .note-search-button,
@@ -3124,7 +3049,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .note-copy-button {
@@ -3140,7 +3064,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .note-search-button:hover,
@@ -3150,7 +3073,6 @@ html:is(
   [data-site-theme="amber"],
   [data-site-theme="blueprint"],
   [data-site-theme="crt"],
-  [data-site-theme="nord"],
   [data-site-theme="fallout"],
   [data-site-theme="dracula"]
 ) .note-copy-button:hover {
@@ -4291,4 +4213,145 @@ html[data-site-theme="dos"] .notes-sidebar-header .note-builder-link:active {
   background: #9bb7b7 !important;
   box-shadow: none !important;
   transform: translate(1px, 1px);
+}
+
+
+/* Homepage ASCII gallery ---------------------------------------------------- */
+.ascii-home {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 76rem);
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 4.5rem) 0;
+  text-align: center;
+}
+
+.ascii-home-kicker {
+  margin: 0 0 0.65rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ascii-home h1 {
+  margin: 0 0 clamp(1.5rem, 4vw, 2.75rem);
+  font-family: var(--font-title);
+  font-size: clamp(2.1rem, 6vw, 4.8rem);
+  line-height: 1;
+  letter-spacing: 0.035em;
+  text-wrap: balance;
+}
+
+.ascii-frame {
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--accent) 44%, var(--border));
+  border-radius: 0.85rem;
+  background: #050706;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent) 10%, transparent),
+    0 18px 55px rgba(0, 0, 0, 0.38);
+  color: color-mix(in srgb, var(--accent) 78%, #f4fff9);
+  text-align: left;
+}
+
+.ascii-art {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  min-height: clamp(23rem, 56vh, 38rem);
+  margin: 0;
+  overflow: auto;
+  padding: clamp(1.25rem, 4vw, 3rem);
+  color: inherit;
+  font-family: var(--font-code);
+  font-size: clamp(0.68rem, 1.15vw, 1rem);
+  font-variant-ligatures: none;
+  line-height: 1.18;
+  tab-size: 4;
+  white-space: pre;
+  text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 32%, transparent);
+}
+
+.ascii-frame-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.75rem 0.55rem 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--accent) 28%, #1e2823);
+  background: #090d0b;
+  color: color-mix(in srgb, var(--accent) 48%, #b8c6bf);
+  font-family: var(--font-code);
+  font-size: 0.78rem;
+  text-align: left;
+}
+
+.ascii-next-button {
+  min-height: 2rem;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, #27312c);
+  border-radius: 0.4rem;
+  background: color-mix(in srgb, var(--accent) 10%, #0a0d0b);
+  color: color-mix(in srgb, var(--accent) 80%, white);
+  font: inherit;
+  cursor: pointer;
+}
+
+.ascii-next-button:hover,
+.ascii-next-button:focus-visible {
+  background: color-mix(in srgb, var(--accent) 20%, #0a0d0b);
+}
+
+.ascii-home-hint {
+  margin: 1rem 0 0;
+  color: var(--text-muted);
+  font-family: var(--font-code);
+  font-size: 0.78rem;
+}
+
+html[data-site-theme="dos"] .ascii-frame,
+html[data-site-theme="dos"] .ascii-next-button {
+  border-radius: 0;
+}
+
+html[data-site-theme="dos"] .ascii-frame {
+  border-width: 2px;
+  border-color: #ffffff #000000 #000000 #ffffff;
+  box-shadow: 5px 5px 0 #000000;
+}
+
+html[data-site-theme="dos"] .ascii-frame-footer {
+  border-color: #808080;
+}
+
+html[data-site-theme="dracula"] .ascii-frame {
+  box-shadow:
+    0 0 0 1px rgba(120, 0, 18, 0.5),
+    0 20px 70px rgba(0, 0, 0, 0.72),
+    0 0 42px rgba(112, 0, 15, 0.14);
+}
+
+@media (max-width: 680px) {
+  .ascii-home {
+    padding-block: 1.25rem;
+  }
+
+  .ascii-home h1 {
+    margin-bottom: 1.25rem;
+  }
+
+  .ascii-art {
+    place-items: start;
+    min-height: 24rem;
+    padding: 1rem;
+    font-size: 0.66rem;
+  }
+
+  .ascii-frame-footer {
+    align-items: flex-start;
+  }
 }

@@ -131,44 +131,20 @@
 
     <main class="main-content" id="main-content" tabindex="-1">
       <section class="home-view" id="home-view">
-        <div class="hero">
-          <p class="eyebrow">Static knowledge base</p>
-          <h1>Repo</h1>
-          <p>Browse notes and launch small tools from one self-contained site.</p>
+        <div class="ascii-home" aria-labelledby="ascii-home-title">
+          <p class="ascii-home-kicker">Random access memory</p>
+          <h1 id="ascii-home-title">Welcome to the Repo</h1>
+
+          <div class="ascii-frame">
+            <pre class="ascii-art" id="ascii-art" aria-live="polite" aria-label="Random ASCII artwork"></pre>
+            <div class="ascii-frame-footer">
+              <span id="ascii-art-label">Loading artwork…</span>
+              <button class="ascii-next-button" id="ascii-next-button" type="button" aria-label="Show another ASCII artwork">Next</button>
+            </div>
+          </div>
+
+          <p class="ascii-home-hint">A different transmission appears on each load.</p>
         </div>
-
-        <section aria-labelledby="quick-links-title">
-          <div class="section-heading">
-            <h2 id="quick-links-title">Quick links</h2>
-            <p>Frequently used pages and notes will live here.</p>
-          </div>
-
-          <div class="quick-links-grid">
-            <a class="quick-link-card" href="#placeholder-note" data-search-type="page" data-search-title="Popular note" data-search-keywords="popular note quick link">
-              <span class="card-icon" aria-hidden="true">01</span>
-              <span>
-                <strong>Popular note</strong>
-                <small>Placeholder for a frequently viewed note</small>
-              </span>
-            </a>
-
-            <a class="quick-link-card" href="./tools/regex-generator/" data-search-type="tool" data-search-title="Regex Generator" data-search-keywords="regex regular expression pattern generator tester email ip phone validation">
-              <span class="card-icon" aria-hidden="true">02</span>
-              <span>
-                <strong>Regex Generator</strong>
-                <small>Generate and test patterns from example values</small>
-              </span>
-            </a>
-
-            <a class="quick-link-card" href="#recent-notes" data-search-type="page" data-search-title="Recent notes" data-search-keywords="recent notes quick link">
-              <span class="card-icon" aria-hidden="true">03</span>
-              <span>
-                <strong>Recent notes</strong>
-                <small>Placeholder for recently added material</small>
-              </span>
-            </a>
-          </div>
-        </section>
       </section>
 
       <section class="search-page-view" id="search-page-view" hidden>

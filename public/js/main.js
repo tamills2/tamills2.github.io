@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initialiseSiteSearch();
   initialiseNoteSearch();
   initialiseNoteCopy();
+  initialiseAsciiHomepage();
   loadNotesManifest();
   loadSearchIndex();
   loadToolsManifest();
@@ -58,8 +59,84 @@ function cacheElements() {
   elements.noteSearchCount = document.querySelector("#note-search-count");
   elements.noteSearchPrevious = document.querySelector("#note-search-previous");
   elements.noteSearchNext = document.querySelector("#note-search-next");
+  elements.asciiArt = document.querySelector("#ascii-art");
+  elements.asciiArtLabel = document.querySelector("#ascii-art-label");
+  elements.asciiNextButton = document.querySelector("#ascii-next-button");
 }
 
+
+
+const ASCII_ARTWORKS = Object.freeze([
+  {
+    "title": "Core Router",
+    "art": "                 .-----------------------.\n                 |  CORE ROUTER // 01  |\n        .--------+-----------------------+--------.\n        |   [ WAN ]   [ LAN ]   [ DMZ ]   [ VPN ] |\n        |      o         o         o         o    |\n        '---+-------------+-------------+-------------'\n            |             |             |\n         .--+--.       .--+--.       .--+--.\n         | SW1 |       | SW2 |       | FW01|\n         '-----'       '-----'       '-----'"
+  },
+  {
+    "title": "Rack 07",
+    "art": "          ______________________________________\n         /_____________________________________/|\n        |  [:::::::::::: RACK 07 ::::::::::::] | |\n        |  [====]  [====]  [====]  [====]     | |\n        |  [____]  [____]  [____]  [____]     | |\n        |  ----------------------------------  | |\n        |  [########]  [########]  [########] | |\n        |  ----------------------------------  | |\n        |  [ o o o o ]  [ o o o o ]  [ PWR ] | /\n        '--------------------------------------'"
+  },
+  {
+    "title": "Ground Station",
+    "art": "                         .-.\n                        /___\\\n                   .---'   '---.\n                .-'             '-.\n              .'        ___        '.\n             /        .-'   '-.       \\\n            /        /  .-.  \\        \\\n           ;        |  (   )  |        ;\n           |         \\  '-'  /         |\n           ;          '-._.-'          ;\n            \\            |            /\n             '.          |          .'\n               '-._______|_______.-'\n                         |\n                    _____|_____"
+  },
+  {
+    "title": "Signal Lost",
+    "art": "        .------------------------------------------------.\n        | RX  10110110  00101101  11100010  01010101 |\n        |                                                |\n        |       >>>>>>>>>  SIGNAL LOST  <<<<<<<<<         |\n        |                                                |\n        | TX  00000000  00000000  00000000  00000000 |\n        '------------------------------------------------'\n                    \\   |   /\n                     \\  |  /\n                      \\ | /\n                       \\|/\n                        V"
+  },
+  {
+    "title": "Fortress",
+    "art": "              |>>>                    |>>>\n              |                        |\n          _  _|_  _                _  _|_  _\n         |;|_|;|_|;|              |;|_|;|_|;|\n         \\\\.    .  /              \\\\.    .  /\n          \\\\:  .  /                \\\\:  .  /\n           ||:   |                  ||:   |\n           ||:.  |                  ||:.  |\n           ||:  .|__________________||:  .|\n           ||: , |      REPO        ||: , |\n           ||: . |                  ||: . |\n        __ ||_   |__________________||_   | __"
+  },
+  {
+    "title": "Terminal Ready",
+    "art": "     +------------------------------------------------------+\n     | repo@localhost:~$ ./start                              |\n     |                                                        |\n     | [ OK ] notes manifest                                  |\n     | [ OK ] tool registry                                   |\n     | [ OK ] hidden themes                                   |\n     | [ OK ] local storage                                   |\n     |                                                        |\n     | SYSTEM READY_                                          |\n     +------------------------------------------------------+"
+  },
+  {
+    "title": "Deep Space Relay",
+    "art": "                              *\n                     .       .          .\n               *          .---.                    .\n                         .'     ' .\n             .          /  .-.  \\        *\n                       |  /   \\  |\n                 *     | |  o  | |     .\n                       |  \\___/  |\n                        \\       /\n                 .       '.___.'       .\n                           /|\\\n                          /_|_\\\n                        _/  |  \\_\n                       /____|____\\"
+  },
+  {
+    "title": "World Tree",
+    "art": "                         &&& &&  & &&\n                    && &\\/&\\|& ()|/ @, &&\n                    &\\/(/&/&||/& /_/)_&/_&\n                 &() &\\/&|()|/&\\/ '%\" & ()\n                &_\\_&&_\\ |& |&&/&__%_/_& &&\n              &&   && & &| &| /& & % ()& /&&\n               ()&_---()&\\&\\|&&-&&--%---()~\n                   &&     \\|||\n                           |||\n                           |||\n                           |||\n                     , -=-~  .-^- _"
+  }
+]);
+
+let currentAsciiArtworkIndex = -1;
+let asciiPrintTimer = 0;
+
+function initialiseAsciiHomepage() {
+  if (!elements.asciiArt || !elements.asciiArtLabel || !elements.asciiNextButton) return;
+
+  elements.asciiNextButton.addEventListener("click", () => showRandomAsciiArtwork());
+  showRandomAsciiArtwork();
+}
+
+function showRandomAsciiArtwork() {
+  window.clearInterval(asciiPrintTimer);
+
+  let nextIndex = Math.floor(Math.random() * ASCII_ARTWORKS.length);
+  if (ASCII_ARTWORKS.length > 1 && nextIndex === currentAsciiArtworkIndex) {
+    nextIndex = (nextIndex + 1 + Math.floor(Math.random() * (ASCII_ARTWORKS.length - 1))) % ASCII_ARTWORKS.length;
+  }
+  currentAsciiArtworkIndex = nextIndex;
+
+  const artwork = ASCII_ARTWORKS[nextIndex];
+  const lines = artwork.art.replace(/^\n|\n$/g, "").split("\n");
+  elements.asciiArt.textContent = "";
+  elements.asciiArtLabel.textContent = `${artwork.title} · Artwork ${nextIndex + 1} of ${ASCII_ARTWORKS.length}`;
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    elements.asciiArt.textContent = lines.join("\n");
+    return;
+  }
+
+  let lineIndex = 0;
+  asciiPrintTimer = window.setInterval(() => {
+    elements.asciiArt.textContent += `${lineIndex ? "\n" : ""}${lines[lineIndex]}`;
+    lineIndex += 1;
+    if (lineIndex >= lines.length) window.clearInterval(asciiPrintTimer);
+  }, Math.max(18, Math.floor(360 / Math.max(lines.length, 1))));
+}
 
 function setPageView(view) {
   elements.body.classList.toggle("is-home-view", view === "home");
