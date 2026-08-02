@@ -4381,3 +4381,19 @@ html[data-site-theme="dracula"] .ascii-frame {
     align-items: flex-start;
   }
 }
+
+/* Keep ASCII artwork geometry stable across every site theme. Only the
+   foreground color follows the active theme; the artwork canvas and font do
+   not inherit theme-specific display fonts or surfaces. */
+.ascii-art-stage {
+  background: #050706 !important;
+}
+
+.ascii-art {
+  color: color-mix(in srgb, var(--accent) 78%, #f4fff9) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  font-stretch: normal !important;
+  letter-spacing: normal !important;
+}
