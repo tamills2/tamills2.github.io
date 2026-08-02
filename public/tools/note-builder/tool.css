@@ -360,3 +360,49 @@ html[data-site-theme="dos"] .note-builder-main :is(.document-editor, input),
 html[data-site-theme="dos"] .note-builder-main :is(.document-editor, input)::placeholder {
   color: #fff !important;
 }
+
+/* DOS: finish the upper Note Builder pane as a gray application window. */
+html[data-site-theme="dos"] .note-builder-main .library-pane {
+  border: 2px solid !important;
+  border-color: #ffffff #000000 #000000 #ffffff !important;
+  border-radius: 0 !important;
+  background: #c0c0c0 !important;
+  color: #000000 !important;
+  box-shadow: 8px 8px 0 #000000 !important;
+}
+
+html[data-site-theme="dos"] .note-builder-main .library-pane :is(
+  .pane-heading,
+  .pane-heading h2,
+  .pane-heading p,
+  .note-search-field,
+  .note-search-field > span,
+  .library-help,
+  .available-notes,
+  .empty-message
+) {
+  color: #000000 !important;
+}
+
+html[data-site-theme="dos"] .note-builder-main .available-notes {
+  border-top-color: #000000 !important;
+  background: #c0c0c0 !important;
+}
+
+html[data-site-theme="dos"] .note-builder-main .note-group-heading {
+  border-bottom-color: #000000 !important;
+  background: #c0c0c0 !important;
+  color: #000000 !important;
+}
+
+html[data-site-theme="dos"] .note-builder-main .note-option {
+  border-bottom-color: #000000 !important;
+  background: #c0c0c0 !important;
+  color: #000000 !important;
+}
+
+html[data-site-theme="dos"] .note-builder-main .note-search-field input,
+html[data-site-theme="dos"] .note-builder-main .note-search-field input::placeholder {
+  background: #0000aa !important;
+  color: #ffffff !important;
+}

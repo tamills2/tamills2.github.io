@@ -4243,3 +4243,10 @@ html[data-site-theme="dos"] .tool-notes-tree .tree-row > :is(button, a):hover *,
 html[data-site-theme="dos"] .tool-notes-tree .tree-row > :is(button, a)[aria-current="page"] * {
   color: #fff !important;
 }
+
+/* DOS: the raised Builder shortcut should not be bold on any route. */
+html[data-site-theme="dos"] .note-builder-link,
+html[data-site-theme="dos"] .notes-sidebar .note-builder-link,
+html[data-site-theme="dos"] .tool-notes-drawer-heading .note-builder-link {
+  font-weight: 400 !important;
+}
