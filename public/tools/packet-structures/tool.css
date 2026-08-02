@@ -69,3 +69,43 @@
   font-size: 0.58rem;
   text-align: center;
 }
+
+/* DOS theme: protocol strip and packet frame use proper raised/sunken DOS chrome. */
+html[data-site-theme="dos"] .packet-tabs-card {
+  padding: .65rem !important;
+  border: 2px solid !important;
+  border-color: #fff #000 #000 #fff !important;
+  border-radius: 0 !important;
+  background: #c0c0c0 !important;
+  box-shadow: 7px 7px 0 #000 !important;
+  overflow: visible !important;
+}
+html[data-site-theme="dos"] .packet-tabs {
+  gap: 4px !important;
+  padding-bottom: 0 !important;
+}
+html[data-site-theme="dos"] .packet-tab {
+  border: 2px solid !important;
+  border-color: #fff #000 #000 #fff !important;
+  border-radius: 0 !important;
+  background: #c0c0c0 !important;
+  color: #000 !important;
+  box-shadow: 2px 2px 0 #000 !important;
+}
+html[data-site-theme="dos"] .packet-tab[aria-selected="true"],
+html[data-site-theme="dos"] .packet-tab.active {
+  border-color: #000 #fff #fff #000 !important;
+  box-shadow: none !important;
+}
+html[data-site-theme="dos"] .packet-diagram {
+  padding: 4px !important;
+  gap: 2px !important;
+  border: 3px solid !important;
+  border-color: #808080 #fff #fff #808080 !important;
+  border-radius: 0 !important;
+  background: #000 !important;
+  box-shadow: 7px 7px 0 #000 !important;
+}
+html[data-site-theme="dos"] :is(.packet-axis, .packet-axis span, .packet-field-width) {
+  color: #000 !important;
+}

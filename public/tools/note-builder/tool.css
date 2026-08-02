@@ -315,16 +315,75 @@ html:not([data-site-theme])[data-theme="dark"] .document-editor::placeholder {
   outline-offset: 2px;
 }
 
-
-/* Keep the Matrix rain behind the Note Builder controls rather than inside them. */
-html[data-site-theme="matrix"] .library-pane,
-html[data-site-theme="matrix"] .editor-pane,
-html[data-site-theme="matrix"] .note-group-heading,
-html[data-site-theme="matrix"] .tool-input,
-html[data-site-theme="matrix"] .document-editor {
-  background: var(--surface-opaque, var(--surface));
+/* DOS theme: Note Builder is a gray DOS application window with blue edit fields. */
+html[data-site-theme="dos"] :is(.library-pane, .editor-pane) {
+  background: #c0c0c0 !important;
+  color: #000 !important;
+  border: 2px solid !important;
+  border-color: #fff #000 #000 #fff !important;
+  border-radius: 0 !important;
+  box-shadow: 7px 7px 0 #000 !important;
 }
-
-html[data-site-theme="matrix"] .available-notes {
-  background: var(--surface-opaque, var(--surface));
+html[data-site-theme="dos"] :is(
+  .library-pane,
+  .library-pane *,
+  .editor-pane,
+  .editor-pane *,
+  .pane-heading,
+  .pane-heading *,
+  .library-help,
+  .editor-help,
+  .available-notes,
+  .note-option,
+  .note-option *,
+  .empty-message,
+  .status-message,
+  .document-counts,
+  .editor-label
+) {
+  color: #000 !important;
+}
+html[data-site-theme="dos"] .note-group-heading {
+  position: sticky;
+  background: #c0c0c0 !important;
+  color: #000 !important;
+  border-color: #000 !important;
+}
+html[data-site-theme="dos"] .note-option {
+  background: #c0c0c0 !important;
+  border-color: #000 !important;
+}
+html[data-site-theme="dos"] .note-option:hover,
+html[data-site-theme="dos"] .note-option:focus-visible,
+html[data-site-theme="dos"] .note-option[aria-selected="true"] {
+  background: #a8a8a8 !important;
+}
+html[data-site-theme="dos"] :is(
+  .note-search-field input,
+  .filename-field input,
+  .document-editor
+) {
+  background: #0000aa !important;
+  color: #fff !important;
+  border-radius: 0 !important;
+  border: 2px solid !important;
+  border-color: #000 #fff #fff #000 !important;
+  box-shadow: none !important;
+}
+html[data-site-theme="dos"] :is(.note-search-field input, .filename-field input, .document-editor)::placeholder {
+  color: #aaa !important;
+}
+html[data-site-theme="dos"] :is(.tool-primary-button, .tool-secondary-button) {
+  color: #000 !important;
+}
+html[data-site-theme="dos"] :is(.tool-primary-button, .tool-secondary-button):disabled {
+  color: #707070 !important;
+}
+/* The shared sidebar must remain black-on-gray on the builder route too. */
+html[data-site-theme="dos"] .notes-sidebar,
+html[data-site-theme="dos"] .notes-sidebar * {
+  color: #000 !important;
+}
+html[data-site-theme="dos"] .notes-sidebar :is(.sidebar-header, .sidebar-header *) {
+  color: #000 !important;
 }

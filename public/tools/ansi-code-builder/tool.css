@@ -19,3 +19,20 @@ html:not([data-site-theme])[data-theme="light"] .code-output-shell {
   background-color: transparent !important;
   box-shadow: none;
 }
+
+/* DOS theme: Sequence & code surfaces are gray DOS windows, not dark-theme code planes. */
+html[data-site-theme="dos"] #panel-sequence :is(.notice, .code-output-shell) {
+  background: #c0c0c0 !important;
+  color: #000 !important;
+  border-radius: 0 !important;
+  border: 2px solid !important;
+  border-color: #808080 #fff #fff #808080 !important;
+}
+html[data-site-theme="dos"] #panel-sequence :is(.notice, .code-output-shell, .code-output-shell pre, .code-output-shell code) {
+  color: #000 !important;
+}
+html[data-site-theme="dos"] #panel-sequence .copy-code-button {
+  background: #c0c0c0 !important;
+  color: #000 !important;
+  border-radius: 0 !important;
+}

@@ -4163,3 +4163,8 @@ html[data-site-theme="dos"] .code-window .syntax-string { color: #a5d6ff !import
 html[data-site-theme="dos"] .code-window .syntax-variable { color: #d2a8ff !important; }
 html[data-site-theme="dos"] .code-window .syntax-number,
 html[data-site-theme="dos"] .code-window .syntax-path { color: #79c0ff !important; }
+
+/* Final DOS route-specific safeguards. */
+html[data-site-theme="dos"] .site-header .site-title { color: #fff !important; }
+html[data-site-theme="dos"] body:has(.note-builder-main) .notes-sidebar,
+html[data-site-theme="dos"] body:has(.note-builder-main) .notes-sidebar * { color: #000 !important; }

@@ -244,3 +244,18 @@ html:not([data-site-theme])[data-theme="dark"] .tooltip-details {
     left: var(--tooltip-arrow-left, 50%);
   }
 }
+
+/* DOS theme: the empty instruction duplicates the input guidance above. */
+html[data-site-theme="dos"] #empty-state {
+  display: none !important;
+}
+
+/* DOS theme: keep the textarea prompt, hide only the separate empty-state copy below. */
+html[data-site-theme="dos"] #character-input::placeholder {
+  color: #c0c0c0 !important;
+  opacity: 1;
+}
+
+html[data-site-theme="dos"] #empty-state {
+  display: none !important;
+}

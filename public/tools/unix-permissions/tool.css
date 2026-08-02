@@ -370,3 +370,36 @@
 @media (max-width: 520px) {
   .umask-results { grid-template-columns: 1fr; }
 }
+
+/* DOS theme: remove stray alternate gray fills and keep all gray-window text readable. */
+html[data-site-theme="dos"] :is(
+  .permission-toggle span,
+  .special-toggle,
+  .defaults-row,
+  .defaults-header,
+  .umask-result,
+  .derived-umask
+) {
+  background: #c0c0c0 !important;
+  color: #000 !important;
+  border-radius: 0 !important;
+}
+html[data-site-theme="dos"] :is(
+  .column-heading,
+  .row-heading,
+  .defaults-header,
+  .defaults-header *,
+  .defaults-row,
+  .defaults-row *,
+  .umask-result,
+  .umask-result *,
+  .derived-umask,
+  .derived-umask *
+) {
+  color: #000 !important;
+}
+html[data-site-theme="dos"] .permission-toggle input:checked + span,
+html[data-site-theme="dos"] .special-toggle:has(input:checked) {
+  background: #a8c4c4 !important;
+  color: #008b8b !important;
+}
