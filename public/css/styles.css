@@ -4268,14 +4268,22 @@ html[data-site-theme="dos"] .notes-sidebar-header .note-builder-link:active {
   text-align: left;
 }
 
-.ascii-art {
+.ascii-art-stage {
   display: grid;
   place-items: center;
   box-sizing: border-box;
   min-height: clamp(23rem, 56vh, 38rem);
-  margin: 0;
   overflow: auto;
   padding: clamp(1.25rem, 4vw, 3rem);
+  text-align: center;
+}
+
+.ascii-art {
+  display: block;
+  width: calc(var(--ascii-columns, 1) * 1ch);
+  max-width: none;
+  margin: auto;
+  padding: 0;
   color: inherit;
   font-family: var(--font-code);
   font-size: clamp(0.68rem, 1.15vw, 1rem);
@@ -4283,6 +4291,7 @@ html[data-site-theme="dos"] .notes-sidebar-header .note-builder-link:active {
   line-height: 1.18;
   tab-size: 4;
   white-space: pre;
+  text-align: left;
   text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 32%, transparent);
 }
 
@@ -4359,10 +4368,12 @@ html[data-site-theme="dracula"] .ascii-frame {
     margin-bottom: 1.25rem;
   }
 
-  .ascii-art {
-    place-items: start;
+  .ascii-art-stage {
     min-height: 24rem;
     padding: 1rem;
+  }
+
+  .ascii-art {
     font-size: 0.66rem;
   }
 

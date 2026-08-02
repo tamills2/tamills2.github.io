@@ -1,0 +1,98 @@
+[
+  {
+    "id": "dragon",
+    "heading": "The Dragon's Hoard",
+    "subtitle": "Fortune favors the bold.",
+    "file": "dragon.txt"
+  },
+  {
+    "id": "castle",
+    "heading": "The Forgotten Keep",
+    "subtitle": "Some doors remember who opened them.",
+    "file": "castle.txt"
+  },
+  {
+    "id": "pirate",
+    "heading": "The Black Tide",
+    "subtitle": "No map marks the way back.",
+    "file": "pirate.txt"
+  },
+  {
+    "id": "wolf",
+    "heading": "The Hunt Begins",
+    "subtitle": "The forest is listening.",
+    "file": "wolf.txt"
+  },
+  {
+    "id": "skull",
+    "heading": "Memento Mori",
+    "subtitle": "Every system reaches an end state.",
+    "file": "skull.txt"
+  },
+  {
+    "id": "spaceship",
+    "heading": "Beyond the Horizon",
+    "subtitle": "Every journey begins with a single launch.",
+    "file": "spaceship.txt"
+  },
+  {
+    "id": "tree",
+    "heading": "The Elder Grove",
+    "subtitle": "Old roots hold newer secrets.",
+    "file": "tree.txt"
+  },
+  {
+    "id": "mountain",
+    "heading": "The Long Ascent",
+    "subtitle": "The summit keeps its own counsel.",
+    "file": "mountain.txt"
+  },
+  {
+    "id": "phoenix",
+    "heading": "From the Ashes",
+    "subtitle": "Begin again, but remember the fire.",
+    "file": "phoenix.txt"
+  },
+  {
+    "id": "raven",
+    "heading": "Nevermore",
+    "subtitle": "A black wing crosses the archive.",
+    "file": "raven.txt"
+  },
+  {
+    "id": "kraken",
+    "heading": "Into the Abyss",
+    "subtitle": "The deep answers slowly.",
+    "file": "kraken.txt"
+  },
+  {
+    "id": "terminal",
+    "heading": "System Initialization",
+    "subtitle": "All modules report ready.",
+    "file": "terminal.txt"
+  },
+  {
+    "id": "circuit",
+    "heading": "Digital Genesis",
+    "subtitle": "Signal becomes structure.",
+    "file": "circuit.txt"
+  },
+  {
+    "id": "hourglass",
+    "heading": "The Sands of Time",
+    "subtitle": "Every process has a timeout.",
+    "file": "hourglass.txt"
+  },
+  {
+    "id": "owl",
+    "heading": "Keeper of Secrets",
+    "subtitle": "Wisdom watches from the dark.",
+    "file": "owl.txt"
+  },
+  {
+    "id": "lighthouse",
+    "heading": "Beacon in the Storm",
+    "subtitle": "One light is enough to navigate by.",
+    "file": "lighthouse.txt"
+  }
+]

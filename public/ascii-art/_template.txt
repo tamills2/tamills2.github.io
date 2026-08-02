@@ -1,0 +1,5 @@
+Place new ASCII artwork inside a roughly 72 x 22 character canvas.
+Delete this guide before adding the file to manifest.json.
+
+The page removes shared indentation, measures the longest line,
+centers the complete block, and preserves internal spacing.

@@ -1,0 +1,10 @@
+     +------------------------------------------------------+
+     | repo@localhost:~$ ./start                              |
+     |                                                        |
+     | [ OK ] notes manifest                                  |
+     | [ OK ] tool registry                                   |
+     | [ OK ] hidden themes                                   |
+     | [ OK ] local storage                                   |
+     |                                                        |
+     | SYSTEM READY_                                          |
+     +------------------------------------------------------+

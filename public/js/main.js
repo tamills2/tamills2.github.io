@@ -69,34 +69,55 @@ function cacheElements() {
 
 
 
-const ASCII_ARTWORKS = Object.freeze([
-  {"id": "dragon", "heading": "The Dragon's Hoard", "subtitle": "Fortune favors the bold.", "art": "                         / \\  //\\\n                  |\\___/|      /   \\//  \\\\\n                  /0  0  \\__  /    //  | \\ \\\n                 /     /  \\/_/    //   |  \\  \\\n                 @_^_@'/   \\/_   //    |   \\   \\\n                 //_^_/     \\/_ //     |    \\    \\\n              ( //) |        \\///      |     \\     \\\n            ( / /) _|_ /   )  //       |      \\     _\\\n          ( // /) '/,_ _ _/  ( ; -.    |    _ _\\.-~"},
-  {"id": "castle", "heading": "The Forgotten Keep", "subtitle": "Some doors remember who opened them.", "art": "                         |>>>                    |>>>\n                         |                        |\n                     _  _|_  _                _  _|_  _\n                    |;|_|;|_|;|              |;|_|;|_|;|\n                    \\\\.    .  /              \\\\.    .  /\n                     \\\\:  .  /                \\\\:  .  /\n                      ||:   |                  ||:   |\n                      ||:.  |                  ||:.  |\n                      ||:  .|__________________||:  .|\n                   __ ||_   |__________________||_   | __"},
-  {"id": "pirate", "heading": "The Black Tide", "subtitle": "No map marks the way back.", "art": "                              |\\\n                              | \\\n                              |  \\\n                         _____|___\\____\n                        /              /\\\n                 ______/______________/  \\____\n                \\                         ___/\n          ~~~~~~~\\_______________________/~~~~~~~~\n       ~~~~~  ~~~~~   ~~~~~   ~~~~~   ~~~~~  ~~~~~"},
-  {"id": "wolf", "heading": "The Hunt Begins", "subtitle": "The forest is listening.", "art": "                         .     .\n                         |\\_---_/|\n                        /   o_o   \\\n                       |    (_)    |\n                        \\  .---.  /\n                         '-|   |-'\n                           |   |\n                     _..---'   '---.._\n                  .-'                 '-.\n                 /      /|       |\\      \\\n                /______/ |_______| \\______\\"},
-  {"id": "skull", "heading": "Memento Mori", "subtitle": "Every system reaches an end state.", "art": "                         ______\n                      .-\"      \"-.\n                     /            \\\n                    |              |\n                    |,  .-.  .-.  ,|\n                    | )(_o/  \\o_)( |\n                    |/     /\\     \\|\n                    (_     ^^     _)\n                     \\__|IIIIII|__/\n                        \\      /\n                         `----`"},
-  {"id": "spaceship", "heading": "Beyond the Horizon", "subtitle": "Every journey begins with a single launch.", "art": "                              /\\\n                             /  \\\n                            / /\\ \\\n                           / /  \\ \\\n                          /_/____\\_\\\n                            |  |\n                         ___|  |___\n                        /   |  |   \\\n                       /____|__|____\\\n                         /  /\\  \\\n                        /__/  \\__\\\n                       *          *"},
-  {"id": "tree", "heading": "The Elder Grove", "subtitle": "Old roots hold newer secrets.", "art": "                           &&& &&  & &&\n                      && &\\/&\\|& ()|/ @, &&\n                      &\\/(/&/&||/& /_/)_&/_&\n                   &() &\\/&|()|/&\\/ '%\" & ()\n                  &_\\_&&_\\ |& |&&/&__%_/_& &&\n                &&   && & &| &| /& & % ()& /&&\n                 ()&_---()&\\&\\|&&-&&--%---()~\n                     &&     \\|||\n                             |||\n                             |||\n                       , -=-~  .-^- _"},
-  {"id": "mountain", "heading": "The Long Ascent", "subtitle": "The summit keeps its own counsel.", "art": "                              /\\\n                             /  \\\n                            / /\\ \\\n                           / /  \\ \\\n                    /\\    /_/____\\_\\     /\\\n                   /  \\      /\\         /  \\\n              /\\  /    \\    /  \\   /\\ /    \\\n             /  \\/      \\__/    \\_/  V      \\\n            /__________________________________\\"},
-  {"id": "phoenix", "heading": "From the Ashes", "subtitle": "Begin again, but remember the fire.", "art": "                          .-\"\"\"-.\n                         /  .-.  \\\n                    .---|  /   \\  |---.\n                  .'    \\  \\_/  /    '.\n                 /       '.___.'       \\\n                /   .-._    |    _.-.   \\\n               /_.-'    '-._|_.-'    '-._\\\n                         _/ | \\_\n                    _.-'   |   '-._\n                 .-'      / \\      '-.\n                /________/___\\________\\"},
-  {"id": "raven", "heading": "Nevermore", "subtitle": "A black wing crosses the archive.", "art": "                             ___\n                         .-\"   \"-.\n                        /  .-. .-.\\\n                       |  /   Y   \\ |\n                       |  \\ 0 | 0 / |\n                        \\  '._^_.'  /\n                         '._     _.'\n                            |   |\n                       _____|   |_____\n                      /      \\_/      \\\n                     /_________________\\"},
-  {"id": "kraken", "heading": "Into the Abyss", "subtitle": "The deep answers slowly.", "art": "                        .-\"\"\"\"\"-.\n                      .'  _   _  '.\n                     /   (o) (o)   \\\n                    |       ^       |\n                    |    .-----.    |\n                     \\  '-------'  /\n                      '._       _.'\n                         \\| | |/\n                     _.-' | | '-._\n                  .-'    /| |\\    '-.\n                 /______/ | | \\______\\"},
-  {"id": "terminal", "heading": "System Initialization", "subtitle": "All modules report ready.", "art": "     +------------------------------------------------------+\n     | repo@localhost:~$ ./start                              |\n     |                                                        |\n     | [ OK ] notes manifest                                  |\n     | [ OK ] tool registry                                   |\n     | [ OK ] hidden themes                                   |\n     | [ OK ] local storage                                   |\n     |                                                        |\n     | SYSTEM READY_                                          |\n     +------------------------------------------------------+"},
-  {"id": "circuit", "heading": "Digital Genesis", "subtitle": "Signal becomes structure.", "art": "          o----[R1]----o----------o----[R2]----o\n          |            |          |            |\n        [C1]         .-+-.      [CPU]         [C2]\n          |          |   |        |            |\n          o----o-----+---+--------o-----o------o\n               |                      |\n             [RAM]                  [ROM]\n               |                      |\n          o----o----------------------o----o\n          |                                |\n        [I/O]----------------------------[NET]"},
-  {"id": "hourglass", "heading": "The Sands of Time", "subtitle": "Every process has a timeout.", "art": "                        ___________\n                       \\         /\n                        \\       /\n                         \\     /\n                          \\   /\n                           \\ /\n                           / \\\n                          /   \\\n                         /  .  \\\n                        / .::.  \\\n                       /:::::::::\\\n                      /___________\\"},
-  {"id": "owl", "heading": "Keeper of Secrets", "subtitle": "Wisdom watches from the dark.", "art": "                           ,_,\n                          (O,O)\n                          (   )\n                           \"-\"\n                       ___/   \\___\n                    .-'           '-.\n                   /    /|     |\\    \\\n                  /____/ |_____| \\____\\\n                     /     |     \\\n                    /______|______\\"},
-  {"id": "lighthouse", "heading": "Beacon in the Storm", "subtitle": "One light is enough to navigate by.", "art": "                            |\\\n                         ___|_\\___\n                        /   |   /\\\n                       /____|__/  \\\n                          ||\n                        __||__\n                       /  ||  \\\n                      /___||___\\\n                         /||\\\n                        /_||_\\\n                   ~~~~~~~||~~~~~~~~\n                ~~~~~  ~~~||~~~  ~~~~~"}
-]);
+let asciiArtworks = [];
+
 
 let currentAsciiArtworkIndex = -1;
 let asciiSequenceToken = 0;
 let asciiPrintTimer = 0;
 let asciiIntroTimers = [];
 
-function initialiseAsciiHomepage() {
+async function initialiseAsciiHomepage() {
   if (!elements.asciiHomeTitle || !elements.asciiIntro || !elements.asciiSubtitle || !elements.asciiArt || !elements.asciiArtLabel || !elements.asciiNextButton) return;
+
+  elements.asciiNextButton.disabled = true;
   elements.asciiNextButton.addEventListener("click", () => showRandomAsciiArtwork());
-  showRandomAsciiArtwork();
+
+  try {
+    const manifestResponse = await fetch("./ascii-art/manifest.json");
+    if (!manifestResponse.ok) throw new Error(`ASCII manifest returned ${manifestResponse.status}`);
+    const manifest = await manifestResponse.json();
+
+    asciiArtworks = await Promise.all(manifest.map(async (entry) => {
+      const artResponse = await fetch(`./ascii-art/${entry.file}`);
+      if (!artResponse.ok) throw new Error(`${entry.file} returned ${artResponse.status}`);
+      return { ...entry, art: normaliseAsciiArtwork(await artResponse.text()) };
+    }));
+
+    if (!asciiArtworks.length) throw new Error("The ASCII manifest is empty.");
+    elements.asciiNextButton.disabled = false;
+    showRandomAsciiArtwork();
+  } catch (error) {
+    console.error("Unable to load ASCII artwork:", error);
+    elements.asciiIntro.textContent = "ARCHIVE UNAVAILABLE";
+    elements.asciiHomeTitle.textContent = "Transmission Lost";
+    elements.asciiSubtitle.textContent = "The artwork archive could not be loaded.";
+    elements.asciiArt.textContent = "[ NO SIGNAL ]";
+    elements.asciiArtLabel.textContent = "Check public/ascii-art/manifest.json";
+  }
+}
+
+function normaliseAsciiArtwork(source) {
+  const lines = String(source).replace(/\r/g, "").split("\n");
+  while (lines.length && !lines[0].trim()) lines.shift();
+  while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
+
+  const populated = lines.filter((line) => line.trim());
+  const sharedIndent = populated.length
+    ? Math.min(...populated.map((line) => line.match(/^ */)[0].length))
+    : 0;
+
+  return lines.map((line) => line.slice(sharedIndent).replace(/\s+$/, "")).join("\n");
 }
 
 function clearAsciiSequence() {
@@ -107,27 +128,33 @@ function clearAsciiSequence() {
 }
 
 function showRandomAsciiArtwork() {
+  if (!asciiArtworks.length) return;
   clearAsciiSequence();
   const sequenceToken = asciiSequenceToken;
-  let nextIndex = Math.floor(Math.random() * ASCII_ARTWORKS.length);
-  if (ASCII_ARTWORKS.length > 1 && nextIndex === currentAsciiArtworkIndex) {
-    nextIndex = (nextIndex + 1 + Math.floor(Math.random() * (ASCII_ARTWORKS.length - 1))) % ASCII_ARTWORKS.length;
+  let nextIndex = Math.floor(Math.random() * asciiArtworks.length);
+  if (asciiArtworks.length > 1 && nextIndex === currentAsciiArtworkIndex) {
+    nextIndex = (nextIndex + 1 + Math.floor(Math.random() * (asciiArtworks.length - 1))) % asciiArtworks.length;
   }
   currentAsciiArtworkIndex = nextIndex;
-  const artwork = ASCII_ARTWORKS[nextIndex];
-  const lines = artwork.art.replace(/^\n|\n$/g, "").split("\n");
+  const artwork = asciiArtworks[nextIndex];
+  const lines = artwork.art.split("\n");
+  const longestLine = Math.max(...lines.map((line) => [...line].length), 1);
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  elements.asciiArt.style.setProperty("--ascii-columns", longestLine);
   elements.asciiHomeTitle.textContent = reducedMotion ? artwork.heading : "";
   elements.asciiSubtitle.textContent = reducedMotion ? artwork.subtitle : "";
   elements.asciiIntro.textContent = reducedMotion ? "ARCHIVE READY" : "Initializing...";
-  elements.asciiArt.textContent = reducedMotion ? lines.join("\n") : "";
-  elements.asciiArtLabel.textContent = `${artwork.heading} · Artwork ${nextIndex + 1} of ${ASCII_ARTWORKS.length}`;
+  elements.asciiArt.textContent = reducedMotion ? artwork.art : "";
+  elements.asciiArtLabel.textContent = `${artwork.heading} · Artwork ${nextIndex + 1} of ${asciiArtworks.length}`;
   if (reducedMotion) return;
+
   [[260, "Loading artwork..."], [560, "Locating archive..."], [860, `> ${artwork.heading}`]].forEach(([delay, message]) => {
     asciiIntroTimers.push(window.setTimeout(() => {
       if (sequenceToken === asciiSequenceToken) elements.asciiIntro.textContent = message;
     }, delay));
   });
+
   asciiIntroTimers.push(window.setTimeout(() => {
     if (sequenceToken !== asciiSequenceToken) return;
     elements.asciiHomeTitle.textContent = artwork.heading;
