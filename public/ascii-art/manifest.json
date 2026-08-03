@@ -60,22 +60,16 @@
     "file": "raven.txt"
   },
   {
-    "id": "kraken",
+    "id": "alien",
     "heading": "Into the Abyss",
     "subtitle": "The deep answers slowly.",
-    "file": "kraken.txt"
+    "file": "alien.txt"
   },
   {
     "id": "terminal",
     "heading": "System Initialization",
     "subtitle": "All modules report ready.",
     "file": "terminal.txt"
-  },
-  {
-    "id": "circuit",
-    "heading": "Digital Genesis",
-    "subtitle": "Signal becomes structure.",
-    "file": "circuit.txt"
   },
   {
     "id": "hourglass",
