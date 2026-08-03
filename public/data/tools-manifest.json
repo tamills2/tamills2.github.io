@@ -46,14 +46,14 @@
     "order": 45,
     "path": "tools/cron-expression/",
     "url": "./tools/cron-expression/",
-    "content": "Build standard cron schedules or explain an existing five-field cron expression. Cron Expression | Repo Repo tool Cron Expression Build a standard five-field cron schedule, or paste one in to see what it means. Expression generator Choose a common schedule or set each field manually. Common cron presets Every minute Every 5 minutes Hourly Daily Weekdays at 9:00 Monthly Minute 0–59 Hour 0–23 Day of month 1–31 Month 1–12 Day of week 0–7 Copy Expression explainer Paste a five-field Unix cron expression. Names such as MON and JAN are supported. Cron expression Explain Load into generator Clear Field reference Standard Unix crontab syntax uses five schedule fields followed by the command."
+    "content": "Build standard cron schedules or explain an existing five-field cron expression. Cron Expression | Repo Repo tool Cron Expression Build a standard five-field cron schedule, or paste one in to see what it means. Expression generator Choose a common schedule or set each field manually. Common cron presets Every minute Every 5 minutes Hourly Daily Weekdays at 9:00 Monthly Minute 0\u201359 Hour 0\u201323 Day of month 1\u201331 Month 1\u201312 Day of week 0\u20137 Copy Expression explainer Paste a five-field Unix cron expression. Names such as MON and JAN are supported. Cron expression Explain Load into generator Clear Field reference Standard Unix crontab syntax uses five schedule fields followed by the command."
   },
   {
     "type": "tool",
     "slug": "vim-cheatsheet",
     "title": "Vim Cheatsheet",
     "description": "",
-    "category": "Development",
+    "category": "Text",
     "keywords": [
       "vim",
       "vi",
@@ -75,7 +75,7 @@
     "order": 15,
     "path": "tools/vim-cheatsheet/",
     "url": "./tools/vim-cheatsheet/",
-    "content": "Vim Cheatsheet | Repo Repo reference Vim Cheatsheet Filter Vim commands Search commands motion, delete word, :substitute, Ctrl-W… Clear Vim cheatsheet sections No commands match that search."
+    "content": "Vim Cheatsheet | Repo Repo reference Vim Cheatsheet Filter Vim commands Search commands motion, delete word, :substitute, Ctrl-W\u2026 Clear Vim cheatsheet sections No commands match that search."
   },
   {
     "type": "tool",
@@ -106,7 +106,7 @@
     "order": 35,
     "path": "tools/ansi-code-builder/",
     "url": "./tools/ansi-code-builder/",
-    "content": "Browse common ANSI escape codes, pick terminal colors, compose sequences, and generate variables and usage examples for popular programming languages. ANSI Codes & Color Builder | Repo Repo tool ANSI Codes & Color Builder Find common terminal control sequences, build foreground and background colors, combine operations, and export ready-to-use code. Tool sections Reference Color builder Sequence & code Common ANSI escape codes Search by name, category, description, or numeric sequence. Add any row to the sequence builder. Search cursor, clear, bold, 2J… Category All categories Display format \\\\x1b \\\\033 \\\\e ESC Literal character Name Sequence Description Actions Choose a color Pick a hue and saturation on the wheel, then adjust brightness. Hue and saturation color wheel Brightness 100% Hex R G B Terminal output Choose where the color applies and which terminal color mode to generate. Apply color to Foreground Background Both Background hex Color mode Truecolor (24-bit) ANSI 256 Standard 16-color Styles Bold Dim Italic Underline Inverse Strikethrough Include reset in complete examples Add color to sequence builder Generated color values The closest ANSI 256 and standard 16-color matches are calculated automatically. Sequence builder Arrange movements, colors, styles, and other controls in the order they should run. Clear Variable & usage generator Export the current sequence as variables, a combined value, or a complete example. Language Variable name Example text Output Single combined variable Separate variables Complete runnable example Helper function Reset handling Separate RESET variable Inline reset No reset (advanced) Copy generated code Copy"
+    "content": "Browse common ANSI escape codes, pick terminal colors, compose sequences, and generate variables and usage examples for popular programming languages. ANSI Codes & Color Builder | Repo Repo tool ANSI Codes & Color Builder Find common terminal control sequences, build foreground and background colors, combine operations, and export ready-to-use code. Tool sections Reference Color builder Sequence & code Common ANSI escape codes Search by name, category, description, or numeric sequence. Add any row to the sequence builder. Search cursor, clear, bold, 2J\u2026 Category All categories Display format \\\\x1b \\\\033 \\\\e ESC Literal character Name Sequence Description Actions Choose a color Pick a hue and saturation on the wheel, then adjust brightness. Hue and saturation color wheel Brightness 100% Hex R G B Terminal output Choose where the color applies and which terminal color mode to generate. Apply color to Foreground Background Both Background hex Color mode Truecolor (24-bit) ANSI 256 Standard 16-color Styles Bold Dim Italic Underline Inverse Strikethrough Include reset in complete examples Add color to sequence builder Generated color values The closest ANSI 256 and standard 16-color matches are calculated automatically. Sequence builder Arrange movements, colors, styles, and other controls in the order they should run. Clear Variable & usage generator Export the current sequence as variables, a combined value, or a complete example. Language Variable name Example text Output Single combined variable Separate variables Complete runnable example Helper function Reset handling Separate RESET variable Inline reset No reset (advanced) Copy generated code Copy"
   },
   {
     "type": "tool",
@@ -128,7 +128,7 @@
     "order": 20,
     "path": "tools/subnet-calculator/",
     "url": "./tools/subnet-calculator/",
-    "content": "Calculate IPv4 network ranges, masks, broadcast addresses, usable hosts, and binary details from an address and CIDR prefix. Subnet Calculator | Repo Repo tool Subnet Calculator Enter an IPv4 address and CIDR prefix to calculate its network, broadcast address, usable host range, masks, and binary representation. IPv4 network Use CIDR notation in the address field, or choose the prefix separately. IPv4 address or CIDR 192.168.1.25/24 Prefix length Common subnet sizes /8 /16 /24 /30 /31 /32 Calculate subnet Clear Load example Calculated block Results Copy results Address range Masks and prefix Binary breakdown Each octet is padded to eight bits. Network and host portions are separated visually. Value Dotted decimal Binary Address — Network Mask"
+    "content": "Calculate IPv4 network ranges, masks, broadcast addresses, usable hosts, and binary details from an address and CIDR prefix. Subnet Calculator | Repo Repo tool Subnet Calculator Enter an IPv4 address and CIDR prefix to calculate its network, broadcast address, usable host range, masks, and binary representation. IPv4 network Use CIDR notation in the address field, or choose the prefix separately. IPv4 address or CIDR 192.168.1.25/24 Prefix length Common subnet sizes /8 /16 /24 /30 /31 /32 Calculate subnet Clear Load example Calculated block Results Copy results Address range Masks and prefix Binary breakdown Each octet is padded to eight bits. Network and host portions are separated visually. Value Dotted decimal Binary Address \u2014 Network Mask"
   },
   {
     "type": "tool",
@@ -174,7 +174,7 @@
     "order": 30,
     "path": "tools/common-ports/",
     "url": "./tools/common-ports/",
-    "content": "Search common TCP and UDP ports, compare related services, and generate ready-to-run connectivity test commands. Common Ports Reference | Repo Repo tool Common Ports Reference Search frequently encountered TCP and UDP services, compare related ports, and generate commands for testing connectivity. Port number ranges Port lookup Filter by number, service, purpose, category, protocol, or security status. Reset filters Search 22, SSH, DNS, database… Category All categories Protocol TCP and UDP TCP UDP Both Security Any status Secure / encrypted Plaintext / legacy Depends on configuration Quick port filters 22 SSH 53 DNS 80 HTTP 443 HTTPS 445 SMB 3389 RDP Port Service Description Actions Selected service Choose a port Select any row to see practical details and related ports. Related ports Copy port details Connectivity command generator This offline tool does not scan hosts. It generates commands for you to run in your own terminal. Host or address Ephemeral port defaults Ephemeral ports are temporary local source ports selected by the operating system for outbound connections. These defaults can be changed by administrators or software. Operating system Default range Notes Linux 32768–60999 Kernel default for TCP and UDP local-port selection through ip_local_port_range . Distribution or host settings may override it. Windows Vista / Server 2008 and newer 49152–65535 Modern Windows default. TCP and UDP ranges are configured separately for IPv4 and IPv6. Windows XP / Server 2003 and older 1025–5000 Legacy Windows default retained here for troubleshooting older systems and mixed environments. View or change the active range Copy Linux procfs command Copy Linux sysctl command Copy Linux set command Copy Windows TCP view command Copy Windows UDP view command Copy Windows set command"
+    "content": "Search common TCP and UDP ports, compare related services, and generate ready-to-run connectivity test commands. Common Ports Reference | Repo Repo tool Common Ports Reference Search frequently encountered TCP and UDP services, compare related ports, and generate commands for testing connectivity. Port number ranges Port lookup Filter by number, service, purpose, category, protocol, or security status. Reset filters Search 22, SSH, DNS, database\u2026 Category All categories Protocol TCP and UDP TCP UDP Both Security Any status Secure / encrypted Plaintext / legacy Depends on configuration Quick port filters 22 SSH 53 DNS 80 HTTP 443 HTTPS 445 SMB 3389 RDP Port Service Description Actions Selected service Choose a port Select any row to see practical details and related ports. Related ports Copy port details Connectivity command generator This offline tool does not scan hosts. It generates commands for you to run in your own terminal. Host or address Ephemeral port defaults Ephemeral ports are temporary local source ports selected by the operating system for outbound connections. These defaults can be changed by administrators or software. Operating system Default range Notes Linux 32768\u201360999 Kernel default for TCP and UDP local-port selection through ip_local_port_range . Distribution or host settings may override it. Windows Vista / Server 2008 and newer 49152\u201365535 Modern Windows default. TCP and UDP ranges are configured separately for IPv4 and IPv6. Windows XP / Server 2003 and older 1025\u20135000 Legacy Windows default retained here for troubleshooting older systems and mixed environments. View or change the active range Copy Linux procfs command Copy Linux sysctl command Copy Linux set command Copy Windows TCP view command Copy Windows UDP view command Copy Windows set command"
   },
   {
     "type": "tool",
@@ -225,7 +225,7 @@
     "order": 5,
     "path": "tools/note-builder/",
     "url": "./tools/note-builder/",
-    "content": "Insert repository notes into an editable document, then copy or save it as a Linux LF text file. Note Builder | Repo Repo tool Note Builder Insert notes from the repository, edit the combined document, then copy it or save it as a UTF-8 text file with Linux LF line endings. Note builder Available notes Loading… Search note names Type a note name… Double-click a note, press Enter, or drag it into the editor. The same note can be inserted any number of times. Loading notes… File name Copy text Save text file Clear 0 characters · 0 lines Combined document Double-click or drag notes here. You can edit anything before saving. Notes are separated by one blank line. Dragging inserts at the current cursor position when possible; otherwise it appends to the end. Your draft and filename are saved locally in this browser."
+    "content": "Insert repository notes into an editable document, then copy or save it as a Linux LF text file. Note Builder | Repo Repo tool Note Builder Insert notes from the repository, edit the combined document, then copy it or save it as a UTF-8 text file with Linux LF line endings. Note builder Available notes Loading\u2026 Search note names Type a note name\u2026 Double-click a note, press Enter, or drag it into the editor. The same note can be inserted any number of times. Loading notes\u2026 File name Copy text Save text file Clear 0 characters \u00b7 0 lines Combined document Double-click or drag notes here. You can edit anything before saving. Notes are separated by one blank line. Dragging inserts at the current cursor position when possible; otherwise it appends to the end. Your draft and filename are saved locally in this browser."
   },
   {
     "type": "tool",
@@ -311,7 +311,7 @@
     "order": 30,
     "path": "tools/hashes-encoding/",
     "url": "./tools/hashes-encoding/",
-    "content": "Generate common hashes and Base64 encodings from text or local files without uploading anything. Hashes & Encoding | Repo Repo tool Hashes & Encoding Generate hashes and Base64 output from UTF-8 text or a local file. Text input 0 characters · 0 bytes Clear Text Paste or type text Output options Uppercase hexadecimal Remove Base64 padding Wrap Base64 at 76 characters Text results File hashing No file selected Drop a file here or choose a file File results"
+    "content": "Generate common hashes and Base64 encodings from text or local files without uploading anything. Hashes & Encoding | Repo Repo tool Hashes & Encoding Generate hashes and Base64 output from UTF-8 text or a local file. Text input 0 characters \u00b7 0 bytes Clear Text Paste or type text Output options Uppercase hexadecimal Remove Base64 padding Wrap Base64 at 76 characters Text results File hashing No file selected Drop a file here or choose a file File results"
   },
   {
     "type": "tool",
@@ -339,7 +339,7 @@
     "order": 10,
     "path": "tools/http-status-codes/",
     "url": "./tools/http-status-codes/",
-    "content": "Search HTTP response codes with causes, troubleshooting steps, related headers, and cache behavior. HTTP Status Codes | Repo Repo tool HTTP Status Codes Search HTTP response codes by number, name, meaning, related header, cause, or troubleshooting step. HTTP status code filters Search Try 404, redirect, Retry-After, authentication… Common codes only Clear Status code category All 1xx Informational 2xx Success 3xx Redirection 4xx Client error 5xx Server error Status codes"
+    "content": "Search HTTP response codes with causes, troubleshooting steps, related headers, and cache behavior. HTTP Status Codes | Repo Repo tool HTTP Status Codes Search HTTP response codes by number, name, meaning, related header, cause, or troubleshooting step. HTTP status code filters Search Try 404, redirect, Retry-After, authentication\u2026 Common codes only Clear Status code category All 1xx Informational 2xx Success 3xx Redirection 4xx Client error 5xx Server error Status codes"
   },
   {
     "type": "tool",
