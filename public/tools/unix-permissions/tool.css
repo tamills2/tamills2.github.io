@@ -338,7 +338,7 @@
 .umask-title-row { margin-bottom: 0.9rem; }
 .umask-title-row h2 { margin: 0; font-size: 1rem; }
 .umask-layout { display: grid; grid-template-columns: minmax(9rem, 0.55fr) minmax(0, 1.45fr); gap: 1rem; align-items: stretch; }
-.umask-control-title,
+.umask-control label,
 .reverse-controls label > span,
 .derived-umask > span { display: block; margin-bottom: 0.45rem; font-size: 0.82rem; font-weight: 700; }
 .umask-control input { max-width: 9rem; }
@@ -354,8 +354,17 @@
 .reverse-controls label { min-width: 0; }
 .reverse-controls select,
 .reverse-controls input { width: 100%; }
-.derived-umask { min-height: 2.75rem; padding: 0.55rem 0.75rem; border: 1px solid var(--border); border-radius: 0.5rem; background: var(--surface-subtle); }
-.derived-umask > span { margin-bottom: 0.15rem; }
+.derived-umask { min-width: 0; }
+.derived-umask > span { margin-bottom: 0.45rem; }
+.derived-umask-value-box {
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--surface-subtle);
+}
 .derived-umask code { font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace); font-size: 1rem; font-weight: 800; }
 .derived-umask.invalid code { color: var(--text-muted); }
 
@@ -378,7 +387,7 @@ html[data-site-theme="dos"] :is(
   .defaults-row,
   .defaults-header,
   .umask-result,
-  .derived-umask
+  .derived-umask-value-box
 ) {
   background: #c0c0c0 !important;
   color: #000 !important;
@@ -394,7 +403,9 @@ html[data-site-theme="dos"] :is(
   .umask-result,
   .umask-result *,
   .derived-umask,
-  .derived-umask *
+  .derived-umask *,
+  .derived-umask-value-box,
+  .derived-umask-value-box *
 ) {
   color: #000 !important;
 }
@@ -402,22 +413,4 @@ html[data-site-theme="dos"] .permission-toggle input:checked + span,
 html[data-site-theme="dos"] .special-toggle:has(input:checked) {
   background: #a8c4c4 !important;
   color: #008b8b !important;
-}
-
-
-/* Hidden themes: keep umask result cards as one clean themed surface. */
-html[data-site-theme] .umask-result {
-  background: var(--surface-color, var(--surface)) !important;
-}
-
-html[data-site-theme] .umask-result code {
-  padding: 0 !important;
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-/* DOS retains its intended gray application-window surface. */
-html[data-site-theme="dos"] .umask-result {
-  background: #c0c0c0 !important;
 }
