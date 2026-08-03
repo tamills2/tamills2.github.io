@@ -403,3 +403,21 @@ html[data-site-theme="dos"] .special-toggle:has(input:checked) {
   background: #a8c4c4 !important;
   color: #008b8b !important;
 }
+
+
+/* Hidden themes: keep umask result cards as one clean themed surface. */
+html[data-site-theme] .umask-result {
+  background: var(--surface-color, var(--surface)) !important;
+}
+
+html[data-site-theme] .umask-result code {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* DOS retains its intended gray application-window surface. */
+html[data-site-theme="dos"] .umask-result {
+  background: #c0c0c0 !important;
+}

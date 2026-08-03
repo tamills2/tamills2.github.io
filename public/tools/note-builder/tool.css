@@ -406,3 +406,10 @@ html[data-site-theme="dos"] .note-builder-main .note-search-field input::placeho
   background: #0000aa !important;
   color: #ffffff !important;
 }
+
+
+/* Keep the note list visually separated from the search control. */
+.note-search-field {
+  margin-bottom: 0.9rem;
+}
+
