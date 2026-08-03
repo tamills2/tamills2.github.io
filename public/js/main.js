@@ -484,7 +484,7 @@ function renderSiteSearchResults(rawQuery) {
   if (!matches.length) {
     const empty = document.createElement("p");
     empty.className = "search-empty";
-    empty.textContent = "No matching notes, tools, pages, or actions.";
+    empty.textContent = "No matching notes, tools, links, pages, or actions.";
     elements.siteSearchResults.append(empty);
     return;
   }
@@ -613,7 +613,7 @@ function renderSearchPageResults(matches) {
     groups.get(match.type).push(match);
   }
 
-  for (const type of ["note", "tool", "page", "action"]) {
+  for (const type of ["note", "tool", "link", "page", "action"]) {
     const groupMatches = groups.get(type);
     if (!groupMatches?.length) {
       continue;
@@ -724,7 +724,7 @@ function scoreSearchEntry(entry, query) {
   else if (keywordIndex > -1) score = 34;
   else if (contentIndex > -1) score = 50;
 
-  score += ({ note: 0, tool: 1, page: 2, action: 3 }[entry.type] ?? 4);
+  score += ({ note: 0, tool: 1, link: 2, page: 3, action: 4 }[entry.type] ?? 5);
 
   return {
     ...entry,
@@ -754,6 +754,11 @@ async function activateSearchEntry(entry) {
     return;
   }
 
+  if (entry.type === "link") {
+    window.open(entry.url, "_blank", "noopener,noreferrer");
+    return;
+  }
+
   if (entry.url === "./") {
     showHome();
     return;
@@ -776,11 +781,11 @@ function performSearchAction(action) {
 }
 
 function formatSearchType(type) {
-  return ({ note: "Notes", tool: "Tools", page: "Pages", action: "Actions" }[type] || "Other");
+  return ({ note: "Notes", tool: "Tools", link: "Links", page: "Pages", action: "Actions" }[type] || "Other");
 }
 
 function getSearchTypeIcon(type) {
-  return ({ note: "N", tool: "T", page: "P", action: "A" }[type] || "•");
+  return ({ note: "N", tool: "T", link: "L", page: "P", action: "A" }[type] || "•");
 }
 
 function updateActiveSiteSearchResult(results) {

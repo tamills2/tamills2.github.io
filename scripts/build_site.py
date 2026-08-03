@@ -18,6 +18,7 @@ DATA_ROOT = PUBLIC_ROOT / "data"
 NOTES_MANIFEST_FILE = DATA_ROOT / "notes-manifest.json"
 TOOLS_MANIFEST_FILE = DATA_ROOT / "tools-manifest.json"
 SITE_SEARCH_INDEX_FILE = DATA_ROOT / "site-search-index.json"
+LINKS_FILE = DATA_ROOT / "links.json"
 
 IGNORED_NAMES = {".DS_Store", "Thumbs.db"}
 NOTE_EXTENSIONS = {
@@ -200,6 +201,61 @@ def build_tools_manifest() -> list[dict[str, Any]]:
     )
 
 
+
+def build_link_search_entries() -> list[dict[str, Any]]:
+    """Build searchable entries from the grouped or legacy flat links file."""
+    if not LINKS_FILE.exists():
+        return []
+
+    try:
+        payload = json.loads(LINKS_FILE.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as error:
+        print(f"Warning: could not index {LINKS_FILE.relative_to(REPOSITORY_ROOT)}: {error}")
+        return []
+
+    if not isinstance(payload, list):
+        print(f"Warning: {LINKS_FILE.relative_to(REPOSITORY_ROOT)} must contain a JSON array.")
+        return []
+
+    entries: list[dict[str, Any]] = []
+
+    def add_link(item: Any, section: str = "Other") -> None:
+        if not isinstance(item, dict):
+            return
+
+        title = str(item.get("title") or "").strip()
+        url = str(item.get("url") or "").strip()
+        description = str(item.get("description") or "").strip()
+        if not title or not url:
+            return
+
+        entries.append({
+            "type": "link",
+            "title": title,
+            "path": url,
+            "url": url,
+            "section": section,
+            "keywords": [section, url],
+            "content": description,
+            "description": description,
+            "external": True,
+        })
+
+    for item in payload:
+        if not isinstance(item, dict):
+            continue
+
+        grouped_links = item.get("links")
+        if isinstance(grouped_links, list):
+            section = str(item.get("section") or "Other").strip() or "Other"
+            for link in grouped_links:
+                add_link(link, section)
+        else:
+            # Backward compatibility with the original flat links.json format.
+            add_link(item)
+
+    return entries
+
 def main() -> None:
     DATA_ROOT.mkdir(parents=True, exist_ok=True)
     NOTES_ROOT.mkdir(parents=True, exist_ok=True)
@@ -210,6 +266,7 @@ def main() -> None:
     search_index = [
         *build_note_search_entries(),
         *tools_manifest,
+        *build_link_search_entries(),
     ]
 
     NOTES_MANIFEST_FILE.write_text(
