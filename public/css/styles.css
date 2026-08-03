@@ -4685,15 +4685,15 @@ html[data-site-theme="dos"] .link-card:focus-visible {
   gap: 1rem;
 }
 
-/* This control is an anchor, so explicitly mirror theme button typography. */
+/* Match each theme's existing header-control casing. */
 html[data-site-theme="matrix"] .links-nav-button,
 html[data-site-theme="dos"] .links-nav-button,
-html[data-site-theme="blueprint"] .links-nav-button,
-html[data-site-theme="fallout"] .links-nav-button {
-  text-transform: uppercase;
+html[data-site-theme="blueprint"] .links-nav-button {
+  text-transform: none;
 }
 
 html[data-site-theme="fallout"] .links-nav-button {
+  text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
