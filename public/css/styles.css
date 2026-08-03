@@ -4711,3 +4711,18 @@ html[data-site-theme="dos"] .links-section-heading {
   box-shadow: 3px 3px 0 #000;
   font-weight: 400;
 }
+
+/* Keep the active Links navigation control visible on the default light header. */
+html[data-theme="light"]:not([data-site-theme]) .links-nav-button[aria-current="page"] {
+  border-color: var(--header-border-soft);
+  background: var(--header-surface-soft);
+  color: var(--header-text);
+  box-shadow: inset 0 0 0 1px var(--header-input-highlight);
+}
+
+html[data-theme="light"]:not([data-site-theme]) .links-nav-button[aria-current="page"]:hover,
+html[data-theme="light"]:not([data-site-theme]) .links-nav-button[aria-current="page"]:focus-visible {
+  border-color: var(--header-focus-border);
+  background: var(--header-control-hover);
+  color: var(--header-text);
+}
