@@ -4528,3 +4528,135 @@ html.theme-effects-lite[data-site-theme="fallout"] .fallout-scan-distortion {
 html.theme-effects-lite[data-site-theme="fallout"] .fallout-crt-layer.screen-pulse {
   animation: none;
 }
+
+/* Links navigation and page */
+.links-nav-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.links-nav-button[aria-current="page"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.links-main {
+  width: min(100%, var(--content-max-width));
+}
+
+.links-heading {
+  margin-bottom: 1.5rem;
+}
+
+.links-heading h1 {
+  margin: 0.15rem 0 0.55rem;
+}
+
+.links-heading > p:last-child {
+  max-width: 48rem;
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.links-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.link-card {
+  display: block;
+  min-width: 0;
+  padding: 1.15rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  box-shadow: var(--shadow-soft, none);
+  transition:
+    border-color 130ms ease,
+    background-color 130ms ease,
+    box-shadow 130ms ease,
+    transform 130ms ease;
+}
+
+.link-card:hover,
+.link-card:focus-visible {
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+  outline: none;
+}
+
+.link-card-title,
+.link-card-url,
+.link-card-description {
+  display: block;
+}
+
+.link-card-title {
+  font-size: 1.05rem;
+  font-weight: 750;
+}
+
+.link-card-url {
+  margin-top: 0.35rem;
+  color: var(--accent);
+  font-family: var(--font-code, ui-monospace, monospace);
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+}
+
+.link-card-description {
+  margin-top: 0.55rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.links-status {
+  margin: 0;
+  padding: 2rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+html[data-site-theme="dos"] .link-card,
+html[data-site-theme="dos"] .links-status {
+  border-radius: 0;
+  color: #000;
+}
+
+html[data-site-theme="dos"] .link-card {
+  border-width: 2px;
+  border-style: solid;
+  border-color: #fff #111 #111 #fff;
+  box-shadow: 4px 4px 0 #000;
+}
+
+html[data-site-theme="dos"] .link-card-description {
+  color: #111;
+}
+
+html[data-site-theme="dos"] .link-card:hover,
+html[data-site-theme="dos"] .link-card:focus-visible {
+  transform: none;
+}
+
+@media (max-width: 760px) {
+  .links-nav-button {
+    padding-inline: 0.55rem;
+  }
+
+  .link-card {
+    padding: 1rem;
+  }
+}

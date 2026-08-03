@@ -1,0 +1,17 @@
+[
+  {
+    "title": "Example Documentation",
+    "url": "https://example.com/docs",
+    "description": "A placeholder for documentation, references, or guides you use regularly."
+  },
+  {
+    "title": "Example Utilities",
+    "url": "https://example.com/tools",
+    "description": "A placeholder for an external utility or web-based tool worth keeping nearby."
+  },
+  {
+    "title": "Example Project",
+    "url": "https://example.com/project",
+    "description": "A placeholder for a project page, repository, dashboard, or other frequently visited resource."
+  }
+]

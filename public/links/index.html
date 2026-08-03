@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Links | Repo</title>
+  <meta name="description" content="A personal collection of useful websites and external resources.">
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/tools.css">
+  <script src="../js/theme.js" defer></script>
+  <script src="../js/tool-base.js" defer></script>
+  <script src="./links.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+
+  <main class="tool-main links-main">
+    <header class="links-heading">
+      <p class="eyebrow">Repo collection</p>
+      <h1>Links</h1>
+      <p>Websites, references, tools, and other external resources worth keeping close.</p>
+    </header>
+
+    <section class="links-list" id="links-list" aria-label="Saved links">
+      <p class="links-status">Loading links…</p>
+    </section>
+  </main>
+</body>
+</html>

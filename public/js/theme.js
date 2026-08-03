@@ -636,6 +636,55 @@
     }
   }
 
+
+  const THEME_SCRIPT_URL = document.currentScript?.src || "";
+
+  function getRepoRootUrl() {
+    const configuredRoot = document.documentElement.dataset.repoRoot;
+    if (configuredRoot) return new URL(configuredRoot, window.location.href);
+    if (THEME_SCRIPT_URL) return new URL("../", THEME_SCRIPT_URL);
+    return new URL("./", window.location.href);
+  }
+
+  function ensureLinksNavigation() {
+    const headerRight = document.querySelector(".site-header .header-right");
+    const search = headerRight?.querySelector(".site-search");
+    if (!headerRight || !search || headerRight.querySelector(".links-nav-button")) return false;
+
+    const link = document.createElement("a");
+    link.className = "tools-button links-nav-button";
+    link.href = new URL("links/", getRepoRootUrl()).href;
+    link.textContent = "Links";
+    link.setAttribute("data-search-type", "page");
+    link.setAttribute("data-search-title", "Links");
+    link.setAttribute("data-search-keywords", "links bookmarks websites resources references");
+
+    const currentUrl = new URL(window.location.href);
+    if (/\/links\/?$/.test(currentUrl.pathname)) {
+      link.setAttribute("aria-current", "page");
+    }
+
+    search.insertAdjacentElement("afterend", link);
+    return true;
+  }
+
+  function initialiseLinksNavigation() {
+    if (ensureLinksNavigation()) return;
+
+    const observer = new MutationObserver(() => {
+      if (ensureLinksNavigation()) observer.disconnect();
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+
+    window.setTimeout(() => observer.disconnect(), 10000);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initialiseLinksNavigation, { once: true });
+  } else {
+    initialiseLinksNavigation();
+  }
+
   window.RepoTheme = {
     apply,
     applySiteTheme,
