@@ -338,7 +338,7 @@
 .umask-title-row { margin-bottom: 0.9rem; }
 .umask-title-row h2 { margin: 0; font-size: 1rem; }
 .umask-layout { display: grid; grid-template-columns: minmax(9rem, 0.55fr) minmax(0, 1.45fr); gap: 1rem; align-items: stretch; }
-.umask-control label,
+.umask-control-title,
 .reverse-controls label > span,
 .derived-umask > span { display: block; margin-bottom: 0.45rem; font-size: 0.82rem; font-weight: 700; }
 .umask-control input { max-width: 9rem; }

@@ -3,7 +3,6 @@
 (() => {
   const input = document.querySelector("#character-input");
   const grid = document.querySelector("#character-grid");
-  const emptyState = document.querySelector("#empty-state");
   const clearButton = document.querySelector("#clear-button");
   const characterCount = document.querySelector("#character-count");
 
@@ -223,7 +222,6 @@
     grid.replaceChildren();
 
     characterCount.textContent = `${characters.length} ${characters.length === 1 ? "character" : "characters"}`;
-    emptyState.hidden = characters.length > 0;
     grid.hidden = characters.length === 0;
 
     const fragment = document.createDocumentFragment();

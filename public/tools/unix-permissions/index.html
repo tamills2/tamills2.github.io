@@ -29,6 +29,7 @@
     <div class="tool-heading">
       <p class="eyebrow">Repo tool</p>
       <h1>Unix Permissions</h1>
+      <p>Convert between rwx permissions, octal modes, and chmod commands.</p>
     </div>
 
     <section class="tool-card permissions-card" aria-labelledby="permissions-title">
@@ -130,7 +131,8 @@
 
       <div class="umask-layout">
         <div class="umask-control">
-          <label for="umask-input">Umask</label>
+          <span class="umask-control-title">Umask</span>
+          <label class="visually-hidden" for="umask-input">Umask value</label>
           <input class="tool-input mono-input" id="umask-input" type="text" inputmode="numeric" value="022" maxlength="4" spellcheck="false" autocomplete="off">
         </div>
 
