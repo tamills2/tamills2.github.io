@@ -1,0 +1,25 @@
+.vim-main { width: min(100% - 2rem, 92rem); }
+.vim-filter-card { display: grid; gap: .85rem; margin-bottom: 1rem; }
+.vim-filter-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: var(--text-muted); font-size: .86rem; }
+.vim-clear { min-height: 2.2rem; padding: .35rem .7rem; }
+.vim-category-nav { display: flex; gap: .45rem; overflow-x: auto; margin: 0 0 1rem; padding: .15rem 0 .55rem; scrollbar-width: thin; }
+.vim-category-nav a { flex: 0 0 auto; padding: .42rem .65rem; border: 1px solid var(--border); border-radius: .42rem; background: var(--surface); color: var(--text); font-size: .78rem; text-decoration: none; }
+.vim-category-nav a:hover, .vim-category-nav a:focus-visible { border-color: var(--border-strong); background: var(--surface-hover); outline: none; }
+.vim-sections { display: grid; gap: 1rem; }
+.vim-section { scroll-margin-top: calc(var(--header-height) + 1rem); }
+.vim-section > h2 { margin: 0; padding: .8rem 1rem; border-bottom: 1px solid var(--border); font-size: 1rem; }
+.vim-command-list { margin: 0; padding: 0; list-style: none; }
+.vim-command { display: grid; grid-template-columns: minmax(8rem, 16rem) minmax(0, 1fr) auto; align-items: start; gap: .9rem; padding: .72rem 1rem; border-bottom: 1px solid var(--border); }
+.vim-command:last-child { border-bottom: 0; }
+.vim-command:hover { background: var(--surface-hover); }
+.vim-keys { display: inline-flex; flex-wrap: wrap; gap: .25rem; align-items: center; min-width: 0; color: var(--accent); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-weight: 700; overflow-wrap: anywhere; }
+.vim-action { min-width: 0; line-height: 1.45; }
+.vim-mode { padding: .18rem .42rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface-subtle); color: var(--text-muted); font-size: .68rem; white-space: nowrap; }
+.vim-empty { padding: 2rem; border: 1px solid var(--border); border-radius: .75rem; background: var(--surface); color: var(--text-muted); text-align: center; }
+@media (max-width: 720px) {
+  .vim-main { width: min(100% - 1.25rem, 92rem); }
+  .vim-command { grid-template-columns: 1fr; gap: .35rem; }
+  .vim-mode { justify-self: start; }
+}
+html[data-site-theme="dos"] .vim-command, html[data-site-theme="dos"] .vim-section > h2 { color: #000; }
+html[data-site-theme="dos"] .vim-keys { color: #000080; }

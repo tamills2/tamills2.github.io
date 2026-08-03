@@ -1,0 +1,24 @@
+{
+  "title": "Vim Cheatsheet",
+  "description": "",
+  "category": "Development",
+  "keywords": [
+    "vim",
+    "vi",
+    "cheatsheet",
+    "shortcuts",
+    "motions",
+    "operators",
+    "visual mode",
+    "registers",
+    "macros",
+    "search",
+    "replace",
+    "buffers",
+    "windows",
+    "tabs",
+    "folds"
+  ],
+  "homepage": true,
+  "order": 15
+}

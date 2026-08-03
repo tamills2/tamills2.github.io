@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vim Cheatsheet | Repo</title>
+  <meta name="description" content="A detailed, searchable Vim command and shortcut reference.">
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+  <main class="tool-main vim-main">
+    <div class="tool-heading">
+      <p class="eyebrow">Repo reference</p>
+      <h1>Vim Cheatsheet</h1>
+    </div>
+
+    <section class="tool-card vim-filter-card" aria-labelledby="vim-filter-title">
+      <h2 id="vim-filter-title" class="visually-hidden">Filter Vim commands</h2>
+      <label class="tool-field" for="vim-search">
+        <span>Search commands</span>
+        <input class="tool-input" id="vim-search" type="search" placeholder="motion, delete word, :substitute, Ctrl-W…" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="vim-filter-footer">
+        <span id="vim-count" aria-live="polite"></span>
+        <button class="tool-secondary-button vim-clear" id="vim-clear" type="button">Clear</button>
+      </div>
+    </section>
+
+    <nav class="vim-category-nav" id="vim-category-nav" aria-label="Vim cheatsheet sections"></nav>
+    <div class="vim-sections" id="vim-sections"></div>
+    <p class="vim-empty" id="vim-empty" hidden>No commands match that search.</p>
+  </main>
+</body>
+</html>
