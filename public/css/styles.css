@@ -4553,7 +4553,7 @@ html.theme-effects-lite[data-site-theme="fallout"] .fallout-crt-layer.screen-pul
 }
 
 .links-heading h1 {
-  margin: 0.15rem 0 0.55rem;
+  margin: 0.15rem 0 0;
 }
 
 .links-heading > p:last-child {
