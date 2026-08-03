@@ -31,7 +31,8 @@
       <h2 id="vim-filter-title" class="visually-hidden">Filter Vim commands</h2>
       <label class="tool-field" for="vim-search">
         <span>Search commands</span>
-        <input class="tool-input" id="vim-search" type="search" placeholder="motion, delete word, :substitute, Ctrl-W…" autocomplete="off" spellcheck="false">
+        <div class="vim-legend"><h2>Notation</h2><p><strong>&lt;...&gt;</strong> Value you provide (e.g. &lt;register&gt;, &lt;search&gt;, &lt;count&gt;)</p><p><strong>{...}</strong> Press this key (e.g. {Esc}, {Enter}, {Ctrl+w}, {Tab})</p></div>
+<input class="tool-input" id="vim-search" type="search" placeholder="motion, delete word, :substitute, Ctrl-W…" autocomplete="off" spellcheck="false">
       </label>
       <div class="vim-filter-footer">
         <span id="vim-count" aria-live="polite"></span>

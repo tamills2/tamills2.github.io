@@ -23,14 +23,3 @@
 }
 html[data-site-theme="dos"] .vim-command, html[data-site-theme="dos"] .vim-section > h2 { color: #000; }
 html[data-site-theme="dos"] .vim-keys { color: #000080; }
-
-/* Keep the command-key column visually consistent across themes. */
-.vim-command > .vim-keys {
-  background: transparent !important;
-  background-image: none !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  text-shadow: none;
-}

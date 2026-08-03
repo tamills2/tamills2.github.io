@@ -56,12 +56,12 @@
         "mode": "Normal"
       },
       {
-        "keys": "<C-v>",
+        "keys": "{Ctrl+v}",
         "action": "Start blockwise Visual mode",
         "mode": "Normal"
       },
       {
-        "keys": "<Esc>",
+        "keys": "{Esc}",
         "action": "Return to Normal mode / cancel an operation",
         "mode": "Any"
       },
@@ -76,12 +76,12 @@
         "mode": "Command"
       },
       {
-        "keys": "<C-]>",
+        "keys": "{Ctrl+]}",
         "action": "Follow the help tag or tag under cursor",
         "mode": "Normal"
       },
       {
-        "keys": "<C-t>",
+        "keys": "{Ctrl+t}",
         "action": "Jump back from a tag",
         "mode": "Normal"
       },
@@ -96,12 +96,12 @@
         "mode": "Command"
       },
       {
-        "keys": "g<C-g>",
+        "keys": "g{Ctrl+g}",
         "action": "Show detailed cursor and selection statistics",
         "mode": "Normal/Visual"
       },
       {
-        "keys": "<C-g>",
+        "keys": "{Ctrl+g}",
         "action": "Show current file name, status, and cursor position",
         "mode": "Normal"
       }
@@ -166,22 +166,22 @@
         "mode": "Normal"
       },
       {
-        "keys": "f{char}",
+        "keys": "f<character>",
         "action": "Jump forward to the next character on the line",
         "mode": "Normal"
       },
       {
-        "keys": "F{char}",
+        "keys": "F<character>",
         "action": "Jump backward to the previous character on the line",
         "mode": "Normal"
       },
       {
-        "keys": "t{char}",
+        "keys": "t<character>",
         "action": "Jump forward to just before a character",
         "mode": "Normal"
       },
       {
-        "keys": "T{char}",
+        "keys": "T<character>",
         "action": "Jump backward to just after a character",
         "mode": "Normal"
       },
@@ -281,12 +281,12 @@
         "mode": "Normal"
       },
       {
-        "keys": "{count}G",
+        "keys": "<count>G",
         "action": "Go to an exact line number",
         "mode": "Normal"
       },
       {
-        "keys": "{count}gg",
+        "keys": "<count>gg",
         "action": "Go to an exact line number",
         "mode": "Normal"
       },
@@ -296,12 +296,12 @@
         "mode": "Command"
       },
       {
-        "keys": "'{mark}",
+        "keys": "'<mark>",
         "action": "Jump to the marked line",
         "mode": "Normal"
       },
       {
-        "keys": "`{mark}",
+        "keys": "`<mark>",
         "action": "Jump to the exact marked position",
         "mode": "Normal"
       },
@@ -386,32 +386,32 @@
         "mode": "Normal"
       },
       {
-        "keys": "<C-e>",
+        "keys": "{Ctrl+e}",
         "action": "Scroll window down one line",
         "mode": "Normal"
       },
       {
-        "keys": "<C-y>",
+        "keys": "{Ctrl+y}",
         "action": "Scroll window up one line",
         "mode": "Normal"
       },
       {
-        "keys": "<C-d>",
+        "keys": "{Ctrl+d}",
         "action": "Scroll down half a screen",
         "mode": "Normal"
       },
       {
-        "keys": "<C-u>",
+        "keys": "{Ctrl+u}",
         "action": "Scroll up half a screen",
         "mode": "Normal"
       },
       {
-        "keys": "<C-f>",
+        "keys": "{Ctrl+f}",
         "action": "Scroll forward one screen",
         "mode": "Normal"
       },
       {
-        "keys": "<C-b>",
+        "keys": "{Ctrl+b}",
         "action": "Scroll backward one screen",
         "mode": "Normal"
       },
@@ -431,7 +431,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "z<CR>",
+        "keys": "z{Enter}",
         "action": "Place current line at top and move to first non-blank",
         "mode": "Normal"
       },
@@ -556,7 +556,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "<C-v>",
+        "keys": "{Ctrl+v}",
         "action": "Blockwise selection",
         "mode": "Normal"
       },
@@ -621,7 +621,7 @@
         "mode": "Visual Block"
       },
       {
-        "keys": "r{char}",
+        "keys": "r<character>",
         "action": "Replace every selected character",
         "mode": "Visual"
       },
@@ -646,62 +646,62 @@
     "name": "Operators and Operator Patterns",
     "entries": [
       {
-        "keys": "d{motion}",
+        "keys": "d<motion>",
         "action": "Delete text covered by a motion",
         "mode": "Normal"
       },
       {
-        "keys": "c{motion}",
+        "keys": "c<motion>",
         "action": "Change text covered by a motion",
         "mode": "Normal"
       },
       {
-        "keys": "y{motion}",
+        "keys": "y<motion>",
         "action": "Yank text covered by a motion",
         "mode": "Normal"
       },
       {
-        "keys": ">{motion}",
+        "keys": "><motion>",
         "action": "Indent text covered by a motion",
         "mode": "Normal"
       },
       {
-        "keys": "<{motion}",
+        "keys": "<<motion>",
         "action": "Unindent text covered by a motion",
         "mode": "Normal"
       },
       {
-        "keys": "={motion}",
+        "keys": "=<motion>",
         "action": "Auto-indent text covered by a motion",
         "mode": "Normal"
       },
       {
-        "keys": "gq{motion}",
+        "keys": "gq<motion>",
         "action": "Format text covered by a motion",
         "mode": "Normal"
       },
       {
-        "keys": "gu{motion}",
+        "keys": "gu<motion>",
         "action": "Lowercase text covered by a motion",
         "mode": "Normal"
       },
       {
-        "keys": "gU{motion}",
+        "keys": "gU<motion>",
         "action": "Uppercase text covered by a motion",
         "mode": "Normal"
       },
       {
-        "keys": "g~{motion}",
+        "keys": "g~<motion>",
         "action": "Toggle case over a motion",
         "mode": "Normal"
       },
       {
-        "keys": "!{motion}{cmd}",
+        "keys": "!<motion><command>",
         "action": "Filter text through an external command",
         "mode": "Normal"
       },
       {
-        "keys": "{count}{operator}{motion}",
+        "keys": "<count>{operator}<motion>",
         "action": "Repeat an operator over a count",
         "mode": "Normal"
       },
@@ -711,17 +711,17 @@
         "mode": "Normal"
       },
       {
-        "keys": "dv{motion}",
+        "keys": "dv<motion>",
         "action": "Force a characterwise operator",
         "mode": "Normal"
       },
       {
-        "keys": "dV{motion}",
+        "keys": "dV<motion>",
         "action": "Force a linewise operator",
         "mode": "Normal"
       },
       {
-        "keys": "d<C-v>{motion}",
+        "keys": "d{Ctrl+v}<motion>",
         "action": "Force a blockwise operator",
         "mode": "Normal"
       }
@@ -826,12 +826,12 @@
         "mode": "Normal"
       },
       {
-        "keys": "r{char}",
+        "keys": "r<character>",
         "action": "Replace one character",
         "mode": "Normal"
       },
       {
-        "keys": "gr{char}",
+        "keys": "gr<character>",
         "action": "Virtual replace one character",
         "mode": "Normal"
       },
@@ -856,7 +856,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "y{motion}",
+        "keys": "y<motion>",
         "action": "Yank text covered by motion",
         "mode": "Normal"
       },
@@ -886,7 +886,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "\"{reg}{command}",
+        "keys": "\"<register>{command}",
         "action": "Use a named register for the next command",
         "mode": "Normal"
       },
@@ -921,7 +921,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "\"_d{motion}",
+        "keys": "\"_d<motion>",
         "action": "Delete into the black-hole register",
         "mode": "Normal"
       },
@@ -941,12 +941,12 @@
         "mode": "Command"
       },
       {
-        "keys": "<C-r>{reg}",
+        "keys": "{Ctrl+r}<register>",
         "action": "Insert register contents in Insert/Command mode",
         "mode": "Insert/Command"
       },
       {
-        "keys": "\"=expression<CR>p",
+        "keys": "\"=expression{Enter}p",
         "action": "Evaluate an expression and put its result",
         "mode": "Normal"
       }
@@ -966,7 +966,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "<C-r>",
+        "keys": "{Ctrl+r}",
         "action": "Redo",
         "mode": "Normal"
       },
@@ -1041,12 +1041,12 @@
     "name": "Search and Pattern Navigation",
     "entries": [
       {
-        "keys": "/{pattern}<CR>",
+        "keys": "/<search>{Enter}",
         "action": "Search forward",
         "mode": "Normal"
       },
       {
-        "keys": "?{pattern}<CR>",
+        "keys": "?<search>{Enter}",
         "action": "Search backward",
         "mode": "Normal"
       },
@@ -1091,12 +1091,12 @@
         "mode": "Normal"
       },
       {
-        "keys": "<C-o>",
+        "keys": "{Ctrl+o}",
         "action": "Jump to older location in jump list",
         "mode": "Normal"
       },
       {
-        "keys": "<C-i> / <Tab>",
+        "keys": "{Ctrl+i} / {Tab}",
         "action": "Jump to newer location in jump list",
         "mode": "Normal"
       },
@@ -1196,22 +1196,22 @@
         "mode": "Command"
       },
       {
-        "keys": ":g/{pattern}/{cmd}",
+        "keys": ":g/<search>/<command>",
         "action": "Run command on every matching line",
         "mode": "Command"
       },
       {
-        "keys": ":v/{pattern}/{cmd}",
+        "keys": ":v/<search>/<command>",
         "action": "Run command on every non-matching line",
         "mode": "Command"
       },
       {
-        "keys": ":g/{pattern}/d",
+        "keys": ":g/<search>/d",
         "action": "Delete every matching line",
         "mode": "Command"
       },
       {
-        "keys": ":v/{pattern}/d",
+        "keys": ":v/<search>/d",
         "action": "Delete every non-matching line",
         "mode": "Command"
       },
@@ -1241,97 +1241,97 @@
     "name": "Insert Mode Editing and Completion",
     "entries": [
       {
-        "keys": "<C-h> / <BS>",
+        "keys": "{Ctrl+h} / {Backspace}",
         "action": "Delete character before cursor",
         "mode": "Insert"
       },
       {
-        "keys": "<C-w>",
+        "keys": "{Ctrl+w}",
         "action": "Delete word before cursor",
         "mode": "Insert"
       },
       {
-        "keys": "<C-u>",
+        "keys": "{Ctrl+u}",
         "action": "Delete to start of inserted text",
         "mode": "Insert"
       },
       {
-        "keys": "<C-t> / <C-d>",
+        "keys": "{Ctrl+t} / {Ctrl+d}",
         "action": "Increase / decrease indent",
         "mode": "Insert"
       },
       {
-        "keys": "<C-o>{cmd}",
+        "keys": "{Ctrl+o}<command>",
         "action": "Execute one Normal command, then return to Insert",
         "mode": "Insert"
       },
       {
-        "keys": "<C-r>{reg}",
+        "keys": "{Ctrl+r}<register>",
         "action": "Insert register contents",
         "mode": "Insert"
       },
       {
-        "keys": "<C-r>=expr<CR>",
+        "keys": "{Ctrl+r}=expr{Enter}",
         "action": "Insert result of an expression",
         "mode": "Insert"
       },
       {
-        "keys": "<C-v>{char}",
+        "keys": "{Ctrl+v}<character>",
         "action": "Insert next character literally",
         "mode": "Insert"
       },
       {
-        "keys": "<C-k>{digraph}",
+        "keys": "{Ctrl+k}{digraph}",
         "action": "Insert a digraph",
         "mode": "Insert"
       },
       {
-        "keys": "<C-a>",
+        "keys": "{Ctrl+a}",
         "action": "Insert previously inserted text",
         "mode": "Insert"
       },
       {
-        "keys": "<C-@>",
+        "keys": "{Ctrl+@}",
         "action": "Insert previous text and leave Insert mode",
         "mode": "Insert"
       },
       {
-        "keys": "<C-n> / <C-p>",
+        "keys": "{Ctrl+n} / {Ctrl+p}",
         "action": "Complete next / previous keyword",
         "mode": "Insert"
       },
       {
-        "keys": "<C-x><C-l>",
+        "keys": "{Ctrl+x}{Ctrl+l}",
         "action": "Complete whole lines",
         "mode": "Insert"
       },
       {
-        "keys": "<C-x><C-f>",
+        "keys": "{Ctrl+x}{Ctrl+f}",
         "action": "Complete file names",
         "mode": "Insert"
       },
       {
-        "keys": "<C-x><C-o>",
+        "keys": "{Ctrl+x}{Ctrl+o}",
         "action": "Omni completion",
         "mode": "Insert"
       },
       {
-        "keys": "<C-x><C-]>",
+        "keys": "{Ctrl+x}{Ctrl+]}",
         "action": "Complete tags",
         "mode": "Insert"
       },
       {
-        "keys": "<C-x><C-k>",
+        "keys": "{Ctrl+x}{Ctrl+k}",
         "action": "Dictionary completion",
         "mode": "Insert"
       },
       {
-        "keys": "<C-x><C-s>",
+        "keys": "{Ctrl+x}{Ctrl+s}",
         "action": "Spelling completion",
         "mode": "Insert"
       },
       {
-        "keys": "<C-y> / <C-e>",
+        "keys": "{Ctrl+y} / {Ctrl+e}",
         "action": "Accept character from line above / below",
         "mode": "Insert"
       },
@@ -1351,7 +1351,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "{count}>>",
+        "keys": "<count>>>",
         "action": "Indent multiple lines",
         "mode": "Normal"
       },
@@ -1361,7 +1361,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "={motion}",
+        "keys": "=<motion>",
         "action": "Auto-indent a range",
         "mode": "Normal"
       },
@@ -1371,7 +1371,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "gq{motion}",
+        "keys": "gq<motion>",
         "action": "Format text using textwidth",
         "mode": "Normal"
       },
@@ -1381,7 +1381,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "gw{motion}",
+        "keys": "gw<motion>",
         "action": "Format text and keep cursor position",
         "mode": "Normal"
       },
@@ -1391,17 +1391,17 @@
         "mode": "Normal"
       },
       {
-        "keys": "g~{motion}",
+        "keys": "g~<motion>",
         "action": "Toggle case over motion",
         "mode": "Normal"
       },
       {
-        "keys": "gu{motion}",
+        "keys": "gu<motion>",
         "action": "Lowercase over motion",
         "mode": "Normal"
       },
       {
-        "keys": "gU{motion}",
+        "keys": "gU<motion>",
         "action": "Uppercase over motion",
         "mode": "Normal"
       },
@@ -1441,22 +1441,22 @@
     "name": "Numbers and Character Codes",
     "entries": [
       {
-        "keys": "<C-a>",
+        "keys": "{Ctrl+a}",
         "action": "Increment number at or after cursor",
         "mode": "Normal"
       },
       {
-        "keys": "<C-x>",
+        "keys": "{Ctrl+x}",
         "action": "Decrement number at or after cursor",
         "mode": "Normal"
       },
       {
-        "keys": "g<C-a>",
+        "keys": "g{Ctrl+a}",
         "action": "Create an incrementing sequence over selection",
         "mode": "Visual"
       },
       {
-        "keys": "g<C-x>",
+        "keys": "g{Ctrl+x}",
         "action": "Create a decrementing sequence over selection",
         "mode": "Visual"
       },
@@ -1491,12 +1491,12 @@
         "mode": "Normal"
       },
       {
-        "keys": "'{mark}",
+        "keys": "'<mark>",
         "action": "Jump to marked line",
         "mode": "Normal"
       },
       {
-        "keys": "`{mark}",
+        "keys": "`<mark>",
         "action": "Jump to exact marked position",
         "mode": "Normal"
       },
@@ -1571,7 +1571,7 @@
     "name": "Macros and Recording",
     "entries": [
       {
-        "keys": "q{reg}",
+        "keys": "q<register>",
         "action": "Start recording commands into a register",
         "mode": "Normal"
       },
@@ -1581,7 +1581,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "@{reg}",
+        "keys": "@<register>",
         "action": "Execute a recorded macro",
         "mode": "Normal"
       },
@@ -1591,7 +1591,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "{count}@{reg}",
+        "keys": "<count>@<register>",
         "action": "Execute a macro multiple times",
         "mode": "Normal"
       },
@@ -1611,7 +1611,7 @@
         "mode": "Command"
       },
       {
-        "keys": ":global/{pattern}/normal @a",
+        "keys": ":global/<search>/normal @a",
         "action": "Run macro a on matching lines",
         "mode": "Command"
       }
@@ -1631,7 +1631,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "<C-f>",
+        "keys": "{Ctrl+f}",
         "action": "Open command-line window while editing command",
         "mode": "Command"
       },
@@ -1641,27 +1641,27 @@
         "mode": "Command"
       },
       {
-        "keys": "<C-p> / <C-n>",
+        "keys": "{Ctrl+p} / {Ctrl+n}",
         "action": "Previous / next matching history entry",
         "mode": "Command"
       },
       {
-        "keys": "<C-r>{reg}",
+        "keys": "{Ctrl+r}<register>",
         "action": "Insert register into command line",
         "mode": "Command"
       },
       {
-        "keys": "<C-w>",
+        "keys": "{Ctrl+w}",
         "action": "Delete previous word",
         "mode": "Command"
       },
       {
-        "keys": "<C-u>",
+        "keys": "{Ctrl+u}",
         "action": "Delete to beginning of command line",
         "mode": "Command"
       },
       {
-        "keys": "<C-b> / <C-e>",
+        "keys": "{Ctrl+b} / {Ctrl+e}",
         "action": "Move to beginning / end of command line",
         "mode": "Command"
       },
@@ -1686,17 +1686,17 @@
         "mode": "Command"
       },
       {
-        "keys": ":3,8{cmd}",
+        "keys": ":3,8<command>",
         "action": "Run command on lines 3 through 8",
         "mode": "Command"
       },
       {
-        "keys": ":read !{cmd}",
+        "keys": ":read !<command>",
         "action": "Insert output of external command",
         "mode": "Command"
       },
       {
-        "keys": ":!{cmd}",
+        "keys": ":!<command>",
         "action": "Run an external shell command",
         "mode": "Command"
       },
@@ -1711,7 +1711,7 @@
     "name": "Files, Saving, and Exiting",
     "entries": [
       {
-        "keys": ":e {file}",
+        "keys": ":e <filename>",
         "action": "Edit a file",
         "mode": "Command"
       },
@@ -1721,7 +1721,7 @@
         "mode": "Command"
       },
       {
-        "keys": ":find {file}",
+        "keys": ":find <filename>",
         "action": "Find and edit a file using path",
         "mode": "Command"
       },
@@ -1731,7 +1731,7 @@
         "mode": "Command"
       },
       {
-        "keys": ":w {file}",
+        "keys": ":w <filename>",
         "action": "Write to another file",
         "mode": "Command"
       },
@@ -1776,7 +1776,7 @@
         "mode": "Command"
       },
       {
-        "keys": ":saveas {file}",
+        "keys": ":saveas <filename>",
         "action": "Save under a new name and edit it",
         "mode": "Command"
       },
@@ -1841,7 +1841,7 @@
         "mode": "Command"
       },
       {
-        "keys": ":b# / <C-^>",
+        "keys": ":b# / {Ctrl+^}",
         "action": "Switch to alternate buffer",
         "mode": "Command/Normal"
       },
@@ -1856,7 +1856,7 @@
         "mode": "Command"
       },
       {
-        "keys": ":bufdo {cmd}",
+        "keys": ":bufdo <command>",
         "action": "Run command in every buffer",
         "mode": "Command"
       },
@@ -1876,17 +1876,17 @@
         "mode": "Command"
       },
       {
-        "keys": ":argadd {file}",
+        "keys": ":argadd <filename>",
         "action": "Add file to argument list",
         "mode": "Command"
       },
       {
-        "keys": ":argdelete {file}",
+        "keys": ":argdelete <filename>",
         "action": "Remove file from argument list",
         "mode": "Command"
       },
       {
-        "keys": ":argdo {cmd}",
+        "keys": ":argdo <command>",
         "action": "Run command for every argument",
         "mode": "Command"
       }
@@ -1896,92 +1896,92 @@
     "name": "Windows and Splits",
     "entries": [
       {
-        "keys": ":split {file} / :sp",
+        "keys": ":split <filename> / :sp",
         "action": "Horizontal split",
         "mode": "Command"
       },
       {
-        "keys": ":vsplit {file} / :vs",
+        "keys": ":vsplit <filename> / :vs",
         "action": "Vertical split",
         "mode": "Command"
       },
       {
-        "keys": "<C-w>s",
+        "keys": "{Ctrl+w}s",
         "action": "Horizontal split",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>v",
+        "keys": "{Ctrl+w}v",
         "action": "Vertical split",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>n",
+        "keys": "{Ctrl+w}n",
         "action": "Open new empty window",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>q / <C-w>c",
+        "keys": "{Ctrl+w}q / {Ctrl+w}c",
         "action": "Quit / close current window",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>o",
+        "keys": "{Ctrl+w}o",
         "action": "Keep only current window",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>h/j/k/l",
+        "keys": "{Ctrl+w}h/j/k/l",
         "action": "Move to window left/down/up/right",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>w",
+        "keys": "{Ctrl+w}w",
         "action": "Cycle to next window",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>p",
+        "keys": "{Ctrl+w}p",
         "action": "Go to previous window",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>H/J/K/L",
+        "keys": "{Ctrl+w}H/J/K/L",
         "action": "Move current window to far edge",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>r / <C-w>R",
+        "keys": "{Ctrl+w}r / {Ctrl+w}R",
         "action": "Rotate windows",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>x",
+        "keys": "{Ctrl+w}x",
         "action": "Exchange current window with next",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>=",
+        "keys": "{Ctrl+w}=",
         "action": "Equalize window sizes",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>_ / <C-w>|",
+        "keys": "{Ctrl+w}_ / {Ctrl+w}|",
         "action": "Maximize height / width",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>+ / <C-w>-",
+        "keys": "{Ctrl+w}+ / {Ctrl+w}-",
         "action": "Increase / decrease height",
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>> / <C-w><",
+        "keys": "{Ctrl+w}> / {Ctrl+w}<",
         "action": "Increase / decrease width",
         "mode": "Normal"
       },
       {
-        "keys": ":windo {cmd}",
+        "keys": ":windo <command>",
         "action": "Run command in every window",
         "mode": "Command"
       }
@@ -1991,12 +1991,12 @@
     "name": "Tabs",
     "entries": [
       {
-        "keys": ":tabnew {file}",
+        "keys": ":tabnew <filename>",
         "action": "Open file in a new tab",
         "mode": "Command"
       },
       {
-        "keys": ":tabedit {file}",
+        "keys": ":tabedit <filename>",
         "action": "Edit file in a new tab",
         "mode": "Command"
       },
@@ -2021,7 +2021,7 @@
         "mode": "Normal/Command"
       },
       {
-        "keys": "{count}gt",
+        "keys": "<count>gt",
         "action": "Go to tab number",
         "mode": "Normal"
       },
@@ -2041,7 +2041,7 @@
         "mode": "Command"
       },
       {
-        "keys": ":tabdo {cmd}",
+        "keys": ":tabdo <command>",
         "action": "Run command in every tab",
         "mode": "Command"
       }
@@ -2051,7 +2051,7 @@
     "name": "Folds",
     "entries": [
       {
-        "keys": "zf{motion}",
+        "keys": "zf<motion>",
         "action": "Create a fold",
         "mode": "Normal"
       },
@@ -2131,17 +2131,17 @@
     "name": "Tags, Definitions, Quickfix, and Location Lists",
     "entries": [
       {
-        "keys": "<C-]>",
+        "keys": "{Ctrl+]}",
         "action": "Jump to tag under cursor",
         "mode": "Normal"
       },
       {
-        "keys": "g<C-]>",
+        "keys": "g{Ctrl+]}",
         "action": "List matching tags",
         "mode": "Normal"
       },
       {
-        "keys": "<C-t>",
+        "keys": "{Ctrl+t}",
         "action": "Pop tag stack",
         "mode": "Normal"
       },
@@ -2171,7 +2171,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "[<C-d> / ]<C-d>",
+        "keys": "[{Ctrl+d} / ]{Ctrl+d}",
         "action": "Previous / next macro definition",
         "mode": "Normal"
       },
@@ -2181,7 +2181,7 @@
         "mode": "Command"
       },
       {
-        "keys": ":grep {pattern} {files}",
+        "keys": ":grep <search> {files}",
         "action": "Search files and populate quickfix",
         "mode": "Command"
       },
@@ -2276,7 +2276,7 @@
     "name": "Diff Mode",
     "entries": [
       {
-        "keys": ":diffsplit {file}",
+        "keys": ":diffsplit <filename>",
         "action": "Open a file in diff mode",
         "mode": "Command"
       },
@@ -2421,7 +2421,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "<C-w>f",
+        "keys": "{Ctrl+w}f",
         "action": "Open file name under cursor in new window",
         "mode": "Normal"
       },
@@ -2431,7 +2431,7 @@
         "mode": "Normal"
       },
       {
-        "keys": "q{char}",
+        "keys": "q<character>",
         "action": "Record macro; q alone stops recording",
         "mode": "Normal"
       },
@@ -2446,12 +2446,12 @@
         "mode": "Normal"
       },
       {
-        "keys": "<C-l>",
+        "keys": "{Ctrl+l}",
         "action": "Redraw and clear stale display",
         "mode": "Normal"
       },
       {
-        "keys": "<C-z>",
+        "keys": "{Ctrl+z}",
         "action": "Suspend Vim",
         "mode": "Normal"
       },
