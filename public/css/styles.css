@@ -4431,3 +4431,100 @@ html[data-site-theme] body .ascii-frame .ascii-art-stage > pre.ascii-art {
     transform: translateY(-1rem);
   }
 }
+
+/* Adaptive hidden-theme performance ---------------------------------------
+   theme.js adds .theme-effects-lite only on lower-spec/high-pixel-load
+   systems. The atmosphere remains visible, but expensive compositing and
+   redundant full-screen animation layers are removed. */
+html.theme-effects-lite[data-site-theme="matrix"] #matrix-rain-canvas.is-active {
+  opacity: 0.30;
+}
+
+html.theme-effects-lite[data-site-theme="matrix"] :is(
+  .panel,
+  .tool-card,
+  .code-window,
+  .notes-sidebar,
+  .note-viewer,
+  .viewer-panel,
+  .tool-section
+) {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+html.theme-effects-lite[data-site-theme="dracula"] body {
+  background-attachment: scroll;
+}
+
+html.theme-effects-lite[data-site-theme="dracula"] .dracula-fog-bank {
+  mix-blend-mode: normal;
+  will-change: auto;
+}
+
+html.theme-effects-lite[data-site-theme="dracula"] :is(
+  .dracula-fog-bank-2,
+  .dracula-fog-bank-4
+) {
+  display: none;
+}
+
+html.theme-effects-lite[data-site-theme="dracula"] .dracula-fog-bank-1 {
+  opacity: 0.46;
+  animation: dracula-fog-drift-a 150s linear infinite alternate;
+}
+
+html.theme-effects-lite[data-site-theme="dracula"] .dracula-fog-bank-3 {
+  opacity: 0.34;
+  animation: dracula-fog-drift-c 190s linear infinite alternate-reverse;
+}
+
+html.theme-effects-lite[data-site-theme="dracula"] :is(
+  button,
+  .quick-link-card,
+  .tool-card,
+  .panel,
+  .tool-section,
+  .tree-row,
+  .tools-menu a
+) {
+  transition-duration: 120ms;
+}
+
+html.theme-effects-lite[data-site-theme="fallout"] body {
+  background-attachment: scroll;
+}
+
+html.theme-effects-lite[data-site-theme="fallout"] .fallout-crt-layer {
+  filter: none;
+}
+
+html.theme-effects-lite[data-site-theme="fallout"] :is(
+  .fallout-phosphor-hotspot-b,
+  .fallout-static-flash
+) {
+  display: none !important;
+}
+
+html.theme-effects-lite[data-site-theme="fallout"] .fallout-phosphor-hotspot-a {
+  opacity: 0.34;
+  mix-blend-mode: normal;
+  will-change: auto;
+  animation: fallout-hotspot-a 52s ease-in-out infinite alternate;
+}
+
+html.theme-effects-lite[data-site-theme="fallout"] .fallout-rolling-band {
+  opacity: 0.34;
+  mix-blend-mode: normal;
+  will-change: auto;
+  animation-duration: 48s;
+}
+
+html.theme-effects-lite[data-site-theme="fallout"] .fallout-scan-distortion {
+  opacity: 0.30;
+  animation: none;
+}
+
+html.theme-effects-lite[data-site-theme="fallout"] .fallout-crt-layer.screen-pulse {
+  animation: none;
+}
