@@ -1,18 +1,29 @@
-ADDING LINKS
-============
+LINKS PAGE DATA
+===============
 
-Edit:
+Edit this file to manage the page:
 
     public/data/links.json
 
-Each entry uses this format:
+The JSON is split into sections. Each section has a visible heading and a list
+of links beneath it:
 
-    {
-      "title": "Website title",
-      "url": "https://example.com/",
-      "description": "A short description of why the site is useful."
-    }
+[
+  {
+    "section": "Documentation & References",
+    "links": [
+      {
+        "title": "Website title",
+        "url": "https://example.com/",
+        "description": "Why this site is useful."
+      }
+    ]
+  }
+]
 
-Add a comma between entries, but do not add a comma after the final entry.
-The order in the JSON file is the order displayed on the Links page.
-Every card opens its website in a new browser tab.
+Add another object inside a section's "links" array to add a card. Add another
+section object to create a new heading. Sections and links appear in the same
+order as they are written in the JSON file.
+
+Every card opens in a new browser tab. The original flat-array JSON format is
+still accepted and will appear under an "Other" heading.

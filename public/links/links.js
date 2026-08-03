@@ -34,27 +34,66 @@
     return card;
   }
 
+  function isValidLink(entry) {
+    return Boolean(
+      entry &&
+      typeof entry.title === "string" && entry.title.trim() &&
+      typeof entry.url === "string" && entry.url.trim() &&
+      typeof entry.description === "string"
+    );
+  }
+
+  function normaliseSections(data) {
+    if (!Array.isArray(data)) {
+      throw new TypeError("links.json must contain an array.");
+    }
+
+    // Preferred structure: [{ "section": "Name", "links": [...] }]
+    const grouped = data
+      .filter((group) => group && Array.isArray(group.links))
+      .map((group) => ({
+        title: typeof group.section === "string" && group.section.trim()
+          ? group.section.trim()
+          : "Other",
+        links: group.links.filter(isValidLink),
+      }))
+      .filter((group) => group.links.length);
+
+    if (grouped.length) return grouped;
+
+    // Backward compatibility with the original flat list.
+    const legacyLinks = data.filter(isValidLink);
+    return legacyLinks.length ? [{ title: "Other", links: legacyLinks }] : [];
+  }
+
+  function createSection(group) {
+    const section = document.createElement("section");
+    section.className = "links-section";
+
+    const heading = document.createElement("h2");
+    heading.className = "links-section-heading";
+    heading.textContent = group.title;
+
+    const cards = document.createElement("div");
+    cards.className = "links-section-cards";
+    cards.append(...group.links.map(createLinkCard));
+
+    section.append(heading, cards);
+    return section;
+  }
+
   async function loadLinks() {
     try {
       const response = await fetch("../data/links.json", { cache: "no-store" });
       if (!response.ok) throw new Error(`Links request failed with ${response.status}.`);
 
-      const entries = await response.json();
-      if (!Array.isArray(entries)) throw new TypeError("links.json must contain an array.");
-
-      const validEntries = entries.filter((entry) =>
-        entry &&
-        typeof entry.title === "string" && entry.title.trim() &&
-        typeof entry.url === "string" && entry.url.trim() &&
-        typeof entry.description === "string"
-      );
-
-      if (!validEntries.length) {
+      const sections = normaliseSections(await response.json());
+      if (!sections.length) {
         renderStatus("No links have been added yet.");
         return;
       }
 
-      list.replaceChildren(...validEntries.map(createLinkCard));
+      list.replaceChildren(...sections.map(createSection));
     } catch (error) {
       console.error(error);
       renderStatus("Links could not be loaded. Check public/data/links.json.");
