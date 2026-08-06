@@ -1,5 +1,5 @@
 .url-tool-main {
-  width: min(100% - 2rem, 76rem);
+  width: min(100% - 2rem, 96rem);
 }
 
 .visually-hidden {
@@ -264,4 +264,12 @@
   .encoding-helper-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+@media (min-width: 70rem) {
+  .url-tool-main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1rem; }
+  .url-tool-main > .tool-heading,
+  .url-tool-main > .url-converter,
+  .url-tool-main > .url-reference-card:last-child { grid-column: 1 / -1; }
+  .url-tool-main > .tool-card + .tool-card { margin-top: 0; }
 }

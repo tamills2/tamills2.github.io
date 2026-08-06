@@ -1,5 +1,5 @@
 .http-status-main {
-  width: min(100% - 2rem, 76rem);
+  width: min(100% - 2rem, 98rem);
 }
 
 .visually-hidden {
@@ -115,7 +115,9 @@
 
 .status-list {
   display: grid;
-  gap: 0.7rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
+  align-items: start;
+  gap: 0.8rem;
 }
 
 .status-entry {

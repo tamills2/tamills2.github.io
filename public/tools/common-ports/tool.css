@@ -1,5 +1,5 @@
-.ports-main { max-width: 1180px; }
-.range-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.4rem; }
+.ports-main { width: min(100% - 2rem, 98rem); max-width: none; }
+.range-strip { display:grid; grid-template-columns:repeat(auto-fit,minmax(13rem,1fr)); gap:1rem; margin-bottom:1.4rem; }
 .range-strip article { display:flex; flex-direction:column; gap:.18rem; padding:1rem 1.15rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--surface); }
 .range-strip strong { font-family:var(--mono); font-size:1rem; }
 .range-strip span { color:var(--muted); font-size:.9rem; }
@@ -38,7 +38,7 @@
 .details-copy { width:100%; margin-top:1rem; }
 .table-status { color:var(--muted); margin:.75rem 0 0; }
 .command-controls { display:grid; grid-template-columns:2fr 1fr; gap:1rem; margin:1rem 0; }
-.command-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
+.command-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(19rem,1fr)); gap:.75rem; }
 .command-output { display:grid; grid-template-columns:1fr auto; gap:.75rem; align-items:center; border:1px solid var(--border); border-radius:var(--radius); padding:.82rem .9rem; background:var(--surface); }
 .command-output strong { display:block; margin-bottom:.35rem; font-size:.8rem; color:var(--muted); }
 .command-output code { display:block; overflow-wrap:anywhere; font-family:var(--mono); font-size:.86rem; }
@@ -49,7 +49,7 @@
 .ephemeral-table tbody tr:last-child td { border-bottom:0; }
 .ephemeral-table code { font-family:var(--mono); white-space:nowrap; }
 .ephemeral-command-title { margin:1.35rem 0 .75rem; font-size:1.05rem; }
-.ephemeral-command-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
+.ephemeral-command-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(19rem,1fr)); gap:.75rem; }
 .notes-card p:last-child { margin-bottom:0; }
 .empty-row td { color:var(--muted); text-align:center; padding:2rem; }
 html:not([data-site-theme])[data-theme="dark"] .security-badge.secure { color:var(--success); }

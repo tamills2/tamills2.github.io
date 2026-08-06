@@ -66,12 +66,12 @@
         "mode": "Any"
       },
       {
-        "keys": ":help {topic}",
+        "keys": ":help <topic>",
         "action": "Open help for a topic",
         "mode": "Command"
       },
       {
-        "keys": ":h {topic}",
+        "keys": ":h <topic>",
         "action": "Short form of :help",
         "mode": "Command"
       },
@@ -111,22 +111,22 @@
     "name": "Basic Cursor Movement",
     "entries": [
       {
-        "keys": "h / <Left>",
+        "keys": "h / {Left}",
         "action": "Move left",
         "mode": "Normal"
       },
       {
-        "keys": "j / <Down>",
+        "keys": "j / {Down}",
         "action": "Move down one display line",
         "mode": "Normal"
       },
       {
-        "keys": "k / <Up>",
+        "keys": "k / {Up}",
         "action": "Move up one display line",
         "mode": "Normal"
       },
       {
-        "keys": "l / <Right>",
+        "keys": "l / {Right}",
         "action": "Move right",
         "mode": "Normal"
       },
@@ -1636,7 +1636,7 @@
         "mode": "Command"
       },
       {
-        "keys": "<Up> / <Down>",
+        "keys": "{Up} / {Down}",
         "action": "Previous / next command history entry",
         "mode": "Command"
       },
@@ -2098,6 +2098,16 @@
       {
         "keys": "zj / zk",
         "action": "Move to next / previous fold",
+        "mode": "Normal"
+      },
+      {
+        "keys": "z[",
+        "action": "Move to the start of the current open fold",
+        "mode": "Normal"
+      },
+      {
+        "keys": "z]",
+        "action": "Move to the end of the current open fold",
         "mode": "Normal"
       },
       {

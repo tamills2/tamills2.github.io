@@ -4726,3 +4726,40 @@ html[data-theme="light"]:not([data-site-theme]) .links-nav-button[aria-current="
   background: var(--header-control-hover);
   color: var(--header-text);
 }
+
+
+/* Responsive reference-card system ---------------------------------------- */
+:root {
+  --reference-card-min: 19rem;
+  --reference-grid-gap: 1rem;
+}
+
+.reference-grid,
+.reference-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--reference-card-min)), 1fr));
+  align-items: start;
+  gap: var(--reference-grid-gap);
+}
+
+.reference-card,
+.reference-grid > .tool-card,
+.reference-card-grid > .tool-card {
+  min-width: 0;
+  margin: 0;
+}
+
+.reference-card--wide,
+.reference-grid > .reference-card--wide,
+.reference-card-grid > .reference-card--wide {
+  grid-column: 1 / -1;
+}
+
+.reference-card--double {
+  grid-column: span 2;
+}
+
+@media (max-width: 46rem) {
+  :root { --reference-card-min: 16rem; }
+  .reference-card--double { grid-column: 1 / -1; }
+}
