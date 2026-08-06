@@ -5,6 +5,7 @@
     { label: "UTC", timeZone: "UTC" },
     { label: "New York", timeZone: "America/New_York" },
     { label: "Los Angeles", timeZone: "America/Los_Angeles" },
+    { label: "London", timeZone: "Europe/London" },
     { label: "United Kingdom", timeZone: "Europe/London" },
     { label: "Russia", timeZone: "Europe/Moscow" },
     { label: "Paris", timeZone: "Europe/Paris" },
