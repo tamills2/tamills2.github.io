@@ -1,0 +1,8 @@
+{
+  "title": "Network Map",
+  "description": "",
+  "category": "Network",
+  "keywords": ["network map", "topology", "diagram", "router", "switch", "firewall", "server", "subnet", "vlan", "drawio", "network documentation"],
+  "homepage": true,
+  "order": 5
+}

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Network Map | Repo</title>
+  <meta name="description" content="Offline network topology and documentation editor.">
+  <script>
+    (() => {
+      const saved = localStorage.getItem("repo-theme");
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = saved || preferred;
+    })();
+  </script>
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="./tool.css">
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./tool.js" defer></script>
+</head>
+<body class="tool-page-shell network-map-page">
+  <div id="shared-tool-header"></div>
+
+  <main class="network-map-main">
+    <div class="network-map-titlebar">
+      <div class="tool-heading"><p class="eyebrow">Network</p><h1>Network Map</h1></div>
+      <div class="map-file-actions" aria-label="Map file actions">
+        <button class="nm-button" id="new-map" type="button">New</button>
+        <button class="nm-button" id="import-map" type="button">Import</button>
+        <button class="nm-button" id="export-json" type="button">JSON</button>
+        <button class="nm-button" id="export-png" type="button">PNG</button>
+        <button class="nm-button" id="export-pdf" type="button">PDF</button>
+        <button class="nm-button" id="export-drawio" type="button">draw.io</button>
+        <input id="map-file-input" type="file" accept=".json,.drawio,.xml,.io,application/json,text/xml" hidden>
+      </div>
+    </div>
+
+    <section class="network-map-app" aria-label="Network map editor">
+      <aside class="nm-sidebar nm-palette" aria-label="Device library">
+        <div class="nm-panel-heading">
+          <h2>Devices</h2>
+          <button class="nm-icon-button" id="toggle-palette" type="button" aria-label="Collapse device library">‹</button>
+        </div>
+        <div class="nm-palette-search"><input id="palette-search" type="search" placeholder="Filter devices" autocomplete="off"></div>
+        <div class="nm-device-library" id="device-library"></div>
+        <div class="nm-layer-panel">
+          <div class="nm-panel-heading nm-subheading"><h2>Layers</h2><button class="nm-icon-button" id="add-layer" type="button" aria-label="Add layer">+</button></div>
+          <div id="layer-list" class="nm-layer-list"></div>
+        </div>
+      </aside>
+
+      <section class="nm-center">
+        <div class="nm-toolbar" role="toolbar" aria-label="Map tools">
+          <div class="nm-tool-group">
+            <button class="nm-tool is-active" data-mode="select" type="button">Select</button>
+            <button class="nm-tool" data-mode="pan" type="button">Pan</button>
+            <button class="nm-tool" data-mode="connect" type="button">Connect</button>
+            <button class="nm-tool" data-mode="attachment" type="button">Info block</button>
+            <button class="nm-tool" data-mode="container" type="button">Container</button>
+            <button class="nm-tool" data-mode="text" type="button">Text</button>
+          </div>
+          <div class="nm-tool-group">
+            <button class="nm-icon-button" id="undo" type="button" title="Undo (Ctrl/Cmd+Z)">↶</button>
+            <button class="nm-icon-button" id="redo" type="button" title="Redo (Ctrl/Cmd+Shift+Z)">↷</button>
+            <button class="nm-icon-button" id="duplicate" type="button" title="Duplicate">⧉</button>
+            <button class="nm-icon-button" id="delete-selection" type="button" title="Delete">⌫</button>
+          </div>
+          <div class="nm-tool-group">
+            <label class="nm-toolbar-check"><input id="snap-grid" type="checkbox" checked> Snap</label>
+            <select id="grid-size" aria-label="Grid size"><option value="10">10</option><option value="20" selected>20</option><option value="40">40</option></select>
+            <button class="nm-icon-button" id="zoom-out" type="button" aria-label="Zoom out">−</button>
+            <output id="zoom-display">100%</output>
+            <button class="nm-icon-button" id="zoom-in" type="button" aria-label="Zoom in">+</button>
+            <button class="nm-button" id="fit-map" type="button">Fit</button>
+          </div>
+          <div class="nm-tool-group nm-toolbar-end">
+            <label class="nm-toolbar-check"><input id="show-minimap" type="checkbox" checked> Minimap</label>
+            <span id="save-status" class="nm-save-status">Saved locally</span>
+          </div>
+        </div>
+
+        <div class="nm-canvas-shell" id="canvas-shell" tabindex="0">
+          <svg id="network-map-canvas" class="nm-canvas" xmlns="http://www.w3.org/2000/svg" role="application" aria-label="Network map canvas">
+            <defs>
+              <pattern id="small-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" class="nm-grid-minor" fill="none"/></pattern>
+              <pattern id="large-grid" width="100" height="100" patternUnits="userSpaceOnUse"><rect width="100" height="100" fill="url(#small-grid)"/><path d="M 100 0 L 0 0 0 100" class="nm-grid-major" fill="none"/></pattern>
+              <marker id="arrow-end" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" class="nm-arrow-fill"/></marker>
+              <marker id="arrow-start" markerWidth="10" markerHeight="10" refX="1" refY="3" orient="auto-start-reverse" markerUnits="strokeWidth"><path d="M9,0 L9,6 L0,3 z" class="nm-arrow-fill"/></marker>
+            </defs>
+            <rect class="nm-canvas-background" x="-5000" y="-5000" width="10000" height="10000" fill="url(#large-grid)"></rect>
+            <g id="viewport">
+              <g id="container-layer"></g>
+              <g id="connection-layer"></g>
+              <g id="node-layer"></g>
+              <g id="attachment-layer"></g>
+              <g id="annotation-layer"></g>
+              <g id="interaction-layer"></g>
+            </g>
+          </svg>
+          <div id="drop-hint" class="nm-drop-hint">Drag a device here to begin</div>
+          <canvas id="minimap" class="nm-minimap" width="180" height="120" aria-label="Map overview"></canvas>
+        </div>
+      </section>
+
+      <aside class="nm-sidebar nm-inspector" aria-label="Properties inspector">
+        <div class="nm-panel-heading"><h2>Inspector</h2><button class="nm-icon-button" id="toggle-inspector" type="button" aria-label="Collapse inspector">›</button></div>
+        <div class="nm-inspector-tabs" role="tablist">
+          <button class="is-active" data-inspector-tab="details" type="button">Details</button>
+          <button data-inspector-tab="interfaces" type="button">Interfaces</button>
+          <button data-inspector-tab="custom" type="button">Custom</button>
+          <button data-inspector-tab="style" type="button">Style</button>
+          <button data-inspector-tab="connections" type="button">Links</button>
+        </div>
+        <div id="inspector-content" class="nm-inspector-content"><p class="nm-empty-state">Select an item to edit its details.</p></div>
+      </aside>
+    </section>
+  </main>
+
+  <dialog id="confirm-dialog" class="nm-dialog"><form method="dialog"><h2 id="confirm-title">Confirm</h2><p id="confirm-message"></p><div class="tool-button-row"><button class="tool-secondary-button" value="cancel">Cancel</button><button class="tool-primary-button" id="confirm-accept" value="confirm">Confirm</button></div></form></dialog>
+</body>
+</html>

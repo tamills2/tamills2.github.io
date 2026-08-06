@@ -110,6 +110,31 @@
   },
   {
     "type": "tool",
+    "slug": "network-map",
+    "title": "Network Map",
+    "description": "",
+    "category": "Network",
+    "keywords": [
+      "network map",
+      "topology",
+      "diagram",
+      "router",
+      "switch",
+      "firewall",
+      "server",
+      "subnet",
+      "vlan",
+      "drawio",
+      "network documentation"
+    ],
+    "homepage": true,
+    "order": 5,
+    "path": "tools/network-map/",
+    "url": "./tools/network-map/",
+    "content": "Network Map | Repo Network Network Map Map file actions New Import JSON PNG PDF draw.io Network map editor Device library Devices Collapse device library ‹ Filter devices Layers Add layer + Map tools Select Pan Connect Info block Container Text Undo (Ctrl/Cmd+Z) ↶ Redo (Ctrl/Cmd+Shift+Z) ↷ Duplicate ⧉ Delete ⌫ Snap Grid size 10 20 40 Zoom out − Zoom in Fit Minimap Map overview Properties inspector Inspector Collapse inspector › Details Interfaces Custom Style Links Select an item to edit its details. Confirm Cancel"
+  },
+  {
+    "type": "tool",
     "slug": "subnet-calculator",
     "title": "Subnet Calculator",
     "description": "Calculate IPv4 network ranges, masks, broadcast addresses, usable hosts, and binary details from an address and CIDR prefix.",
@@ -261,7 +286,7 @@
     "order": 40,
     "path": "tools/unix-permissions/",
     "url": "./tools/unix-permissions/",
-    "content": "Convert Unix rwx permissions, octal modes, chmod commands, and special permission bits. Unix Permissions | Repo Repo tool Unix Permissions Permissions Reset Read, write, and execute permissions r w x Special bits setuid 4 setgid 2 sticky 1 Permission formats Symbolic Copy symbolic permissions Copy Octal Copy octal permissions chmod command Copy chmod command Common Linux defaults Common Linux umask defaults Umask calculator Umask Created item Directory File"
+    "content": "Convert Unix rwx permissions, octal modes, chmod commands, and special permission bits. Unix Permissions | Repo Repo tool Unix Permissions Convert between rwx permissions, octal modes, and chmod commands. Permissions Reset Read, write, and execute permissions r w x Special bits setuid 4 setgid 2 sticky 1 Permission formats Symbolic Copy symbolic permissions Copy Octal Copy octal permissions chmod command Copy chmod command Common Linux defaults Common Linux umask defaults Umask calculator Umask Created item Directory File"
   },
   {
     "type": "tool",
@@ -298,6 +323,7 @@
       "MD5",
       "SHA-1",
       "SHA-256",
+      "SHA-384",
       "SHA-512",
       "Base64",
       "Base64 URL-safe",
