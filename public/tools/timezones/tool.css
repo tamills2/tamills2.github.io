@@ -41,10 +41,11 @@
 }
 
 .timezone-time {
-  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
-  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: clamp(0.92rem, 1.35vw, 1.55rem);
   font-weight: 800;
-  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
   white-space: nowrap;
 }
 
@@ -88,7 +89,8 @@
 
 .timezone-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13.5rem), 16rem));
+  justify-content: center;
   gap: 0.75rem;
   padding-bottom: 2.25rem;
 }
@@ -284,4 +286,20 @@ html:not([data-site-theme])[data-theme="dark"] .converter-status.error {
   background: var(--surface-color, transparent);
   box-sizing: border-box;
   text-align: center;
+}
+
+
+/* Keep alternate-theme fonts from overflowing compact timezone cards. */
+html[data-site-theme] .timezone-grid .timezone-location,
+html[data-site-theme] .timezone-grid .timezone-time,
+html[data-site-theme] .timezone-grid .timezone-date,
+html[data-site-theme] .timezone-grid .timezone-meta {
+  max-width: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
+}
+
+html[data-site-theme] .timezone-grid .timezone-location,
+html[data-site-theme] .timezone-grid .timezone-date,
+html[data-site-theme] .timezone-grid .timezone-meta {
+  overflow-wrap: anywhere;
 }

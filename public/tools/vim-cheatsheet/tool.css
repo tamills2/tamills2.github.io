@@ -5,8 +5,8 @@
 .vim-category-nav { display: flex; gap: .45rem; overflow-x: auto; margin: 0 0 1rem; padding: .15rem 0 .55rem; scrollbar-width: thin; }
 .vim-category-nav a { flex: 0 0 auto; padding: .42rem .65rem; border: 1px solid var(--border); border-radius: .42rem; background: var(--surface); color: var(--text); font-size: .78rem; text-decoration: none; }
 .vim-category-nav a:hover, .vim-category-nav a:focus-visible { border-color: var(--border-strong); background: var(--surface-hover); outline: none; }
-.vim-sections { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); align-items: start; gap: 1rem; }
-.vim-section { scroll-margin-top: calc(var(--header-height) + 1rem); }
+.vim-sections { display: block; columns: 22rem; column-gap: 1rem; }
+.vim-section { display: inline-block; width: 100%; margin: 0 0 1rem; break-inside: avoid; scroll-margin-top: calc(var(--header-height) + 1rem); vertical-align: top; }
 .vim-section > h2 { margin: 0; padding: .8rem 1rem; border-bottom: 1px solid var(--border); font-size: 1rem; }
 .vim-command-list { margin: 0; padding: 0; list-style: none; }
 .vim-command { display: grid; grid-template-columns: minmax(7rem, 10.5rem) minmax(0, 1fr); align-items: start; gap: .3rem .75rem; padding: .58rem .75rem; border-bottom: 1px solid var(--border); }
@@ -17,6 +17,7 @@
 .vim-mode { grid-column: 2; justify-self: start; padding: .18rem .42rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface-subtle); color: var(--text-muted); font-size: .68rem; white-space: nowrap; }
 .vim-empty { padding: 2rem; border: 1px solid var(--border); border-radius: .75rem; background: var(--surface); color: var(--text-muted); text-align: center; }
 @media (max-width: 720px) {
+  .vim-sections { columns: 1; }
   .vim-main { width: min(100% - 1.25rem, 92rem); }
   .vim-command { grid-template-columns: 1fr; gap: .35rem; }
   .vim-mode { justify-self: start; }
@@ -24,7 +25,7 @@
 html[data-site-theme="dos"] .vim-command, html[data-site-theme="dos"] .vim-section > h2 { color: #000; }
 html[data-site-theme="dos"] .vim-keys { color: #000080; }
 
-.vim-section { break-inside: avoid; min-width: 0; }
-.vim-section > h2 { position: sticky; top: var(--header-height); z-index: 1; background: var(--surface); }
+.vim-section { min-width: 0; }
+.vim-section > h2 { background: var(--surface); }
 .vim-action { font-size: .86rem; }
-@media (min-width: 92rem) { .vim-sections { grid-template-columns: repeat(auto-fit, minmax(21rem, 1fr)); } }
+@media (min-width: 92rem) { .vim-sections { columns: 21rem; } }

@@ -4731,14 +4731,19 @@ html[data-theme="light"]:not([data-site-theme]) .links-nav-button[aria-current="
 /* Responsive reference-card system ---------------------------------------- */
 :root {
   --reference-card-min: 19rem;
+  --reference-card-max: 27rem;
   --reference-grid-gap: 1rem;
 }
 
 .reference-grid,
 .reference-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--reference-card-min)), 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, var(--reference-card-min)), var(--reference-card-max))
+  );
   align-items: start;
+  justify-content: center;
   gap: var(--reference-grid-gap);
 }
 

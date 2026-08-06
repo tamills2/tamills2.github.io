@@ -214,15 +214,23 @@
   place-content: center;
   border: 1px solid var(--border);
   border-radius: 0.6rem;
-  background: var(--surface);
+  background: transparent;
   color: var(--text);
   font: inherit;
+  box-shadow: none;
+  text-shadow: none;
   cursor: pointer;
 }
 
 .encoding-helper-grid button:hover {
-  border-color: var(--border-strong);
-  background: var(--surface-hover);
+  border-color: var(--border);
+  background: transparent;
+  box-shadow: none;
+}
+
+.encoding-helper-grid button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .encoding-helper-grid span {
@@ -272,4 +280,15 @@
   .url-tool-main > .url-converter,
   .url-tool-main > .url-reference-card:last-child { grid-column: 1 / -1; }
   .url-tool-main > .tool-card + .tool-card { margin-top: 0; }
+}
+
+
+/* Encoding helpers are neutral reference controls in every hidden theme. */
+html[data-site-theme] .encoding-helper-grid button,
+html[data-site-theme] .encoding-helper-grid button:hover {
+  border-color: var(--border) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
 }

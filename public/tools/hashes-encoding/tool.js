@@ -25,7 +25,6 @@
     ["MD5", "md5"],
     ["SHA-1", "SHA-1"],
     ["SHA-256", "SHA-256"],
-    ["SHA-384", "SHA-384"],
     ["SHA-512", "SHA-512"],
     ["Base64", "base64"],
     ["Base64 URL-safe", "base64url"]
@@ -35,7 +34,6 @@
     ["MD5", "md5"],
     ["SHA-1", "SHA-1"],
     ["SHA-256", "SHA-256"],
-    ["SHA-384", "SHA-384"],
     ["SHA-512", "SHA-512"]
   ];
 
@@ -220,7 +218,7 @@
       base64url: formatBase64(base64, true)
     };
 
-    const digestAlgorithms = ["SHA-1", "SHA-256", "SHA-384", "SHA-512"];
+    const digestAlgorithms = ["SHA-1", "SHA-256", "SHA-512"];
     const digests = await Promise.all(digestAlgorithms.map(async (algorithm) => [
       algorithm,
       bytesToHex(await subtleDigest(algorithm, bytes))
@@ -252,7 +250,7 @@
     FILE_ALGORITHMS.forEach(([, key]) => setResult(fileResults, key, "Calculating…"));
 
     const bytes = new Uint8Array(await file.arrayBuffer());
-    const digestAlgorithms = ["SHA-1", "SHA-256", "SHA-384", "SHA-512"];
+    const digestAlgorithms = ["SHA-1", "SHA-256", "SHA-512"];
     const digests = await Promise.all(digestAlgorithms.map(async (algorithm) => [
       algorithm,
       bytesToHex(await subtleDigest(algorithm, bytes))
