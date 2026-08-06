@@ -1,4 +1,4 @@
-.permissions-main { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 1fr)); align-items: start; gap: 1rem; width: min(100% - 2rem, 92rem); }
+.permissions-main { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 25rem), 42rem)); align-items: start; justify-content: center; gap: 1rem; width: min(100% - 2rem, 92rem); margin-inline: auto; }
 
 .permissions-main > * { min-width: 0; margin: 0; }
 .permissions-main > .tool-heading,

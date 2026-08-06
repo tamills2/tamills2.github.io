@@ -66,7 +66,7 @@
 
 .result-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 34rem));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: start;
   justify-content: center;
   gap: 0.75rem;
@@ -194,9 +194,19 @@ button:disabled {
   opacity: 0.55;
 }
 
+@media (max-width: 1100px) {
+  .result-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 720px) {
   .hashes-main {
     width: min(100% - 1.25rem, 68rem);
+  }
+
+  .result-list {
+    grid-template-columns: 1fr;
   }
 
   .result-row {
