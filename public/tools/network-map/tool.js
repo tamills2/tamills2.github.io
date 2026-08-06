@@ -92,8 +92,11 @@
   function bindUI() {
     document.querySelectorAll(".nm-tool[data-mode]").forEach(button => button.addEventListener("click", () => setMode(button.dataset.mode)));
     document.querySelectorAll("[data-inspector-tab]").forEach(button => button.addEventListener("click", () => { state.inspectorTab = button.dataset.inspectorTab; document.querySelectorAll("[data-inspector-tab]").forEach(b => b.classList.toggle("is-active", b === button)); renderInspector(); }));
-    byId("toggle-palette").addEventListener("click", () => els.app.classList.toggle("palette-collapsed"));
-    byId("toggle-inspector").addEventListener("click", () => els.app.classList.toggle("inspector-collapsed"));
+    byId("toggle-palette").addEventListener("click", () => setPanelCollapsed("palette", true));
+    byId("toggle-inspector").addEventListener("click", () => setPanelCollapsed("inspector", true));
+    byId("open-palette").addEventListener("click", () => setPanelCollapsed("palette", false));
+    byId("open-inspector").addEventListener("click", () => setPanelCollapsed("inspector", false));
+    restorePanelState();
     byId("palette-search").addEventListener("input", renderDeviceLibrary);
     byId("add-layer").addEventListener("click", addLayer);
     byId("undo").addEventListener("click", undo);
@@ -126,6 +129,36 @@
     document.addEventListener("keydown", handleKeyboard);
     window.addEventListener("beforeunload", () => saveAutosave());
     window.addEventListener("resize", drawMinimap);
+  }
+
+
+  function restorePanelState() {
+    const paletteCollapsed = localStorage.getItem("repo-network-map-palette-collapsed") === "true";
+    const inspectorCollapsed = localStorage.getItem("repo-network-map-inspector-collapsed") === "true";
+    setPanelCollapsed("palette", paletteCollapsed, { persist: false });
+    setPanelCollapsed("inspector", inspectorCollapsed, { persist: false });
+  }
+
+  function setPanelCollapsed(panel, collapsed, { persist = true } = {}) {
+    const isPalette = panel === "palette";
+    const className = isPalette ? "palette-collapsed" : "inspector-collapsed";
+    const closeButton = byId(isPalette ? "toggle-palette" : "toggle-inspector");
+    const openButton = byId(isPalette ? "open-palette" : "open-inspector");
+    const sidebar = document.querySelector(isPalette ? ".nm-palette" : ".nm-inspector");
+
+    els.app.classList.toggle(className, collapsed);
+    openButton.hidden = !collapsed;
+    closeButton.setAttribute("aria-expanded", String(!collapsed));
+    sidebar.setAttribute("aria-hidden", String(collapsed));
+
+    if (persist) {
+      localStorage.setItem(`repo-network-map-${panel}-collapsed`, String(collapsed));
+    }
+
+    window.setTimeout(() => {
+      drawMinimap();
+      renderViewport();
+    }, 190);
   }
 
   function createBlankMap() {
