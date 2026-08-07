@@ -12,7 +12,13 @@
   <div class="game-heading"><p class="eyebrow">Games</p><h1>Puzzle Maker</h1></div>
   <section class="puzzle-setup game-panel" id="puzzle-setup">
     <div class="puzzle-source-row">
-      <label class="upload-card"><strong>Upload image</strong><input id="image-upload" type="file" accept="image/jpeg,image/png,image/webp"></label>
+      <label class="upload-dropzone" id="upload-dropzone" for="image-upload" tabindex="0">
+        <input id="image-upload" type="file" accept="image/jpeg,image/png,image/webp">
+        <span class="upload-dropzone-icon" aria-hidden="true">+</span>
+        <strong>Upload image</strong>
+        <span>Drop an image here or click to browse</span>
+        <small>JPG, PNG, or WebP</small>
+      </label>
       <div><label for="default-image">Default image</label><select class="game-select" id="default-image"><option value="">Choose an image…</option></select></div>
     </div>
     <div class="puzzle-options" id="puzzle-options" hidden>

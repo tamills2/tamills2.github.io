@@ -15,3 +15,43 @@
 .wordle-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.75rem; text-align:center; }
 .wordle-stat strong { display:block; font-size:1.45rem; }.wordle-stat span{font-size:.75rem;color:var(--text-muted)}
 .guess-dist { margin:1rem 0; display:grid; gap:.3rem; }.guess-row{display:grid;grid-template-columns:1rem 1fr;gap:.5rem;align-items:center}.guess-bar{min-width:1.5rem;padding:.2rem .35rem;background:var(--surface-subtle);text-align:right}
+
+
+/* Wordle-style interaction animation */
+.wordle-row.shake { animation: wordleShake 420ms ease; }
+.wordle-tile.pop { animation: wordlePop 110ms ease-out; }
+.wordle-tile.reveal {
+  animation: wordleFlip 560ms ease var(--flip-delay, 0ms) both;
+  transform-style: preserve-3d;
+}
+.wordle-tile.dance { animation: wordleDance 620ms ease var(--dance-delay, 0ms); }
+.wordle-key { transition: transform 80ms ease, background-color 180ms ease, color 180ms ease; }
+.wordle-key:active { transform: scale(.94); }
+
+@keyframes wordlePop {
+  0% { transform: scale(.82); }
+  55% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes wordleShake {
+  0%,100% { transform: translateX(0); }
+  15% { transform: translateX(-7px); }
+  30% { transform: translateX(6px); }
+  45% { transform: translateX(-5px); }
+  60% { transform: translateX(4px); }
+  75% { transform: translateX(-2px); }
+}
+@keyframes wordleFlip {
+  0% { transform: rotateX(0); background: var(--surface); border-color: var(--text-muted); color: var(--text); }
+  49% { transform: rotateX(90deg); background: var(--surface); border-color: var(--text-muted); color: var(--text); }
+  50% { transform: rotateX(90deg); background: var(--reveal-bg); border-color: var(--reveal-border); color: #fff; }
+  100% { transform: rotateX(0); background: var(--reveal-bg); border-color: var(--reveal-border); color: #fff; }
+}
+@keyframes wordleDance {
+  0%,20%,100% { transform: translateY(0); }
+  45% { transform: translateY(-11px); }
+  65% { transform: translateY(2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wordle-row.shake, .wordle-tile.pop, .wordle-tile.reveal, .wordle-tile.dance { animation-duration: 1ms !important; animation-delay: 0ms !important; }
+}

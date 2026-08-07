@@ -1,9 +1,26 @@
-OFFLINE WORD DATA
+WORDLE OFFLINE WORD LISTS
+==========================
 
-allowed-guesses.txt contains 6,559 lower-case five-letter US English words generated from the system en_US Hunspell/SCOWL dictionary and its standard affix rules. Proper-name entries and non-alphabetic entries were excluded.
+The game now reads exactly these two files:
 
-answers.json is a smaller curated common-word pool used for daily/practice answers. Every answer is also accepted as a guess.
+  la-words.txt
+    Words that are valid guesses AND may be selected as the daily/practice answer.
 
-The accepted-guess list is intentionally much broader than the answer pool so uncommon but legitimate five-letter guesses are less likely to be rejected.
+  ta-words.txt
+    Words that are valid guesses but are NEVER selected as an answer.
 
-See WORDLIST-LICENSE.txt for the SCOWL/Hunspell word-list licensing and attribution carried with this copy.
+FORMAT
+------
+Put one five-letter US-English word per line. Lowercase is recommended, but the
+loader normalizes case. Blank lines and duplicate words are ignored. Only A-Z
+five-letter entries are accepted.
+
+To replace the bundled lists, overwrite these files in place:
+
+  public/games/wordle/data/la-words.txt
+  public/games/wordle/data/ta-words.txt
+
+You do not need to edit game.js when replacing the lists.
+
+The older answers.json and allowed-guesses.txt files may remain in the folder, but
+this version of Wordle no longer reads them.

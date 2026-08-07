@@ -10,7 +10,20 @@
 
   fetch("./images/manifest.json",{cache:"no-store"}).then(r=>r.json()).then(items=>{const sel=document.querySelector("#default-image");for(const item of items){const o=document.createElement("option");o.value=item.file;o.textContent=item.title||item.file;sel.append(o)}}).catch(()=>{});
   document.querySelector("#default-image").addEventListener("change",e=>{if(!e.target.value)return;loadSource(`./images/${e.target.value}`,e.target.selectedOptions[0].textContent)});
-  document.querySelector("#image-upload").addEventListener("change",e=>{const f=e.target.files?.[0];if(f)loadSource(URL.createObjectURL(f),f.name)});
+  const uploadInput=document.querySelector("#image-upload"),uploadZone=document.querySelector("#upload-dropzone");
+  let uploadedObjectUrl=null;
+  function acceptUpload(file){
+    if(!file)return;
+    if(!/^image\/(jpeg|png|webp)$/.test(file.type)){alert("Choose a JPG, PNG, or WebP image.");return;}
+    if(uploadedObjectUrl)URL.revokeObjectURL(uploadedObjectUrl);
+    uploadedObjectUrl=URL.createObjectURL(file);
+    loadSource(uploadedObjectUrl,file.name);
+  }
+  uploadInput.addEventListener("change",e=>acceptUpload(e.target.files?.[0]));
+  uploadZone.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();uploadInput.click();}});
+  ["dragenter","dragover"].forEach(type=>uploadZone.addEventListener(type,e=>{e.preventDefault();e.stopPropagation();uploadZone.classList.add("is-dragover");}));
+  ["dragleave","drop"].forEach(type=>uploadZone.addEventListener(type,e=>{e.preventDefault();e.stopPropagation();uploadZone.classList.remove("is-dragover");}));
+  uploadZone.addEventListener("drop",e=>acceptUpload(e.dataTransfer?.files?.[0]));
 
   function loadSource(url,title){const im=new Image();im.onload=()=>{source=url;sourceTitle=title;imgW=im.naturalWidth;imgH=im.naturalHeight;prepareOptions();document.querySelector("#reference-image").src=url};im.onerror=()=>alert("The image could not be loaded.");im.src=url;}
   function prepareOptions(){const min=Math.min(9,Math.max(4,Math.floor(imgW*imgH/12000))),max=clamp(Math.floor(imgW*imgH/3600),min,MAX_PIECES);grids=buildGridOptions(imgW/imgH,min,max);countSelect.replaceChildren();for(const g of grids){const o=document.createElement("option");o.value=`${g.cols}x${g.rows}`;o.textContent=`${g.count} pieces (${g.cols} × ${g.rows})`;countSelect.append(o)}const mid=grids.findIndex(g=>g.count>=Math.min(100,max));countSelect.selectedIndex=Math.max(0,mid);imageInfo.textContent=`${sourceTitle} • ${imgW} × ${imgH}`;rangeInfo.textContent=`Available range: ${grids[0]?.count||min}–${grids.at(-1)?.count||max} pieces`;options.hidden=false;}
