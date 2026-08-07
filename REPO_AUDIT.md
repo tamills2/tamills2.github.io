@@ -35,3 +35,40 @@ Run `python3 scripts/build_site.py` after changing notes, tool metadata, tool pa
 ### Repository packaging
 
 The uploaded archive included `.git`, `__MACOSX`, `.DS_Store`, and a Python `__pycache__`. The clean distribution ZIP excludes those generated/system files. Keep `.git` in your real working checkout, but do not ship it as part of the static site bundle.
+
+##################### UPDATES TO FIX INTERFACES BUTTON #####################
+# OPEN tool.css AND CHANGE THIS:
+.nm-inspector-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: .25rem;
+  padding: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.nm-inspector-tabs button {
+  min-width: 0;
+  padding: .4rem .2rem;
+  font-size: .69rem;
+}
+
+# TO THIS:
+.nm-inspector-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(4.75rem, 1fr));
+  gap: .25rem;
+  padding: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.nm-inspector-tabs button {
+  min-width: 0;
+  padding: .4rem .35rem;
+  font-size: .69rem;
+  white-space: nowrap;
+}
+
+# AND DELETE THIS:
+.nm-inspector-tabs {
+  grid-template-columns: repeat(3, 1fr);
+}
