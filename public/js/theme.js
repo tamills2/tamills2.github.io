@@ -646,33 +646,51 @@
     return new URL("./", window.location.href);
   }
 
-  function ensureLinksNavigation() {
+  function ensurePrimaryNavigation() {
     const headerRight = document.querySelector(".site-header .header-right");
     const search = headerRight?.querySelector(".site-search");
-    if (!headerRight || !search || headerRight.querySelector(".links-nav-button")) return false;
+    if (!headerRight || !search) return false;
 
-    const link = document.createElement("a");
-    link.className = "tools-button links-nav-button";
-    link.href = new URL("links/", getRepoRootUrl()).href;
-    link.textContent = "Links";
-    link.setAttribute("data-search-type", "page");
-    link.setAttribute("data-search-title", "Links");
-    link.setAttribute("data-search-keywords", "links bookmarks websites resources references");
+    let games = headerRight.querySelector(".games-nav-button");
+    let links = headerRight.querySelector(".links-nav-button");
 
-    const currentUrl = new URL(window.location.href);
-    if (/\/links\/?$/.test(currentUrl.pathname)) {
-      link.setAttribute("aria-current", "page");
+    if (!games) {
+      games = document.createElement("a");
+      games.className = "tools-button games-nav-button";
+      games.href = new URL("games/", getRepoRootUrl()).href;
+      games.textContent = "Games";
+      games.setAttribute("data-search-type", "page");
+      games.setAttribute("data-search-title", "Games");
+      games.setAttribute("data-search-keywords", "games wordle sudoku puzzle jigsaw daily");
     }
 
-    search.insertAdjacentElement("afterend", link);
+    if (!links) {
+      links = document.createElement("a");
+      links.className = "tools-button links-nav-button";
+      links.href = new URL("links/", getRepoRootUrl()).href;
+      links.textContent = "Links";
+      links.setAttribute("data-search-type", "page");
+      links.setAttribute("data-search-title", "Links");
+      links.setAttribute("data-search-keywords", "links bookmarks websites resources references");
+    }
+
+    const currentUrl = new URL(window.location.href);
+    if (/\/games(?:\/|$)/.test(currentUrl.pathname)) games.setAttribute("aria-current", "page");
+    else games.removeAttribute("aria-current");
+    if (/\/links\/?$/.test(currentUrl.pathname)) links.setAttribute("aria-current", "page");
+    else links.removeAttribute("aria-current");
+
+    // Requested order: Search, Games, Links, Tools.
+    search.insertAdjacentElement("afterend", links);
+    search.insertAdjacentElement("afterend", games);
     return true;
   }
 
-  function initialiseLinksNavigation() {
-    if (ensureLinksNavigation()) return;
+  function initialisePrimaryNavigation() {
+    if (ensurePrimaryNavigation()) return;
 
     const observer = new MutationObserver(() => {
-      if (ensureLinksNavigation()) observer.disconnect();
+      if (ensurePrimaryNavigation()) observer.disconnect();
     });
     observer.observe(document.documentElement, { childList: true, subtree: true });
 
@@ -680,9 +698,9 @@
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initialiseLinksNavigation, { once: true });
+    document.addEventListener("DOMContentLoaded", initialisePrimaryNavigation, { once: true });
   } else {
-    initialiseLinksNavigation();
+    initialisePrimaryNavigation();
   }
 
   window.RepoTheme = {

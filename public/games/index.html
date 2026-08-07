@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Games | Repo</title>
+  <script>(()=>{const s=localStorage.getItem('repo-theme');document.documentElement.dataset.theme=s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');})();</script>
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/tools.css">
+  <link rel="stylesheet" href="../css/games.css">
+  <script src="../js/theme.js" defer></script>
+  <script src="../js/tool-base.js" defer></script>
+  <script src="./games.js" defer></script>
+</head>
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+  <main class="games-main">
+    <div class="games-heading"><p class="eyebrow">Repo</p><h1>Games</h1></div>
+    <section class="games-grid" aria-label="Games">
+      <a class="game-card" href="./wordle/"><h2>Wordle</h2><p>Daily five-letter word puzzle or unlimited practice games.</p><span class="game-card-status" id="wordle-status">Daily not played</span></a>
+      <a class="game-card" href="./sudoku/"><h2>Sudoku</h2><p>Daily Easy, Medium, and Hard puzzles plus unlimited practice.</p><span class="game-card-status" id="sudoku-status">Daily puzzles ready</span></a>
+      <a class="game-card" href="./puzzle-maker/"><h2>Puzzle Maker</h2><p>Turn an uploaded or local image into a free-form jigsaw puzzle.</p><span class="game-card-status">Create a puzzle</span></a>
+    </section>
+  </main>
+</body>
+</html>

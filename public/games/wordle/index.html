@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wordle | Repo</title>
+  <script>(()=>{const s=localStorage.getItem('repo-theme');document.documentElement.dataset.theme=s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');})();</script>
+  <link rel="stylesheet" href="../../css/styles.css"><link rel="stylesheet" href="../../css/tools.css"><link rel="stylesheet" href="../../css/games.css"><link rel="stylesheet" href="./game.css">
+  <script src="../../js/theme.js" defer></script><script src="../../js/tool-base.js" defer></script><script src="./game.js" defer></script>
+</head>
+<body class="tool-page-shell"><div id="shared-tool-header"></div>
+<main class="game-main wordle-main">
+  <div class="game-heading"><p class="eyebrow">Games</p><h1>Wordle</h1></div>
+  <div class="game-toolbar">
+    <button class="game-button primary" id="daily-button" type="button">Daily</button>
+    <button class="game-button" id="practice-button" type="button">New practice</button>
+    <button class="game-button" id="stats-button" type="button">Stats</button>
+    <label class="wordle-hard"><input id="hard-mode" type="checkbox"> Hard mode</label>
+  </div>
+  <div class="game-status-row"><span id="wordle-mode">Daily</span><span id="wordle-message" aria-live="polite"></span></div>
+  <section class="wordle-board" id="wordle-board" aria-label="Wordle board"></section>
+  <section class="wordle-keyboard" id="wordle-keyboard" aria-label="On-screen keyboard"></section>
+</main>
+<div class="game-modal" id="wordle-stats-modal" hidden><div class="game-modal-card"><h2>Daily stats</h2><div id="wordle-stats-content"></div><button class="game-button" id="close-stats" type="button">Close</button></div></div>
+</body></html>

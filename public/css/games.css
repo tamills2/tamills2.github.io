@@ -1,0 +1,115 @@
+.games-main,
+.game-main {
+  width: min(100%, 92rem);
+  margin: 0 auto;
+  padding: calc(var(--header-height) + 1.5rem) 1.25rem 3rem;
+}
+
+.games-heading,
+.game-heading {
+  margin-bottom: 1.25rem;
+}
+
+.games-heading h1,
+.game-heading h1 { margin: 0; }
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1rem;
+}
+
+.game-card,
+.game-panel {
+  border: 1px solid var(--border);
+  border-radius: .7rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.game-card {
+  display: grid;
+  gap: .45rem;
+  min-height: 10rem;
+  padding: 1rem;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.game-card:hover,
+.game-card:focus-visible {
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+  outline: none;
+}
+
+.game-card h2 { margin: 0; font-size: 1.15rem; }
+.game-card p { margin: 0; color: var(--text-muted); }
+.game-card-status { margin-top: auto; color: var(--accent); font-size: .86rem; }
+
+.game-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .55rem;
+  margin-bottom: 1rem;
+}
+
+.game-button,
+.game-select,
+.game-input {
+  min-height: 2.35rem;
+  border: 1px solid var(--border);
+  border-radius: .45rem;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+.game-button { padding: .4rem .8rem; cursor: pointer; }
+.game-button:hover,
+.game-button:focus-visible { border-color: var(--accent); outline: none; }
+.game-button.primary { background: var(--accent); color: var(--accent-contrast, #fff); border-color: var(--accent); }
+.game-button[disabled] { opacity: .5; cursor: default; }
+.game-select,.game-input { padding: .4rem .6rem; }
+
+.game-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem 1.25rem;
+  margin: .75rem 0 1rem;
+  color: var(--text-muted);
+  font-size: .88rem;
+}
+
+.game-modal[hidden] { display: none; }
+.game-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(0,0,0,.55);
+}
+.game-modal-card {
+  width: min(34rem, 100%);
+  max-height: 85vh;
+  overflow: auto;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: .75rem;
+  background: var(--surface);
+  color: var(--text);
+}
+.game-modal-card h2 { margin-top: 0; }
+
+html[data-site-theme="matrix"] .game-card,
+html[data-site-theme="matrix"] .game-panel,
+html[data-site-theme="fallout"] .game-card,
+html[data-site-theme="fallout"] .game-panel,
+html[data-site-theme="dracula"] .game-card,
+html[data-site-theme="dracula"] .game-panel {
+  position: relative;
+  z-index: 1;
+}

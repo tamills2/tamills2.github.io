@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Puzzle Maker | Repo</title>
+  <script>(()=>{const s=localStorage.getItem('repo-theme');document.documentElement.dataset.theme=s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');})();</script>
+  <link rel="stylesheet" href="../../css/styles.css"><link rel="stylesheet" href="../../css/tools.css"><link rel="stylesheet" href="../../css/games.css"><link rel="stylesheet" href="./game.css">
+  <script src="../../js/theme.js" defer></script><script src="../../js/tool-base.js" defer></script><script src="./game.js" defer></script>
+</head>
+<body class="tool-page-shell"><div id="shared-tool-header"></div>
+<main class="game-main puzzle-main">
+  <div class="game-heading"><p class="eyebrow">Games</p><h1>Puzzle Maker</h1></div>
+  <section class="puzzle-setup game-panel" id="puzzle-setup">
+    <div class="puzzle-source-row">
+      <label class="upload-card"><strong>Upload image</strong><input id="image-upload" type="file" accept="image/jpeg,image/png,image/webp"></label>
+      <div><label for="default-image">Default image</label><select class="game-select" id="default-image"><option value="">Choose an image…</option></select></div>
+    </div>
+    <div class="puzzle-options" id="puzzle-options" hidden>
+      <div><strong id="image-info"></strong><div class="puzzle-help" id="piece-range"></div></div>
+      <label>Pieces <select class="game-select" id="piece-count"></select></label>
+      <button class="game-button primary" id="create-puzzle" type="button">Create puzzle</button>
+    </div>
+  </section>
+  <section class="puzzle-game" id="puzzle-game" hidden>
+    <div class="puzzle-toolbar game-toolbar">
+      <button class="game-button" id="pause-button" type="button">Pause</button><span id="puzzle-timer">00:00</span><span id="puzzle-progress">0%</span>
+      <button class="game-button" id="zoom-out" type="button">−</button><button class="game-button" id="zoom-in" type="button">+</button><button class="game-button" id="fit-button" type="button">Fit</button>
+      <button class="game-button" id="shuffle-button" type="button">Shuffle loose</button><button class="game-button" id="gather-button" type="button">Gather loose</button>
+      <button class="game-button" id="reference-button" type="button">Reference</button><button class="game-button" id="fullscreen-button" type="button">Fullscreen</button><button class="game-button" id="new-button" type="button">New puzzle</button>
+    </div>
+    <div class="puzzle-workspace" id="puzzle-workspace"><svg id="puzzle-svg" aria-label="Jigsaw puzzle workspace"></svg><div class="puzzle-paused" id="puzzle-paused" hidden>Paused</div></div>
+  </section>
+</main>
+<div class="game-modal" id="reference-modal" hidden><div class="game-modal-card reference-card"><img id="reference-image" alt="Puzzle reference"><button class="game-button" id="close-reference" type="button">Close</button></div></div>
+</body></html>

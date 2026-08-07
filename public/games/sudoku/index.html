@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-repo-root="../../">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sudoku | Repo</title>
+  <script>(()=>{const s=localStorage.getItem('repo-theme');document.documentElement.dataset.theme=s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');})();</script>
+  <link rel="stylesheet" href="../../css/styles.css"><link rel="stylesheet" href="../../css/tools.css"><link rel="stylesheet" href="../../css/games.css"><link rel="stylesheet" href="./game.css">
+  <script src="../../js/theme.js" defer></script><script src="../../js/tool-base.js" defer></script><script src="./game.js" defer></script>
+</head>
+<body class="tool-page-shell"><div id="shared-tool-header"></div>
+<main class="game-main sudoku-main">
+  <div class="game-heading"><p class="eyebrow">Games</p><h1>Sudoku</h1></div>
+  <div class="game-toolbar">
+    <select class="game-select" id="difficulty"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select>
+    <button class="game-button primary" id="daily-button" type="button">Daily</button>
+    <button class="game-button" id="practice-button" type="button">New practice</button>
+    <button class="game-button" id="settings-button" type="button">Settings</button>
+    <button class="game-button" id="stats-button" type="button">Stats</button>
+  </div>
+  <div class="game-status-row"><span id="sudoku-mode">Daily</span><span id="timer">00:00</span><span id="sudoku-message" aria-live="polite"></span></div>
+  <div class="sudoku-layout">
+    <section class="sudoku-board" id="sudoku-board" aria-label="Sudoku board"></section>
+    <aside class="sudoku-controls">
+      <div class="number-pad" id="number-pad"></div>
+      <div class="sudoku-actions">
+        <button class="game-button" id="notes-button" type="button" aria-pressed="false">Notes</button>
+        <button class="game-button" id="erase-button" type="button">Erase</button>
+        <button class="game-button" id="undo-button" type="button">Undo</button>
+        <button class="game-button" id="redo-button" type="button">Redo</button>
+        <button class="game-button" id="hint-button" type="button">Hint</button>
+      </div>
+    </aside>
+  </div>
+</main>
+<div class="game-modal" id="settings-modal" hidden><div class="game-modal-card"><h2>Sudoku settings</h2><div class="settings-list" id="settings-list"></div><button class="game-button" id="close-settings" type="button">Close</button></div></div>
+<div class="game-modal" id="stats-modal" hidden><div class="game-modal-card"><h2>Daily stats</h2><div id="stats-content"></div><button class="game-button" id="close-stats" type="button">Close</button></div></div>
+</body></html>

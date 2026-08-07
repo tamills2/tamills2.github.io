@@ -13,6 +13,7 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_ROOT = REPOSITORY_ROOT / "public"
 NOTES_ROOT = PUBLIC_ROOT / "Notes"
 TOOLS_ROOT = PUBLIC_ROOT / "tools"
+GAMES_ROOT = PUBLIC_ROOT / "games"
 DATA_ROOT = PUBLIC_ROOT / "data"
 
 NOTES_MANIFEST_FILE = DATA_ROOT / "notes-manifest.json"
@@ -202,6 +203,45 @@ def build_tools_manifest() -> list[dict[str, Any]]:
 
 
 
+
+def build_game_search_entries() -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    if not GAMES_ROOT.exists():
+        return entries
+
+    for game_dir in sorted(GAMES_ROOT.iterdir(), key=lambda p: p.name.casefold()):
+        if not game_dir.is_dir() or game_dir.name.startswith("."):
+            continue
+        metadata_path = game_dir / "game.json"
+        index_path = game_dir / "index.html"
+        if not metadata_path.exists() or not index_path.exists():
+            continue
+
+        try:
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError) as error:
+            print(f"Warning: could not index {metadata_path.relative_to(REPOSITORY_ROOT)}: {error}")
+            continue
+
+        parser = VisibleTextExtractor()
+        parser.feed(index_path.read_text(encoding="utf-8", errors="replace"))
+        title = str(metadata.get("title") or game_dir.name.replace("-", " ").title())
+        description = str(metadata.get("description") or "")
+        keywords = metadata.get("keywords") or []
+        if isinstance(keywords, str):
+            keywords = [keywords]
+
+        entries.append({
+            "type": "page",
+            "title": title,
+            "path": f"Games / {title}",
+            "url": f"./games/{game_dir.name}/",
+            "keywords": ["games", *[str(item) for item in keywords]],
+            "content": " ".join(part for part in [description, parser.text()] if part).strip(),
+        })
+
+    return entries
+
 def build_link_search_entries() -> list[dict[str, Any]]:
     """Build searchable entries from the grouped or legacy flat links file."""
     if not LINKS_FILE.exists():
@@ -266,6 +306,7 @@ def main() -> None:
     search_index = [
         *build_note_search_entries(),
         *tools_manifest,
+        *build_game_search_entries(),
         *build_link_search_entries(),
     ]
 
