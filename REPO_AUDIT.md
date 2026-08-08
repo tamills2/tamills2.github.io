@@ -308,3 +308,37 @@ Only these files need to be copied into the repository:
 - Enter fullscreen during an active puzzle, choose New Puzzle from the menu, and confirm fullscreen exits before the blank Create Puzzle page appears.
 - Complete a puzzle in fullscreen, choose New Puzzle from the completion card, and confirm the same behavior.
 - Verify Restart Puzzle still stays fullscreen.
+
+# Repo audit update — 2026-08-08 — Wordle guess handling + Daily win stats
+
+## Wordle changes completed
+
+- Fixed inconsistent guess submission caused by browser default keyboard behavior. The document-level Wordle key handler now calls `preventDefault()` for gameplay Enter, Backspace, and letter keys before routing them into the game.
+- This prevents a physical Enter press from both submitting the current guess and also activating whichever toolbar/on-screen-keyboard button still had focus (for example Daily or New practice), which could previously make invalid guesses appear to reset the puzzle, disappear, or behave inconsistently.
+- Keyboard events are ignored while the stats modal is open so typing/Enter cannot affect the hidden completed board behind the modal.
+- A successful Daily puzzle now automatically opens the existing Daily stats modal after the win/dance animation finishes.
+- Closing the stats modal reveals the completed board and solved word again. The completed board remains read-only and the on-screen keyboard buttons are disabled once the game is finished.
+- Starting a fresh Practice game re-enables the on-screen keyboard. Loading Daily re-enables it only when the saved Daily puzzle is still active; a saved completed Daily remains locked.
+- Practice wins do not automatically open Daily stats and continue not to affect Daily statistics.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/wordle/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/wordle/game.js` passes.
+- Confirmed recognized gameplay keys cancel their browser default action before calling `handleKey`, preventing focused buttons from receiving a second Enter activation.
+- Confirmed Daily stats are only auto-opened for a completed Daily win, after the tile dance delay.
+- Confirmed completed games disable the on-screen keyboard while `handleKey` also retains its existing `finished` guard.
+
+## Next Wordle manual checks
+
+- Click each toolbar button in turn so it has focus, type a five-letter invalid word with the physical keyboard, and press Enter. Confirm the same "Not in the offline dictionary." message appears every time and the board never resets or changes modes.
+- Repeat invalid-word entry using a mixture of physical keyboard and on-screen keyboard input and confirm the typed row remains intact while it shakes.
+- Win the Daily puzzle and confirm the tile celebration completes, then Daily stats opens automatically.
+- Close Daily stats and confirm the solved board remains visible but neither physical nor on-screen keyboard input can alter it.
+- Start a Practice puzzle after viewing a completed Daily and confirm the on-screen keyboard is enabled again.

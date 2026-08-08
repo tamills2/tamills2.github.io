@@ -38,14 +38,17 @@
   function practiceTarget() { return answers[Math.floor(Math.random() * answers.length)]; }
   function startDaily() {
     if (animating) return;
+    keyboard.querySelectorAll("button").forEach(button => button.disabled = false);
     mode = "daily"; target = dailyTarget();
     let saved = null; try { saved = JSON.parse(localStorage.getItem(STATE) || "null"); } catch {}
     if (saved?.date === today()) { guesses = saved.guesses || []; finished = !!saved.finished; }
     else { guesses = []; finished = false; }
     current = ""; modeLabel.textContent = `Daily • ${today()}`; message.textContent = ""; render();
+    if (finished) keyboard.querySelectorAll("button").forEach(button => button.disabled = true);
   }
   function startPractice() {
     if (animating) return;
+    keyboard.querySelectorAll("button").forEach(button => button.disabled = false);
     mode = "practice"; target = practiceTarget(); guesses = []; current = ""; finished = false;
     modeLabel.textContent = "Practice • does not affect stats"; message.textContent = ""; render();
   }
@@ -158,6 +161,16 @@
       finishGame();
     }
     if (mode === "daily") localStorage.setItem(STATE, JSON.stringify({ date: today(), guesses, finished }));
+
+    // Keep the completed board visible but read-only. For a Daily win, let the
+    // tile celebration finish before bringing the stats modal forward.
+    if (finished) {
+      keyboard.querySelectorAll("button").forEach(button => button.disabled = true);
+      if (mode === "daily" && won) {
+        await sleep(700);
+        showStats();
+      }
+    }
     animating = false;
   }
 
@@ -185,8 +198,21 @@
 
   document.addEventListener("keydown", e => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (!modal.hidden) return;
+
     const k = e.key.toUpperCase();
-    if (k === "ENTER") handleKey("ENTER"); else if (k === "BACKSPACE") handleKey("BACKSPACE"); else if (/^[A-Z]$/.test(k)) handleKey(k);
+    let gameKey = null;
+    if (k === "ENTER") gameKey = "ENTER";
+    else if (k === "BACKSPACE") gameKey = "BACKSPACE";
+    else if (/^[A-Z]$/.test(k)) gameKey = k;
+    if (!gameKey) return;
+
+    // Prevent Enter/Backspace/letter keys from also triggering the browser's
+    // default action on whichever toolbar or keyboard button still has focus.
+    // Without this, Enter can submit a guess and then click Daily/Practice,
+    // which makes an invalid guess appear to reset or disappear at random.
+    e.preventDefault();
+    handleKey(gameKey);
   });
   document.querySelector("#daily-button").addEventListener("click", startDaily);
   document.querySelector("#practice-button").addEventListener("click", startPractice);
