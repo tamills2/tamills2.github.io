@@ -563,3 +563,44 @@ Only these files need to be copied into the repository:
 - Enter several Candidate digits into a cell and confirm each digit occupies its expected 3×3 mini-grid location.
 - Check the compact number pad and icon action row at desktop and narrow/mobile window widths.
 - Complete both a Daily and Practice puzzle and confirm stats automatically opens, can be closed, and the completed board remains visible but read-only.
+
+# Repo audit update — 2026-08-08 — Sudoku icon polish and theme corrections
+
+## Sudoku changes completed
+
+- Reduced the Normal/Candidate mode controls and constrained their combined width to the exact desktop number-pad width so their left and right edges align with the 3×3 pad beneath them.
+- Changed the Candidate-mode number pad preview so each button now shows its digit in the same miniature 3×3 position used when that candidate is entered into a Sudoku cell (1 upper-left through 9 lower-right). Normal mode continues to show centered full-size digits.
+- Replaced the Settings artwork with a simple outlined cog closer to the supplied gear reference.
+- Replaced the Pause artwork with the same two vertical stroke lines used by Puzzle Maker; Resume retains the play triangle when the game is paused.
+- Replaced Undo with the exact two-path restart-arrow geometry used by Puzzle Maker and made Redo the horizontally mirrored version of that same icon.
+- Reworked Erase/Backspace to an outlined tag/backspace silhouette with a centered X, matching the supplied reference more closely.
+- Added small ray/tick marks around the Hint lightbulb while keeping the bulb itself as an outline icon.
+- Strengthened DOS Sudoku box boundaries with explicit 3px outer and 3×3 separator lines so the nine 3×3 regions are visually distinct from the ordinary cell grid.
+- Corrected Matrix control visibility by placing `.sudoku-main` above the Matrix rain canvas and giving Sudoku buttons/selects/number-pad keys a fully opaque Matrix surface. The animated rain may still be visible through page gaps but cannot render over the control faces.
+- Restored the visual weight of pre-filled/given digits in CRT, Amber, Fallout, and Matrix. Those single-face terminal fonts do not visibly respond enough to `font-weight` alone, so givens now use a very small current-color text stroke/shadow in addition to weight 900.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/sudoku/index.html`
+- `public/games/sudoku/game.css`
+- `public/games/sudoku/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/sudoku/game.js` passes.
+- Confirmed Candidate-mode pad rendering reuses the same 1–9 positional mapping as in-cell Sudoku notes.
+- Confirmed Undo uses the Puzzle Maker restart SVG paths and Redo mirrors the same artwork rather than using a separate approximation.
+- Confirmed the new icons are stroke-based and inherit the current theme color through `currentColor`.
+- Confirmed Matrix opacity and DOS box-border fixes are scoped to Sudoku and do not modify shared theme CSS.
+
+## Next Sudoku manual checks
+
+- Compare the Normal/Candidate control edges against the number-pad edges at desktop width.
+- Toggle Candidate mode and confirm digits 1–9 shift to the expected mini-grid positions in the number-pad buttons.
+- Check Settings, Pause, Undo, Redo, Erase, and Hint icons at the actual rendered toolbar size.
+- In DOS, confirm all nine 3×3 Sudoku boxes have clearly heavier separators than ordinary cells.
+- In Matrix, verify binary rain cannot be seen over the face of any Sudoku button, select, or number-pad key.
+- In CRT, Amber, Fallout, and Matrix, compare given digits against user-entered digits and confirm givens are visibly heavier.

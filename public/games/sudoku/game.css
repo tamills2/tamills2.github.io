@@ -7,16 +7,26 @@
 .sudoku-cell:nth-child(n+19):nth-child(-n+27),.sudoku-cell:nth-child(n+46):nth-child(-n+54){border-bottom:2px solid var(--text)}
 .sudoku-cell.given{font-weight:800}.sudoku-cell.selected{outline:2px solid var(--accent);outline-offset:-2px;z-index:2}.sudoku-cell.peer{background:var(--surface-subtle)}.sudoku-cell.match{background:var(--surface-hover)}.sudoku-cell.error{color:#c62828}.sudoku-cell.hinted{color:var(--accent)}
 .sudoku-notes { position:absolute; inset:3px; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr); font-size:clamp(.48rem,1vw,.72rem); line-height:1; color:var(--text-muted); font-weight:600; }.sudoku-notes span{display:grid;place-items:center}
-.sudoku-controls{display:grid;grid-template-columns:max-content;justify-content:center;align-content:start;gap:.8rem}
-.entry-mode-toggle{display:grid;grid-template-columns:repeat(2,1fr);gap:.45rem;width:100%}
-.entry-mode-button{min-width:0;padding:.55rem .65rem}
+
+.sudoku-controls{--pad-cell:3.65rem;--pad-gap:.45rem;--pad-width:calc((var(--pad-cell) * 3) + (var(--pad-gap) * 2));display:grid;grid-template-columns:var(--pad-width);justify-content:center;align-content:start;gap:.8rem}
+.entry-mode-toggle{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--pad-gap);width:var(--pad-width)}
+.entry-mode-button{min-width:0;min-height:2rem;padding:.32rem .42rem;font-size:.78rem}
 .entry-mode-button.active{border-color:var(--accent);background:var(--surface-hover);box-shadow:inset 0 0 0 1px var(--accent)}
-.number-pad{display:grid;grid-template-columns:repeat(3,3.65rem);gap:.45rem;justify-content:center}
-.number-button{width:3.65rem;height:3.65rem;border:1px solid var(--border);border-radius:.5rem;background:var(--surface);color:var(--text);font-size:1.1rem;cursor:pointer}.number-button:hover{border-color:var(--accent)}
+.number-pad{display:grid;grid-template-columns:repeat(3,var(--pad-cell));gap:var(--pad-gap);justify-content:center;width:var(--pad-width)}
+.number-button{position:relative;width:var(--pad-cell);height:var(--pad-cell);border:1px solid var(--border);border-radius:.5rem;background:var(--surface);color:var(--text);font-size:1.1rem;cursor:pointer}.number-button:hover{border-color:var(--accent)}
 .number-button.selected-number { border-color: var(--accent); background: var(--surface-hover); box-shadow: inset 0 0 0 1px var(--accent); }
+.number-pad.candidate-mode .number-button{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:.22rem;font-size:.62rem;line-height:1}
+.candidate-pad-digit{display:grid;place-items:center;font-weight:700}
+.candidate-pad-digit[data-digit="1"]{grid-area:1/1}.candidate-pad-digit[data-digit="2"]{grid-area:1/2}.candidate-pad-digit[data-digit="3"]{grid-area:1/3}.candidate-pad-digit[data-digit="4"]{grid-area:2/1}.candidate-pad-digit[data-digit="5"]{grid-area:2/2}.candidate-pad-digit[data-digit="6"]{grid-area:2/3}.candidate-pad-digit[data-digit="7"]{grid-area:3/1}.candidate-pad-digit[data-digit="8"]{grid-area:3/2}.candidate-pad-digit[data-digit="9"]{grid-area:3/3}
 .sudoku-actions{display:grid;grid-template-columns:repeat(4,2.55rem);gap:.45rem;justify-content:center}
 .icon-button{display:inline-grid;place-items:center;padding:.55rem;min-width:2.55rem;min-height:2.55rem}
-.icon-button svg{width:1.15rem;height:1.15rem;fill:currentColor;display:block}
+.icon-button svg{width:1.2rem;height:1.2rem;display:block;overflow:visible}
+.icon-button .stroke-icon{fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.settings-gear-icon{stroke-width:1.65!important}
+.redo-svg{transform:scaleX(-1);transform-origin:center}
+.erase-icon{stroke-width:1.75!important}
+.hint-icon{stroke-width:1.7!important}
+.hint-ray{stroke-width:1.55}
 #pause-button .play-icon{display:none}
 #pause-button[aria-pressed="true"] .pause-icon{display:none}
 #pause-button[aria-pressed="true"] .play-icon{display:block}
@@ -26,4 +36,27 @@
 .sudoku-pause-cover small{color:var(--text-muted)}
 .sudoku-board.is-paused{pointer-events:none;filter:blur(5px)}
 .settings-list{display:grid;gap:.65rem}.setting-row{display:flex;justify-content:space-between;gap:1rem;align-items:center}.sudoku-stats{display:grid;gap:1rem}.sudoku-stat-block{border:1px solid var(--border);border-radius:.5rem;padding:.75rem}.sudoku-stat-block h3{margin:0 0 .5rem}.sudoku-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;text-align:center}.sudoku-stat-grid strong{display:block}.sudoku-stat-grid span{font-size:.72rem;color:var(--text-muted)}
-@media(max-width:760px){.sudoku-layout{grid-template-columns:1fr}.sudoku-controls{width:min(28rem,100%);margin:auto;grid-template-columns:1fr}.entry-mode-toggle{width:min(16rem,100%);margin:auto}.number-pad{grid-template-columns:repeat(9,minmax(0,1fr));width:100%;gap:.35rem}.number-button{width:auto;height:auto;aspect-ratio:1;min-height:2.4rem}.sudoku-actions{grid-template-columns:repeat(4,2.55rem)}}
+
+/* DOS needs unmistakable 3x3 box boundaries; the global DOS button border rule
+   otherwise makes all 81 button edges look equally weighted. */
+html[data-site-theme="dos"] .sudoku-board{border:3px solid var(--text);gap:1px;background:var(--border)}
+html[data-site-theme="dos"] .sudoku-cell:nth-child(3n):not(:nth-child(9n)){border-right:3px solid var(--text)!important}
+html[data-site-theme="dos"] .sudoku-cell:nth-child(n+19):nth-child(-n+27),
+html[data-site-theme="dos"] .sudoku-cell:nth-child(n+46):nth-child(-n+54){border-bottom:3px solid var(--text)!important}
+
+/* Keep Sudoku content above Matrix rain while preserving the rain through gaps.
+   Controls themselves use the opaque Matrix surface so digits cannot render over them. */
+html[data-site-theme="matrix"] .sudoku-main{position:relative;z-index:1}
+html[data-site-theme="matrix"] .sudoku-main .game-button,
+html[data-site-theme="matrix"] .sudoku-main .game-select,
+html[data-site-theme="matrix"] .number-button{background:var(--surface-opaque,#061108)!important}
+html[data-site-theme="matrix"] .entry-mode-button.active{background:#102819!important}
+
+/* Single-face terminal fonts do not visually gain weight from font-weight alone.
+   A tiny text stroke restores the intended heavier look of givens without changing size. */
+html[data-site-theme="crt"] .sudoku-cell.given,
+html[data-site-theme="amber"] .sudoku-cell.given,
+html[data-site-theme="fallout"] .sudoku-cell.given,
+html[data-site-theme="matrix"] .sudoku-cell.given{font-weight:900!important;-webkit-text-stroke:.28px currentColor;text-shadow:.35px 0 currentColor,-.35px 0 currentColor}
+
+@media(max-width:760px){.sudoku-layout{grid-template-columns:1fr}.sudoku-controls{width:min(28rem,100%);margin:auto;grid-template-columns:1fr;--pad-width:min(100%,28rem)}.entry-mode-toggle{width:min(16rem,100%);margin:auto}.number-pad{grid-template-columns:repeat(9,minmax(0,1fr));width:100%;gap:.35rem}.number-button{width:auto;height:auto;aspect-ratio:1;min-height:2.4rem}.sudoku-actions{grid-template-columns:repeat(4,2.55rem)}}
