@@ -457,3 +457,31 @@ Only these files need to be copied into the repository:
 - In Matrix, submit guesses containing correct, present, and absent letters and confirm both tiles and keyboard keys use filled green/yellow/gray states while empty/unscored surfaces remain more opaque against the rain.
 - In DOS, submit a mixed-result guess and confirm the on-screen keyboard updates to green/yellow/gray and keeps those colors when hovered.
 - In Light, confirm unscored keyboard keys are modestly darker and easier to distinguish while result colors remain unchanged.
+
+
+# Repo audit update — 2026-08-08 — Wordle Matrix surface opacity correction
+
+## Wordle changes completed
+
+- Replaced the Matrix theme's near-opaque RGBA backgrounds on unscored Wordle tiles and keyboard keys with fully opaque solid Matrix-toned surfaces.
+- This prevents the falling binary rain from visibly showing through the board and keyboard while preserving the Matrix color palette.
+- Scored correct/present/absent tiles and keys remain excluded from the Matrix surface override, so their green/yellow/gray result fills continue to display normally.
+- No other themes were changed.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/wordle/game.css`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- Confirmed the Matrix unscored tile background is now fully opaque (`#061108`).
+- Confirmed the Matrix unscored keyboard-key background is now fully opaque (`#0a190d`).
+- Confirmed `.correct`, `.present`, and `.absent` states remain excluded from those Matrix-only overrides.
+
+## Next Wordle manual checks
+
+- Open Wordle in Matrix and confirm no falling binary digits are visible through empty/active tiles or unscored keyboard keys.
+- Submit a mixed-result guess and confirm green/yellow/gray fills still display normally on both the board and keyboard.

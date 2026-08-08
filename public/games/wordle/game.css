@@ -95,11 +95,11 @@
 
 /* Keep Matrix rain visible without overriding scored Wordle states. */
 html[data-site-theme="matrix"] .wordle-tile:not(.correct):not(.present):not(.absent) {
-  background: rgba(6, 17, 8, .985);
+  background: #061108;
 }
 
 html[data-site-theme="matrix"] .wordle-key:not(.correct):not(.present):not(.absent) {
-  background: rgba(10, 25, 13, .975);
+  background: #0a190d;
 }
 
 /* The site-wide DOS button treatment is intentionally strong, so restore
