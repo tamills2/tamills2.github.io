@@ -342,3 +342,33 @@ Only these files need to be copied into the repository:
 - Win the Daily puzzle and confirm the tile celebration completes, then Daily stats opens automatically.
 - Close Daily stats and confirm the solved board remains visible but neither physical nor on-screen keyboard input can alter it.
 - Start a Practice puzzle after viewing a completed Daily and confirm the on-screen keyboard is enabled again.
+
+# Repo audit update — 2026-08-08 — Stable Daily Wordle target
+
+## Wordle changes completed
+
+- Fixed Daily puzzle answers changing when `la-words.txt` is edited. The previous selector used `hash(today) % answers.length`, so adding/removing even one answer changed the modulo result and could silently replace the current day's target.
+- Daily state now persists the selected `target` alongside the date, guesses, and finished flag as soon as that day's puzzle is first loaded. Editing, reordering, adding, or removing answer words later in the same day no longer changes an already-started Daily puzzle.
+- Every subsequent Daily-state save now retains the persisted target.
+- Added migration for legacy completed Daily wins that were saved before target persistence existed: when stats confirm the saved Daily was won, the final winning guess is used to recover and lock the original target. This repairs already-completed boards whose colors changed after the answer list length changed.
+- Legacy in-progress Daily state without a stored target cannot always reveal what the old target was, so it falls back to the current deterministic target once and then locks that target going forward.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/wordle/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/wordle/game.js` passes.
+- Confirmed a new Daily stores `{ date, target, guesses, finished }` immediately on load.
+- Confirmed accepted Daily guesses continue saving the same target with the game state.
+- Confirmed legacy completed wins can recover the previous target from the final winning guess when Daily stats mark that date as won.
+
+## Next Wordle manual checks
+
+- Reload the Daily puzzle that changed after editing `la-words.txt`; if it was already completed as a win, confirm the original green/yellow/gray scoring is restored.
+- Start a fresh Daily, note its answer/state, then add another valid five-letter word to `la-words.txt` and reload. Confirm the target and all existing tile colors remain unchanged.
+- Verify Practice mode still draws from the current answer list normally.

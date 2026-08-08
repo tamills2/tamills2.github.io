@@ -39,10 +39,35 @@
   function startDaily() {
     if (animating) return;
     keyboard.querySelectorAll("button").forEach(button => button.disabled = false);
-    mode = "daily"; target = dailyTarget();
-    let saved = null; try { saved = JSON.parse(localStorage.getItem(STATE) || "null"); } catch {}
-    if (saved?.date === today()) { guesses = saved.guesses || []; finished = !!saved.finished; }
-    else { guesses = []; finished = false; }
+    mode = "daily";
+
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(STATE) || "null"); } catch {}
+
+    if (saved?.date === today()) {
+      guesses = Array.isArray(saved.guesses) ? saved.guesses : [];
+      finished = !!saved.finished;
+
+      // Daily answers must not move when la-words.txt is edited. New state
+      // records persist the chosen target for the rest of the day. Older
+      // completed-win state can be migrated safely from its winning guess.
+      if (typeof saved.target === "string" && /^[a-z]{5}$/.test(saved.target)) {
+        target = saved.target;
+      } else {
+        const s = stats();
+        const legacyWin = finished && s.daily?.[today()]?.won && guesses.length;
+        target = legacyWin ? guesses.at(-1) : dailyTarget();
+        localStorage.setItem(STATE, JSON.stringify({ date: today(), target, guesses, finished }));
+      }
+    } else {
+      target = dailyTarget();
+      guesses = [];
+      finished = false;
+      // Lock today's answer immediately, before the first guess, so changing
+      // the answer dictionary later cannot alter an in-progress Daily.
+      localStorage.setItem(STATE, JSON.stringify({ date: today(), target, guesses, finished }));
+    }
+
     current = ""; modeLabel.textContent = `Daily • ${today()}`; message.textContent = ""; render();
     if (finished) keyboard.querySelectorAll("button").forEach(button => button.disabled = true);
   }
@@ -160,7 +185,7 @@
       } else message.textContent = `Answer: ${target.toUpperCase()}`;
       finishGame();
     }
-    if (mode === "daily") localStorage.setItem(STATE, JSON.stringify({ date: today(), guesses, finished }));
+    if (mode === "daily") localStorage.setItem(STATE, JSON.stringify({ date: today(), target, guesses, finished }));
 
     // Keep the completed board visible but read-only. For a Daily win, let the
     // tile celebration finish before bringing the stats modal forward.
