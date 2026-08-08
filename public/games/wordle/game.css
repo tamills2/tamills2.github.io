@@ -93,11 +93,37 @@
   .wordle-row.shake, .wordle-tile.pop, .wordle-tile.reveal, .wordle-tile.dance { animation-duration: 1ms !important; animation-delay: 0ms !important; }
 }
 
-/* Keep Matrix rain visible without letting it compete with the game surface. */
-html[data-site-theme="matrix"] .wordle-tile {
+/* Keep Matrix rain visible without overriding scored Wordle states. */
+html[data-site-theme="matrix"] .wordle-tile:not(.correct):not(.present):not(.absent) {
   background: rgba(6, 17, 8, .985);
 }
 
-html[data-site-theme="matrix"] .wordle-key {
+html[data-site-theme="matrix"] .wordle-key:not(.correct):not(.present):not(.absent) {
   background: rgba(10, 25, 13, .975);
+}
+
+/* The site-wide DOS button treatment is intentionally strong, so restore
+   Wordle's scored keyboard fills with selectors that outrank that treatment. */
+html[data-site-theme="dos"] button.wordle-key.correct,
+html[data-site-theme="dos"] button.wordle-key.correct:hover {
+  background: #538d4e;
+  color: #fff;
+}
+
+html[data-site-theme="dos"] button.wordle-key.present,
+html[data-site-theme="dos"] button.wordle-key.present:hover {
+  background: #b59f3b;
+  color: #fff;
+}
+
+html[data-site-theme="dos"] button.wordle-key.absent,
+html[data-site-theme="dos"] button.wordle-key.absent:hover {
+  background: #3a3a3c;
+  color: #fff;
+}
+
+/* Give the default Light theme a little more keyboard contrast without
+   touching correct/present/absent result colors or hidden site themes. */
+html[data-theme="light"]:not([data-site-theme]) .wordle-key:not(.correct):not(.present):not(.absent) {
+  background: #d9dee3;
 }

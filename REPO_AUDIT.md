@@ -429,3 +429,31 @@ Only these files need to be copied into the repository:
 - Open Wordle in the Matrix theme and confirm the binary rain is much less distracting through empty/active board tiles and keyboard keys.
 - Confirm the Matrix effect is still visible around the game and has not been disabled or dimmed globally.
 - Switch through several other themes and confirm their Wordle board/keyboard appearance is unchanged.
+
+# Repo audit update — 2026-08-08 — Wordle theme-state corrections
+
+## Wordle changes completed
+
+- Corrected the Matrix-specific opacity selectors so the darker, more opaque Matrix surfaces apply only to unscored board tiles and unscored keyboard keys.
+- Matrix correct/present/absent tiles and keyboard keys now retain their normal filled green/yellow/gray result colors instead of having the Matrix surface background override the fill and leave only the result-colored outline visible.
+- Added DOS-specific scored-keyboard rules with sufficient selector strength to override the site's global DOS button styling. Correct, present, and absent keyboard keys now visually reflect submitted guesses in DOS mode, including while hovered.
+- Darkened only the unscored keyboard keys in the default Light theme to improve their visibility against the page background. Scored key colors and all hidden site themes remain unchanged.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/wordle/game.css`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- Confirmed the Matrix opacity selectors explicitly exclude `.correct`, `.present`, and `.absent`, preventing them from overriding scored fills.
+- Confirmed DOS scored-key selectors target `button.wordle-key` and therefore outrank the global DOS button-background rule.
+- Confirmed the Light-theme contrast rule excludes scored keys and excludes hidden `data-site-theme` modes.
+
+## Next Wordle manual checks
+
+- In Matrix, submit guesses containing correct, present, and absent letters and confirm both tiles and keyboard keys use filled green/yellow/gray states while empty/unscored surfaces remain more opaque against the rain.
+- In DOS, submit a mixed-result guess and confirm the on-screen keyboard updates to green/yellow/gray and keeps those colors when hovered.
+- In Light, confirm unscored keyboard keys are modestly darker and easier to distinguish while result colors remain unchanged.
