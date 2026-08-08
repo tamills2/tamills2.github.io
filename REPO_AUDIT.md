@@ -485,3 +485,39 @@ Only these files need to be copied into the repository:
 
 - Open Wordle in Matrix and confirm no falling binary digits are visible through empty/active tiles or unscored keyboard keys.
 - Submit a mixed-result guess and confirm green/yellow/gray fills still display normally on both the board and keyboard.
+
+# Repo audit update — 2026-08-08 — Wordle Matrix container backing fix
+
+## Wordle changes completed
+
+- Corrected the Matrix readability approach after confirming the remaining visible rain was showing through the gaps between Wordle tiles and keyboard keys rather than through the individual surfaces themselves.
+- Added a fully opaque Matrix-only backing surface to the entire `.wordle-board` container so binary rain is blocked behind tile gaps as well as behind the tiles.
+- Added the same fully opaque backing surface to the entire `.wordle-keyboard` container so rain is blocked behind and between keyboard keys.
+- Kept the existing opaque unscored tile/key surfaces and the normal correct/present/absent state fills unchanged.
+- The Matrix rain remains visible around the game areas, and no other themes are affected.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/wordle/game.css`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- Confirmed the new rules affect only the Matrix theme.
+- Confirmed no scored-state selectors were changed, so green/yellow/gray Wordle result fills remain intact.
+- Confirmed the board and keyboard container backgrounds do not alter their dimensions or responsive fit calculations.
+
+## Next Wordle manual checks
+
+- Open Wordle in Matrix and confirm falling binary digits are no longer visible anywhere inside the rectangular board region, including tile gaps.
+- Confirm binary digits are no longer visible inside the keyboard region, including gaps between keys and rows.
+- Submit a mixed-result guess and confirm correct/present/absent colors still display normally.
+- Confirm the Matrix rain remains visible around the board and keyboard.
+
+### 2026-08-08 — Wordle Matrix rain layering fix
+- Corrected the Matrix/Wordle transparency issue at the stacking-layer source: the Matrix rain canvas uses `z-index: 0`, while shared Matrix CSS only elevated `.tool-main`; Wordle uses `.game-main`, allowing the rain canvas to render over its tiles and keys.
+- Added a Matrix-only stacking context to `.wordle-main` (`position: relative; z-index: 1`) so the rain stays behind Wordle's actual game surfaces.
+- Removed the temporary solid backing from `.wordle-board` and `.wordle-keyboard`; Matrix rain remains visible naturally through the gaps around/between tiles and keys, but not over their filled faces.
+- Existing Matrix solid unscored tile/key fills and scored-state color overrides remain intact.

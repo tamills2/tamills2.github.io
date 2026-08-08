@@ -127,3 +127,12 @@ html[data-site-theme="dos"] button.wordle-key.absent:hover {
 html[data-theme="light"]:not([data-site-theme]) .wordle-key:not(.correct):not(.present):not(.absent) {
   background: #d9dee3;
 }
+
+/* Matrix rain is a fixed z-index:0 canvas. Shared theme CSS raises .tool-main
+   above that canvas, but game pages use .game-main instead. Keep Wordle in its
+   own stacking layer above the rain so the animation cannot draw over the
+   tiles/keys themselves; transparent gaps remain transparent to the rain. */
+html[data-site-theme="matrix"] .wordle-main {
+  position: relative;
+  z-index: 1;
+}
