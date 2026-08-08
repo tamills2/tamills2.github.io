@@ -251,101 +251,115 @@
     };
   }
 
-  const EDGE_PROFILES = [
-    { center: .50, width: .180, depth: 1.00 },
-    { center: .50, width: .170, depth: .92 },
-    { center: .50, width: .190, depth: 1.08 },
-    { center: .50, width: .165, depth: .88 },
-    { center: .50, width: .185, depth: .96 },
+  const JIGSAW_PROFILE = [
+    [0, -75],
+    [0, -20], [50, -45],
+    [100, -75], [130, -50],
+    [150, -35], [150, 0],
+    [150, 35], [130, 50],
+    [100, 75], [50, 45],
+    [0, 20], [0, 75],
   ];
-
-  function makeEdge(random) {
-    return {
-      direction: random() < .5 ? -1 : 1,
-      profile: Math.floor(random() * EDGE_PROFILES.length),
-    };
-  }
 
   function makeEdges(cols, rows) {
     const random = seededRandom(`${sourceTitle}|${imgW}x${imgH}|${cols}x${rows}`);
-    return {
-      horizontal: Array.from({ length: (rows - 1) * cols }, () => makeEdge(random)),
-      vertical: Array.from({ length: rows * (cols - 1) }, () => makeEdge(random)),
-    };
+    const nodes = [];
+
+    for (let gx = 0; gx <= 2 * cols; gx++) {
+      const column = [];
+      for (let gy = 0; gy <= 2 * rows; gy++) {
+        const onBoundary = gx === 0 || gy === 0 || gx === 2 * cols || gy === 2 * rows;
+        const corner = gx % 2 === 0 && gy % 2 === 0;
+        const node = {
+          x: gx * PIECE * .5,
+          y: gy * PIECE * .5,
+          mode: 0,
+        };
+
+        // Jigidi subtly distorts the otherwise regular grid. Corner points move
+        // by up to 8% of a piece, while edge midpoints get another 10% shift
+        // along their edge. That irregularity is a large part of why the pieces
+        // look like real die-cut jigsaw pieces rather than repeated SVG stamps.
+        if (!onBoundary) {
+          node.x += (random() - .5) * PIECE * .08;
+          node.y += (random() - .5) * PIECE * .08;
+          if (!corner) {
+            if (gx % 2 === 1) node.x += (random() - .5) * PIECE * .10;
+            if (gy % 2 === 1) node.y += (random() - .5) * PIECE * .10;
+            node.mode = random() < .5 ? 1 : 2;
+          }
+        }
+
+        column.push(node);
+      }
+      nodes.push(column);
+    }
+
+    return { cols, rows, nodes };
   }
 
-  function oppositeEdge(edge) {
-    return edge ? { direction: -edge.direction, profile: edge.profile } : null;
+  function appendJigidiEdge(path, midpoint, orientation, flip, originX, originY) {
+    if (!midpoint || midpoint.mode === 0) return;
+
+    // This is the quadratic profile used by Jigidi's cutter, translated into
+    // SVG path commands. The source profile is expressed in a 150x150-ish
+    // normalized coordinate system and scaled by .22 * ((w + h) / 200).
+    const scale = .22 * ((PIECE + PIECE) / 200);
+    let alongSign = orientation === 1 || orientation === 2 ? -scale : scale;
+    let normalSign = orientation === 2 || orientation === 3 ? -scale : scale;
+    const horizontalSide = orientation % 2 === 0;
+
+    if (flip && horizontalSide) alongSign *= -1;
+    if (flip && !horizontalSide) normalSign *= -1;
+
+    const profile = horizontalSide
+      ? JIGSAW_PROFILE
+      : JIGSAW_PROFILE.map(([x, y]) => [y, x]);
+
+    const mx = midpoint.x - originX;
+    const my = midpoint.y - originY;
+    const point = ([x, y]) => [mx + x * alongSign, my + y * normalSign];
+
+    const [sx, sy] = point(profile[0]);
+    path.push(`L ${sx} ${sy}`);
+    for (let i = 1; i < profile.length; i += 2) {
+      const [cx, cy] = point(profile[i]);
+      const [ex, ey] = point(profile[i + 1]);
+      path.push(`Q ${cx} ${cy} ${ex} ${ey}`);
+    }
   }
 
-  function pointOnEdge(startX, startY, dx, dy, normalX, normalY, t, normalAmount) {
-    return {
-      x: startX + dx * t + normalX * normalAmount,
-      y: startY + dy * t + normalY * normalAmount,
-    };
-  }
+  function piecePath(row, col, cutGrid) {
+    const nodes = cutGrid.nodes;
+    const originX = col * PIECE;
+    const originY = row * PIECE;
+    const topLeft = nodes[2 * col][2 * row];
+    const topRight = nodes[2 * col + 2][2 * row];
+    const bottomRight = nodes[2 * col + 2][2 * row + 2];
+    const bottomLeft = nodes[2 * col][2 * row + 2];
+    const topMid = nodes[2 * col + 1][2 * row];
+    const rightMid = nodes[2 * col + 2][2 * row + 1];
+    const bottomMid = nodes[2 * col + 1][2 * row + 2];
+    const leftMid = nodes[2 * col][2 * row + 1];
+    const local = node => [node.x - originX, node.y - originY];
 
-  function appendClassicEdge(path, startX, startY, endX, endY, normalX, normalY, edge) {
-    const dx = endX - startX;
-    const dy = endY - startY;
-    const profile = EDGE_PROFILES[edge.profile] || EDGE_PROFILES[0];
-    const depth = TAB_DEPTH * profile.depth * edge.direction;
-    const center = profile.center;
-    const width = profile.width;
-    const point = (t, normalAmount = 0) => pointOnEdge(startX, startY, dx, dy, normalX, normalY, t, normalAmount);
+    const [tlx, tly] = local(topLeft);
+    const [trx, try_] = local(topRight);
+    const [brx, bry] = local(bottomRight);
+    const [blx, bly] = local(bottomLeft);
+    const path = [`M ${tlx} ${tly}`];
 
-    // Classic jigsaw edge: a long straight run, a short concave shoulder/neck,
-    // then a broad rounded head before mirroring the same transition back to
-    // the straight edge.  Keeping the head round and the neck short produces
-    // the familiar Jigidi/wooden-jigsaw silhouette without novelty shapes.
-    const shoulderIn = point(center - width);
-    const neckIn = point(center - width * .56, -depth * .07);
-    const bulbIn = point(center - width * .43, depth * .67);
-    const crown = point(center, depth);
-    const bulbOut = point(center + width * .43, depth * .67);
-    const neckOut = point(center + width * .56, -depth * .07);
-    const shoulderOut = point(center + width);
+    if (topMid.mode) appendJigidiEdge(path, topMid, 3, topMid.mode === 1, originX, originY);
+    path.push(`L ${trx} ${try_}`);
 
-    const p = (t, n = 0) => point(t, n);
-    const c1 = p(center - width * .88, 0);
-    const c2 = p(center - width * .67, -depth * .08);
-    const c3 = p(center - width * .54, depth * .03);
-    const c4 = p(center - width * .50, depth * .48);
-    const c5 = p(center - width * .35, depth * .91);
-    const c6 = p(center - width * .13, depth);
-    const c7 = p(center + width * .13, depth);
-    const c8 = p(center + width * .35, depth * .91);
-    const c9 = p(center + width * .50, depth * .48);
-    const c10 = p(center + width * .54, depth * .03);
-    const c11 = p(center + width * .67, -depth * .08);
-    const c12 = p(center + width * .88, 0);
+    if (rightMid.mode) appendJigidiEdge(path, rightMid, 0, rightMid.mode === 1, originX, originY);
+    path.push(`L ${brx} ${bry}`);
 
-    path.push(`L ${shoulderIn.x} ${shoulderIn.y}`);
-    path.push(`C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${neckIn.x} ${neckIn.y}`);
-    path.push(`C ${c3.x} ${c3.y} ${c4.x} ${c4.y} ${bulbIn.x} ${bulbIn.y}`);
-    path.push(`C ${c5.x} ${c5.y} ${c6.x} ${c6.y} ${crown.x} ${crown.y}`);
-    path.push(`C ${c7.x} ${c7.y} ${c8.x} ${c8.y} ${bulbOut.x} ${bulbOut.y}`);
-    path.push(`C ${c9.x} ${c9.y} ${c10.x} ${c10.y} ${neckOut.x} ${neckOut.y}`);
-    path.push(`C ${c11.x} ${c11.y} ${c12.x} ${c12.y} ${shoulderOut.x} ${shoulderOut.y}`);
-    path.push(`L ${endX} ${endY}`);
-  }
+    if (bottomMid.mode) appendJigidiEdge(path, bottomMid, 1, bottomMid.mode !== 1, originX, originY);
+    path.push(`L ${blx} ${bly}`);
 
-  function piecePath(edge) {
-    const path = ["M 0 0"];
-
-    if (edge.top) appendClassicEdge(path, 0, 0, PIECE, 0, 0, -1, edge.top);
-    else path.push(`L ${PIECE} 0`);
-
-    if (edge.right) appendClassicEdge(path, PIECE, 0, PIECE, PIECE, 1, 0, edge.right);
-    else path.push(`L ${PIECE} ${PIECE}`);
-
-    if (edge.bottom) appendClassicEdge(path, PIECE, PIECE, 0, PIECE, 0, 1, edge.bottom);
-    else path.push(`L 0 ${PIECE}`);
-
-    if (edge.left) appendClassicEdge(path, 0, PIECE, 0, 0, -1, 0, edge.left);
-    else path.push("L 0 0");
-
-    path.push("Z");
+    if (leftMid.mode) appendJigidiEdge(path, leftMid, 2, leftMid.mode !== 1, originX, originY);
+    path.push(`L ${tlx} ${tly}`, "Z");
     return path.join(" ");
   }
 
@@ -395,14 +409,7 @@
         const id = row * cols + col;
         const solvedX = col * PIECE;
         const solvedY = row * PIECE;
-        const edge = {
-          top: row === 0 ? null : oppositeEdge(edges.horizontal[(row - 1) * cols + col]),
-          bottom: row === rows - 1 ? null : edges.horizontal[row * cols + col],
-          left: col === 0 ? null : oppositeEdge(edges.vertical[row * (cols - 1) + (col - 1)]),
-          right: col === cols - 1 ? null : edges.vertical[row * (cols - 1) + col],
-        };
-
-        const pathData = piecePath(edge);
+        const pathData = piecePath(row, col, edges);
         const clip = svgEl("clipPath", { id: `clip-${id}`, clipPathUnits: "userSpaceOnUse" });
         clip.append(svgEl("path", { d: pathData }));
         defs.append(clip);
@@ -837,10 +844,26 @@
     if (paused || complete || event.target.closest?.(".puzzle-settings") || event.target.closest?.(".puzzle-complete-overlay")) return;
     event.preventDefault();
     beginTimerOnInteraction();
-    const point = svgPoint(event);
-    const wheelDelta = clamp(event.deltaY, -120, 120);
-    const factor = Math.exp(-wheelDelta * .00045);
-    setZoom(zoom * factor, point.x, point.y);
+
+    // Normalize wheel/trackpad units, then keep the world point beneath the
+    // pointer locked to the same screen pixel while zooming. The old approach
+    // centered that point in the viewport on every wheel event, which caused
+    // even tiny scrolls near an edge to fling the whole puzzle across the view.
+    const rect = workspace.getBoundingClientRect();
+    const pointerX = clamp(event.clientX - rect.left, 0, rect.width);
+    const pointerY = clamp(event.clientY - rect.top, 0, rect.height);
+    const anchorX = viewX + pointerX / zoom;
+    const anchorY = viewY + pointerY / zoom;
+    const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16
+      : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? rect.height
+      : 1;
+    const wheelDelta = clamp(event.deltaY * unit, -80, 80);
+    const nextZoom = clamp(zoom * Math.exp(-wheelDelta * .00018), .35, 3);
+
+    zoom = nextZoom;
+    viewX = anchorX - pointerX / zoom;
+    viewY = anchorY - pointerY / zoom;
+    resizeView();
   }, { passive: false });
 
   function restartCurrentPuzzle() {

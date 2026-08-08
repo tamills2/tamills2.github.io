@@ -183,3 +183,32 @@ Only these files need to be copied into the repository:
 - Scatter pieces, deliberately pan/zoom away from them, then confirm Recenter Pieces reliably brings every piece back into view.
 - Complete a puzzle, close the completion card with `×`, confirm the full image remains visible, then press the three-dot button and confirm the completion card reopens.
 - Recheck the centered Create Puzzle setup on both wide and narrow screens.
+
+# Repo audit update — 2026-08-08 — Jigidi cutter translation + anchored wheel zoom
+
+## Puzzle Maker changes completed
+
+- Replaced the hand-tuned approximation of the jigsaw tabs/sockets with an SVG translation of the actual Jigidi cutter geometry supplied by the user. The implementation uses the same normalized quadratic tab/socket profile and the same orientation/mirroring rules for top, right, bottom, and left edges.
+- Added Jigidi-style grid irregularity: interior corner points receive up to 8% positional variation, edge midpoints receive the additional 10% along-edge variation, and each internal shared edge randomly selects one of the two tab/socket directions. All neighboring pieces reference the same generated cut-grid nodes, so their shared boundaries are identical.
+- Fixed the wheel/trackpad zoom jump. Wheel zoom no longer recenters the whole viewport on the pointer's world coordinate; it now anchors the world point under the pointer to the same screen pixel before and after the zoom.
+- Slowed wheel/trackpad zoom again. Wheel deltas are normalized by `deltaMode`, clamped, and converted with a much smaller exponential scale so small scroll gestures produce small zoom changes.
+- Preserved button zoom behavior separately; the plus/minus toolbar buttons still zoom around the viewport center.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/puzzle-maker/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes after the Jigidi cutter and wheel-zoom changes.
+- The Jigidi-style cut grid is deterministic for a given source image/title and grid size.
+- Adjacent pieces share the same perturbed corner and edge-midpoint nodes, preventing gaps caused by independently generated boundaries.
+
+## Next Puzzle Maker manual checks
+
+- Compare several generated pieces directly against Jigidi at low and medium piece counts; the curve profile should now be materially closer because it is based on the supplied cutter implementation rather than visual approximation.
+- Test both a mouse wheel and a Mac trackpad at the center and near all four edges of the workspace. Zoom should stay anchored beneath the pointer and should no longer fling the viewport sideways/up/down.
+- Confirm the new slower zoom rate still has enough range when using several consecutive scroll gestures.
