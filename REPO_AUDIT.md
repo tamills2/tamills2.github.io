@@ -245,3 +245,37 @@ Only these files need to be copied into the repository:
 - With two or more groups of the same size, click each in turn and confirm the most recently clicked group becomes the top group only within that size tier.
 - Drag a large connected group underneath smaller groups and verify it remains underneath them during the drag, not only after release.
 - Pause with the menu both open and closed. Confirm the canvas is strongly obscured, clicking the covered canvas resumes, and every visible toolbar/menu control remains interactive without implicitly resuming the puzzle.
+
+# Repo audit update — 2026-08-08 — Puzzle Maker completion fit + image-aware piece counts
+
+## Puzzle Maker changes completed
+
+- Changed solved-puzzle framing so completion always animates to the largest zoom that still fits the entire completed puzzle inside the current workspace. It now zooms in when the user finishes while zoomed farther out, instead of only zooming out when necessary.
+- Lowered the completion-only minimum zoom to `0.1` so very large/high-piece-count puzzles can still be fully fit on smaller screens. Normal in-progress zoom retains the existing `0.35` lower limit.
+- Reworked Create Puzzle piece-count choices to be image-aware. Available grids are now generated from the source image's pixel dimensions and aspect ratio rather than starting from generic square-friendly counts.
+- Resolution now determines the upper grid density using a minimum source-cell target of roughly 64 px per side, with the existing hard ceiling of 600 pieces. Lower-resolution images therefore expose a smaller image-specific maximum while sufficiently large images can still reach the general 600-piece ceiling.
+- Aspect ratio now influences the actual low end as well: the generator targets the general 9-piece minimum but chooses the smallest suitable grid that follows the source aspect. Clearly non-square images never receive square `N × N` options.
+- Filters candidate grids to favor layouts within roughly 20% of the source aspect ratio, preventing piece-count targets from visibly reshaping the image just to land on familiar counts. If an extreme image has no candidate within that tolerance, the generator falls back to the closest available resolution-safe grids.
+- Restored wheel/trackpad zoom after puzzle completion. Once the completion card is dismissed, the solved image can be zoomed normally while remaining locked against piece dragging/snapping. The three-dot control continues to reopen the Puzzle Completed card.
+- Completion-state wheel and toolbar zoom support the lower completion-only zoom floor so interacting with a large solved puzzle does not suddenly jump back to the normal in-progress minimum.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/puzzle-maker/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes.
+- Confirmed non-square source images are excluded from square `cols === rows` grid candidates.
+- Confirmed completion fitting uses the calculated fit zoom directly rather than preserving a smaller pre-completion zoom.
+- Confirmed wheel zoom no longer blocks solely because the puzzle is complete; it remains blocked by pause and by interaction directly over the completion/settings overlays.
+
+## Next Puzzle Maker manual checks
+
+- Finish a puzzle while significantly zoomed out and verify the completed image animates larger until it nearly fills the available workspace without cropping.
+- Finish a high-piece-count puzzle on a smaller browser window and verify the whole solved image still fits, including when the required zoom is below `0.35`.
+- Test square, landscape, portrait, and panoramic source images on the Create Puzzle page. Confirm non-square sources do not offer square grids and that the displayed low/high piece counts change appropriately with image dimensions/aspect ratio.
+- Dismiss the completion card and verify mouse-wheel/Mac-trackpad zoom remains anchored and smooth on the solved image. Confirm the three-dot button still restores the Puzzle Completed card afterward.

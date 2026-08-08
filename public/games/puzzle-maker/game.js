@@ -171,38 +171,61 @@
     image.src = url;
   }
 
-  function bestGrid(target, aspect) {
-    let best = null;
-    const maxRows = Math.ceil(Math.sqrt(target / aspect) * 2.3) + 4;
-    const maxCols = Math.ceil(Math.sqrt(target * aspect) * 2.3) + 4;
+  function buildGridOptions(aspect, min, max, maxCols, maxRows) {
+    const isSquareImage = imgW === imgH;
+    const candidates = [];
 
     for (let rows = 2; rows <= maxRows; rows++) {
       for (let cols = 2; cols <= maxCols; cols++) {
         const count = rows * cols;
-        if (count < 4) continue;
-        const score = Math.abs(count - target) / Math.max(1, target) + Math.abs((cols / rows) - aspect) * .32;
-        if (!best || score < best.score) best = { rows, cols, count, score };
+        if (count < min || count > max) continue;
+        if (!isSquareImage && cols === rows) continue;
+
+        // Favor grids whose cell layout follows the source image's aspect
+        // ratio. Using log-ratio error treats portrait and landscape images
+        // symmetrically and avoids generic square counts for non-square art.
+        const ratioError = Math.abs(Math.log((cols / rows) / aspect));
+        candidates.push({ rows, cols, count, ratioError });
       }
     }
-    return best;
-  }
 
-  function buildGridOptions(aspect, min, max) {
+    if (!candidates.length) return [];
+
+    // Do not offer grids that noticeably reshape the source just to hit a
+    // familiar piece count. About a 20% ratio deviation still gives useful
+    // low-count choices while keeping the solved puzzle visually faithful.
+    const aspectMatched = candidates.filter(candidate => candidate.ratioError <= .18);
+    const usableCandidates = aspectMatched.length ? aspectMatched : candidates;
+
     const targets = [9, 12, 16, 20, 25, 30, 36, 42, 48, 56, 64, 72, 80, 90, 100, 120, 140, 150, 180, 200, 240, 250, 300, 350, 400, 450, 500, 550, 600, max]
       .filter(value => value >= min && value <= max);
     const map = new Map();
+    const addGrid = grid => {
+      const existing = map.get(grid.count);
+      if (!existing || grid.ratioError < existing.ratioError) map.set(grid.count, grid);
+    };
 
     for (const target of targets) {
-      const grid = bestGrid(target, aspect);
-      if (grid.count >= min && grid.count <= max) map.set(grid.count, grid);
+      let best = null;
+      for (const candidate of usableCandidates) {
+        const countError = Math.abs(candidate.count - target) / Math.max(1, target);
+        const score = countError + candidate.ratioError * .55;
+        if (!best || score < best.score) best = { ...candidate, score };
+      }
+      if (best) addGrid(best);
     }
 
-    if (!map.size) {
-      const grid = bestGrid(max, aspect);
-      map.set(grid.count, grid);
-    }
+    // Ensure the slider exposes the true image-specific low/high choices, not
+    // merely the closest choices to the generic target list.
+    const byCountThenRatio = [...usableCandidates].sort((a, b) => a.count - b.count || a.ratioError - b.ratioError);
+    const minCount = byCountThenRatio[0].count;
+    const minGrid = byCountThenRatio.filter(grid => grid.count === minCount).sort((a, b) => a.ratioError - b.ratioError)[0];
+    const maxCount = byCountThenRatio.at(-1).count;
+    const maxGrid = byCountThenRatio.filter(grid => grid.count === maxCount).sort((a, b) => a.ratioError - b.ratioError)[0];
+    addGrid(minGrid);
+    addGrid(maxGrid);
 
-    return [...map.values()].sort((a, b) => a.count - b.count);
+    return [...map.values()].sort((a, b) => a.count - b.count || a.ratioError - b.ratioError);
   }
 
   function updateSliderDisplay(slider, valueEl, gridEl) {
@@ -215,17 +238,39 @@
 
   function prepareOptions() {
     const min = 9;
-    const max = clamp(Math.floor((imgW * imgH) / 6400), min, MAX_PIECES);
-    grids = buildGridOptions(imgW / imgH, min, max);
+    const minSourcePieceSide = 64;
+    const maxGridDimension = Math.floor(MAX_PIECES / 2);
+    const maxColsByResolution = clamp(Math.floor(imgW / minSourcePieceSide), 2, maxGridDimension);
+    const maxRowsByResolution = clamp(Math.floor(imgH / minSourcePieceSide), 2, maxGridDimension);
+    const resolutionMax = maxColsByResolution * maxRowsByResolution;
+    const max = clamp(resolutionMax, min, MAX_PIECES);
 
-    const preferredIndex = Math.max(0, grids.findIndex(grid => grid.count >= Math.min(100, max)));
+    grids = buildGridOptions(
+      imgW / imgH,
+      min,
+      max,
+      maxColsByResolution,
+      maxRowsByResolution
+    );
+
+    if (!grids.length) {
+      // Very small/extreme images can have too few 64px cells to reach the
+      // general 9-piece floor. Fall back to a slightly denser resolution-aware
+      // search while still respecting the image aspect and non-square rule.
+      const fallbackCols = Math.max(2, Math.ceil(Math.sqrt(min * imgW / imgH)) + 2);
+      const fallbackRows = Math.max(2, Math.ceil(Math.sqrt(min * imgH / imgW)) + 2);
+      grids = buildGridOptions(imgW / imgH, min, MAX_PIECES, fallbackCols, fallbackRows);
+    }
+
+    const actualMax = grids.at(-1)?.count || min;
+    const preferredIndex = Math.max(0, grids.findIndex(grid => grid.count >= Math.min(100, actualMax)));
     countSlider.min = "0";
     countSlider.max = String(Math.max(0, grids.length - 1));
     countSlider.value = String(preferredIndex);
 
     imageInfo.textContent = `${sourceTitle} • ${imgW} × ${imgH}`;
     pieceMin.textContent = String(grids[0]?.count || min);
-    pieceMax.textContent = String(grids.at(-1)?.count || max);
+    pieceMax.textContent = String(grids.at(-1)?.count || actualMax);
     rangeInfo.textContent = `Available range: ${pieceMin.textContent}–${pieceMax.textContent} pieces`;
     updateSliderDisplay(countSlider, countValue, gridValue);
     options.hidden = false;
@@ -670,8 +715,8 @@
     const fitZoom = clamp(Math.min(
       (workspace.clientWidth - padding * 2) / puzzleWidth,
       (workspace.clientHeight - padding * 2) / puzzleHeight
-    ), .35, 3);
-    const targetZoom = Math.min(zoom, fitZoom);
+    ), .1, 3);
+    const targetZoom = fitZoom;
     const targetWidth = workspace.clientWidth / targetZoom;
     const targetHeight = workspace.clientHeight / targetZoom;
     const targetX = puzzleX + puzzleWidth / 2 - targetWidth / 2;
@@ -787,7 +832,7 @@
     const cx = centerX ?? viewX + oldWidth / 2;
     const cy = centerY ?? viewY + oldHeight / 2;
 
-    zoom = clamp(next, .35, 3);
+    zoom = clamp(next, complete ? .1 : .35, 3);
     const newWidth = workspace.clientWidth / zoom;
     const newHeight = workspace.clientHeight / zoom;
     viewX = cx - newWidth / 2;
@@ -862,9 +907,9 @@
   workspace.addEventListener("pointercancel", finishPan);
 
   workspace.addEventListener("wheel", event => {
-    if (paused || complete || event.target.closest?.(".puzzle-settings") || event.target.closest?.(".puzzle-complete-overlay")) return;
+    if (paused || event.target.closest?.(".puzzle-settings") || event.target.closest?.(".puzzle-complete-overlay")) return;
     event.preventDefault();
-    beginTimerOnInteraction();
+    if (!complete) beginTimerOnInteraction();
 
     // Normalize wheel/trackpad units, then keep the world point beneath the
     // pointer locked to the same screen pixel while zooming. The old approach
@@ -879,7 +924,7 @@
       : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? rect.height
       : 1;
     const wheelDelta = clamp(event.deltaY * unit, -80, 80);
-    const nextZoom = clamp(zoom * Math.exp(-wheelDelta * .00018), .35, 3);
+    const nextZoom = clamp(zoom * Math.exp(-wheelDelta * .00018), complete ? .1 : .35, 3);
 
     zoom = nextZoom;
     viewX = anchorX - pointerX / zoom;
