@@ -1,5 +1,5 @@
 .sudoku-main { max-width: 68rem; }
-.sudoku-layout { display:grid; grid-template-columns:minmax(20rem,34rem) minmax(11rem,16rem); justify-content:center; align-items:start; gap:1.25rem; }
+.sudoku-layout { display:grid; grid-template-columns:minmax(20rem,34rem) minmax(11rem,16rem); justify-content:center; align-items:start; gap:.75rem; }
 .sudoku-board-wrap { position:relative; }
 .sudoku-board { display:grid; grid-template-columns:repeat(9,1fr); aspect-ratio:1; border:2px solid var(--text); background:var(--border-strong); gap:1px; }
 .sudoku-cell { position:relative; display:grid; place-items:center; min-width:0; border:0; background:var(--surface); color:var(--text); font-size:clamp(1.1rem,3vw,1.75rem); cursor:pointer; }
@@ -35,7 +35,7 @@
 .sudoku-pause-cover span{font-size:1.35rem;font-weight:800}
 .sudoku-pause-cover small{color:var(--text-muted)}
 .sudoku-board.is-paused{pointer-events:none;filter:blur(5px)}
-.settings-list{display:grid;gap:.65rem}.setting-row{display:flex;justify-content:space-between;gap:1rem;align-items:center}.sudoku-stats{display:grid;gap:1rem}.sudoku-stat-block{border:1px solid var(--border);border-radius:.5rem;padding:.75rem}.sudoku-stat-block h3{margin:0 0 .5rem}.sudoku-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;text-align:center}.sudoku-stat-grid strong{display:block}.sudoku-stat-grid span{font-size:.72rem;color:var(--text-muted)}
+.settings-list{display:grid;gap:.65rem}.setting-row{display:flex;justify-content:space-between;gap:1rem;align-items:center}.sudoku-stats{display:grid;gap:1rem}#close-stats{margin-top:1rem}.sudoku-stat-block{border:1px solid var(--border);border-radius:.5rem;padding:.75rem}.sudoku-stat-block h3{margin:0 0 .5rem}.sudoku-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;text-align:center}.sudoku-stat-grid strong{display:block}.sudoku-stat-grid span{font-size:.72rem;color:var(--text-muted)}
 
 /* DOS needs unmistakable 3x3 box boundaries; the global DOS button border rule
    otherwise makes all 81 button edges look equally weighted. */

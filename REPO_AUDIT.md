@@ -604,3 +604,25 @@ Only these files need to be copied into the repository:
 - In DOS, confirm all nine 3×3 Sudoku boxes have clearly heavier separators than ordinary cells.
 - In Matrix, verify binary rain cannot be seen over the face of any Sudoku button, select, or number-pad key.
 - In CRT, Amber, Fallout, and Matrix, compare given digits against user-entered digits and confirm givens are visibly heavier.
+
+# Repo audit update — 2026-08-08 — Sudoku final spacing/icon cleanup
+
+## Sudoku changes completed
+
+- Swapped the visual directions of the Undo and Redo icons so Undo now uses the mirrored restart-arrow artwork and Redo uses the unmirrored Puzzle Maker restart-arrow artwork.
+- Reduced the desktop gap between the Sudoku board and the right-side controls from `1.25rem` to `.75rem` so the controls sit closer to the board while preserving all internal number-pad spacing.
+- Added `1rem` of top margin above the stats modal's Close/Clear control so there is visible separation after the Hard statistics block.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/sudoku/index.html`
+- `public/games/sudoku/game.css`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- Confirmed Undo and Redo keep their existing button IDs/behavior; only the SVG mirroring assignment changed.
+- Confirmed the number pad's internal cell/button gaps remain unchanged; only the board-to-controls column gap was reduced.
+- Confirmed the stats spacing is scoped to `#close-stats` and does not affect other modal buttons.
