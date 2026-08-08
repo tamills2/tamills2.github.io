@@ -372,3 +372,38 @@ Only these files need to be copied into the repository:
 - Reload the Daily puzzle that changed after editing `la-words.txt`; if it was already completed as a win, confirm the original green/yellow/gray scoring is restored.
 - Start a fresh Daily, note its answer/state, then add another valid five-letter word to `la-words.txt` and reload. Confirm the target and all existing tile colors remain unchanged.
 - Verify Practice mode still draws from the current answer list normally.
+
+# Repo audit update — 2026-08-08 — Wordle viewport fitting
+
+## Wordle changes completed
+
+- Added responsive viewport fitting for the Wordle board and on-screen keyboard so the full playable area stays visible without requiring page scrolling.
+- The normal board/keyboard sizes remain unchanged whenever they already fit in the current window. The components only shrink when the available viewport is too small.
+- The fit is implemented by resizing the actual board dimensions, tile gaps, tile text, keyboard dimensions, key heights, key gaps, and key text through a shared CSS sizing variable. It does not use CSS `zoom` or a transform-based visual zoom.
+- The page heading, toolbar, Daily/Practice/Stats controls, Hard mode control, status row, and shared site header remain at their normal sizes; only the game board and keyboard participate in the shrink-to-fit behavior.
+- Fit calculations account for both available viewport height and width and are recalculated when the browser window is resized or the device orientation changes.
+- Rendering a new board or rebuilding the keyboard also requests a fresh fit calculation, so Daily/Practice transitions and restored saved games remain correctly sized.
+- Reduced the Wordle page's bottom padding to match the reserved viewport clearance, preventing otherwise-unused page padding from creating a scrollbar after the board and keyboard have been fitted.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/wordle/game.js`
+- `public/games/wordle/game.css`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/wordle/game.js` passes.
+- Confirmed the fit factor is capped at `1`, so the board and keyboard never grow beyond their existing normal size.
+- Confirmed the implementation changes actual CSS dimensions rather than applying `zoom` or `transform: scale(...)`.
+- Confirmed resize and orientation-change events trigger a new viewport fit calculation.
+
+## Next Wordle manual checks
+
+- Open Wordle in a normal desktop-sized window and confirm the board and keyboard retain their existing size.
+- Gradually reduce the browser height and confirm the board and keyboard shrink smoothly enough to remain completely visible without vertical scrolling.
+- Reduce both browser width and height and confirm the board/keyboard continue to fit without horizontal scrolling or clipping.
+- Enlarge the window again and confirm the board and keyboard return to their original size rather than remaining shrunken.
+- Test both Daily and Practice modes, including a completed Daily board, and confirm each state remains correctly fitted.

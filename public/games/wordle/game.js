@@ -18,6 +18,37 @@
   const saveStats = s => localStorage.setItem(STORAGE, JSON.stringify(s));
   const parseWords = text => [...new Set(text.toLowerCase().split(/\s+/).map(w => w.trim()).filter(w => /^[a-z]{5}$/.test(w)))];
 
+  let fitFrame = 0;
+  function fitGameToViewport() {
+    cancelAnimationFrame(fitFrame);
+    fitFrame = requestAnimationFrame(() => {
+      const main = document.querySelector(".wordle-main");
+      if (!main || !board.children.length || !keyboard.children.length) return;
+
+      // Measure at the normal component size first. Only the board and keyboard
+      // are allowed to shrink; the page chrome, toolbar, status, and text stay
+      // at their normal size. This is real responsive sizing, not CSS zoom.
+      main.style.setProperty("--wordle-fit", "1");
+
+      const boardRect = board.getBoundingClientRect();
+      const keyboardRect = keyboard.getBoundingClientRect();
+      const naturalGameHeight = keyboardRect.bottom - boardRect.top;
+      const bottomRoom = 12;
+      const availableHeight = Math.max(1, window.innerHeight - boardRect.top - bottomRoom);
+      const heightFit = Math.min(1, availableHeight / Math.max(1, naturalGameHeight));
+
+      // Width is normally already constrained by the responsive CSS, but keep
+      // it in the calculation so very narrow windows shrink both components in
+      // the same proportion rather than producing a horizontal scrollbar.
+      const availableWidth = Math.max(1, main.clientWidth);
+      const naturalWidth = Math.max(board.scrollWidth, keyboard.scrollWidth);
+      const widthFit = Math.min(1, availableWidth / Math.max(1, naturalWidth));
+      const fit = Math.max(.2, Math.min(heightFit, widthFit));
+
+      main.style.setProperty("--wordle-fit", fit.toFixed(4));
+    });
+  }
+
   Promise.all([
     fetch("./data/la-words.txt", { cache: "no-store" }).then(r => { if (!r.ok) throw new Error("LA word list missing"); return r.text(); }),
     fetch("./data/ta-words.txt", { cache: "no-store" }).then(r => { if (!r.ok) throw new Error("TA word list missing"); return r.text(); })
@@ -70,12 +101,14 @@
 
     current = ""; modeLabel.textContent = `Daily • ${today()}`; message.textContent = ""; render();
     if (finished) keyboard.querySelectorAll("button").forEach(button => button.disabled = true);
+    fitGameToViewport();
   }
   function startPractice() {
     if (animating) return;
     keyboard.querySelectorAll("button").forEach(button => button.disabled = false);
     mode = "practice"; target = practiceTarget(); guesses = []; current = ""; finished = false;
     modeLabel.textContent = "Practice • does not affect stats"; message.textContent = ""; render();
+    fitGameToViewport();
   }
 
   function buildKeyboard() {
@@ -87,6 +120,7 @@
       if (ri === 2) row.append(keyButton("⌫", "BACKSPACE", true));
       keyboard.append(row);
     });
+    fitGameToViewport();
   }
   function keyButton(label, key, wide = false) {
     const b = document.createElement("button"); b.type = "button"; b.className = `wordle-key${wide ? " wide" : ""}`;
@@ -107,6 +141,7 @@
     }
     updateKeyboard();
     if (finished && mode === "daily") message.textContent = guesses.at(-1) === target ? `Solved in ${guesses.length}/6` : `Answer: ${target.toUpperCase()}`;
+    fitGameToViewport();
   }
   function scoreGuess(word) {
     const out = Array(5).fill("absent"), remain = {};
@@ -244,4 +279,6 @@
   document.querySelector("#stats-button").addEventListener("click", showStats);
   document.querySelector("#close-stats").addEventListener("click", () => modal.hidden = true);
   hardToggle.addEventListener("change", () => localStorage.setItem(HARD, String(hardToggle.checked)));
+  window.addEventListener("resize", fitGameToViewport, { passive: true });
+  window.addEventListener("orientationchange", fitGameToViewport, { passive: true });
 })();

@@ -1,16 +1,53 @@
-.wordle-main { max-width: 46rem; }
+.wordle-main {
+  max-width: 46rem;
+  --wordle-fit: 1;
+  padding-bottom: .75rem;
+}
 .wordle-hard { display:flex; align-items:center; gap:.35rem; color:var(--text-muted); }
-.wordle-board { display:grid; gap:.35rem; width:min(21rem,90vw); margin:1.25rem auto; }
-.wordle-row { display:grid; grid-template-columns:repeat(5,1fr); gap:.35rem; }
-.wordle-tile { aspect-ratio:1; display:grid; place-items:center; border:2px solid var(--border-strong); background:var(--surface); color:var(--text); font-size:clamp(1.5rem,5vw,2rem); font-weight:800; text-transform:uppercase; }
+.wordle-board {
+  display: grid;
+  gap: calc(.35rem * var(--wordle-fit));
+  width: min(calc(21rem * var(--wordle-fit)), 90vw);
+  margin: calc(1.25rem * var(--wordle-fit)) auto;
+}
+.wordle-row { display:grid; grid-template-columns:repeat(5,1fr); gap:calc(.35rem * var(--wordle-fit)); }
+.wordle-tile {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: max(1px, calc(2px * var(--wordle-fit))) solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-size: clamp(.8rem, calc(2rem * var(--wordle-fit)), 2rem);
+  font-weight: 800;
+  text-transform: uppercase;
+}
 .wordle-tile.filled { border-color:var(--text-muted); }
 .wordle-tile.correct { background:#538d4e; border-color:#538d4e; color:#fff; }
 .wordle-tile.present { background:#b59f3b; border-color:#b59f3b; color:#fff; }
 .wordle-tile.absent { background:#3a3a3c; border-color:#3a3a3c; color:#fff; }
-.wordle-keyboard { display:grid; gap:.35rem; width:min(38rem,100%); margin:0 auto; }
-.wordle-key-row { display:flex; justify-content:center; gap:.3rem; }
-.wordle-key { flex:1 1 0; min-width:0; max-width:3.2rem; min-height:3rem; padding:.25rem; border:0; border-radius:.35rem; background:var(--surface-subtle); color:var(--text); font-weight:700; cursor:pointer; }
-.wordle-key.wide { flex:1.5; max-width:4.8rem; font-size:.78rem; }
+.wordle-keyboard {
+  display: grid;
+  gap: calc(.35rem * var(--wordle-fit));
+  width: min(calc(38rem * var(--wordle-fit)), 100%);
+  margin: 0 auto;
+}
+.wordle-key-row { display:flex; justify-content:center; gap:calc(.3rem * var(--wordle-fit)); }
+.wordle-key {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: calc(3.2rem * var(--wordle-fit));
+  min-height: calc(3rem * var(--wordle-fit));
+  padding: calc(.25rem * var(--wordle-fit));
+  border: 0;
+  border-radius: calc(.35rem * var(--wordle-fit));
+  background: var(--surface-subtle);
+  color: var(--text);
+  font-size: clamp(.55rem, calc(1rem * var(--wordle-fit)), 1rem);
+  font-weight: 700;
+  cursor: pointer;
+}
+.wordle-key.wide { flex:1.5; max-width:calc(4.8rem * var(--wordle-fit)); font-size:clamp(.5rem, calc(.78rem * var(--wordle-fit)), .78rem); }
 .wordle-key.correct { background:#538d4e; color:#fff; }.wordle-key.present{background:#b59f3b;color:#fff}.wordle-key.absent{background:#3a3a3c;color:#fff}
 .wordle-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.75rem; text-align:center; }
 .wordle-stat strong { display:block; font-size:1.45rem; }.wordle-stat span{font-size:.75rem;color:var(--text-muted)}
