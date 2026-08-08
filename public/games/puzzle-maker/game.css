@@ -453,7 +453,7 @@
   }
 
   .puzzle-options .primary {
-    justify-self: start;
+    justify-self: center;
   }
 
   .puzzle-workspace {
@@ -484,4 +484,84 @@
   .puzzle-complete-actions {
     grid-template-columns: 1fr;
   }
+}
+
+/* Puzzle creator alignment */
+.puzzle-main > .game-heading {
+  text-align: center;
+}
+
+.puzzle-setup {
+  width: min(100%, 64rem);
+  margin-inline: auto;
+  justify-items: center;
+  text-align: center;
+}
+
+.puzzle-setup > * {
+  width: 100%;
+}
+
+.default-image-picker {
+  justify-items: center;
+}
+
+.default-image-picker .game-select {
+  width: min(100%, 32rem);
+}
+
+.puzzle-options {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  width: 100%;
+}
+
+.puzzle-source-details {
+  justify-items: center;
+}
+
+.piece-slider-field {
+  width: min(100%, 40rem);
+}
+
+.puzzle-options .primary {
+  justify-self: center;
+}
+
+.recenter-icon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.puzzle-complete-card {
+  position: relative;
+}
+
+.puzzle-complete-close {
+  position: absolute;
+  top: .55rem;
+  right: .55rem;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: .4rem;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.puzzle-complete-close:hover,
+.puzzle-complete-close:focus-visible {
+  background: var(--surface-hover);
+  color: var(--text);
+  outline: none;
 }

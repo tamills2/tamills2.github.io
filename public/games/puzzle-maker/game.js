@@ -3,7 +3,7 @@
 (() => {
   const NS = "http://www.w3.org/2000/svg";
   const PIECE = 92;
-  const TAB_DEPTH = PIECE * 0.20;
+  const TAB_DEPTH = PIECE * 0.22;
   const SNAP_SCREEN_PX = 4;
   const MAX_PIECES = 600;
 
@@ -29,6 +29,8 @@
   const completeTime = document.querySelector("#puzzle-complete-time");
   const completeName = document.querySelector("#puzzle-complete-name");
   const completePreview = document.querySelector("#puzzle-complete-preview");
+  const completeClose = document.querySelector("#puzzle-complete-close");
+  const recenterButton = document.querySelector("#recenter-button");
   const showMiniClock = document.querySelector("#show-mini-clock");
   const changePanel = document.querySelector("#change-pieces-panel");
   const changeSlider = document.querySelector("#change-piece-count");
@@ -250,12 +252,11 @@
   }
 
   const EDGE_PROFILES = [
-    { center: .50, neck: .105, bulb: .175, depth: 1.00 },
-    { center: .50, neck: .095, bulb: .160, depth: .88 },
-    { center: .50, neck: .115, bulb: .190, depth: 1.05 },
-    { center: .46, neck: .100, bulb: .170, depth: .94 },
-    { center: .54, neck: .100, bulb: .170, depth: .94 },
-    { center: .50, neck: .085, bulb: .145, depth: 1.08 },
+    { center: .50, width: .180, depth: 1.00 },
+    { center: .50, width: .170, depth: .92 },
+    { center: .50, width: .190, depth: 1.08 },
+    { center: .50, width: .165, depth: .88 },
+    { center: .50, width: .185, depth: .96 },
   ];
 
   function makeEdge(random) {
@@ -290,37 +291,42 @@
     const profile = EDGE_PROFILES[edge.profile] || EDGE_PROFILES[0];
     const depth = TAB_DEPTH * profile.depth * edge.direction;
     const center = profile.center;
-    const neckLeft = center - profile.neck;
-    const neckRight = center + profile.neck;
-    const bulbLeft = center - profile.bulb;
-    const bulbRight = center + profile.bulb;
+    const width = profile.width;
     const point = (t, normalAmount = 0) => pointOnEdge(startX, startY, dx, dy, normalX, normalY, t, normalAmount);
 
-    // A conventional jigsaw connection: straight run, narrow neck, rounded bulb,
-    // matching narrow neck, then straight run. The slight horizontal reversal
-    // around the neck gives tabs and sockets the familiar puzzle-piece silhouette.
-    const shoulderIn = point(bulbLeft);
-    const neckIn = point(neckLeft, depth * .18);
+    // Classic jigsaw edge: a long straight run, a short concave shoulder/neck,
+    // then a broad rounded head before mirroring the same transition back to
+    // the straight edge.  Keeping the head round and the neck short produces
+    // the familiar Jigidi/wooden-jigsaw silhouette without novelty shapes.
+    const shoulderIn = point(center - width);
+    const neckIn = point(center - width * .56, -depth * .07);
+    const bulbIn = point(center - width * .43, depth * .67);
     const crown = point(center, depth);
-    const neckOut = point(neckRight, depth * .18);
-    const shoulderOut = point(bulbRight);
+    const bulbOut = point(center + width * .43, depth * .67);
+    const neckOut = point(center + width * .56, -depth * .07);
+    const shoulderOut = point(center + width);
 
-    const c1 = point(bulbLeft + .025, 0);
-    const c2 = point(neckLeft + .018, depth * .02);
-    const c3 = point(neckLeft - .025, depth * .38);
-    const c4 = point(center - profile.bulb * .72, depth * .96);
-    const c5 = point(center - profile.bulb * .38, depth);
-    const c6 = point(center + profile.bulb * .38, depth);
-    const c7 = point(center + profile.bulb * .72, depth * .96);
-    const c8 = point(neckRight + .025, depth * .38);
-    const c9 = point(neckRight - .018, depth * .02);
-    const c10 = point(bulbRight - .025, 0);
+    const p = (t, n = 0) => point(t, n);
+    const c1 = p(center - width * .88, 0);
+    const c2 = p(center - width * .67, -depth * .08);
+    const c3 = p(center - width * .54, depth * .03);
+    const c4 = p(center - width * .50, depth * .48);
+    const c5 = p(center - width * .35, depth * .91);
+    const c6 = p(center - width * .13, depth);
+    const c7 = p(center + width * .13, depth);
+    const c8 = p(center + width * .35, depth * .91);
+    const c9 = p(center + width * .50, depth * .48);
+    const c10 = p(center + width * .54, depth * .03);
+    const c11 = p(center + width * .67, -depth * .08);
+    const c12 = p(center + width * .88, 0);
 
     path.push(`L ${shoulderIn.x} ${shoulderIn.y}`);
     path.push(`C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${neckIn.x} ${neckIn.y}`);
-    path.push(`C ${c3.x} ${c3.y} ${c4.x} ${c4.y} ${crown.x} ${crown.y}`);
-    path.push(`C ${c6.x} ${c6.y} ${c7.x} ${c7.y} ${neckOut.x} ${neckOut.y}`);
-    path.push(`C ${c8.x} ${c8.y} ${c9.x} ${c9.y} ${shoulderOut.x} ${shoulderOut.y}`);
+    path.push(`C ${c3.x} ${c3.y} ${c4.x} ${c4.y} ${bulbIn.x} ${bulbIn.y}`);
+    path.push(`C ${c5.x} ${c5.y} ${c6.x} ${c6.y} ${crown.x} ${crown.y}`);
+    path.push(`C ${c7.x} ${c7.y} ${c8.x} ${c8.y} ${bulbOut.x} ${bulbOut.y}`);
+    path.push(`C ${c9.x} ${c9.y} ${c10.x} ${c10.y} ${neckOut.x} ${neckOut.y}`);
+    path.push(`C ${c11.x} ${c11.y} ${c12.x} ${c12.y} ${shoulderOut.x} ${shoulderOut.y}`);
     path.push(`L ${endX} ${endY}`);
   }
 
@@ -717,6 +723,36 @@
   });
   showMiniClock.addEventListener("change", syncMiniClock);
 
+  function fitAllPieces() {
+    if (!pieces.length) return;
+
+    const extra = TAB_DEPTH + 6;
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    for (const piece of pieces) {
+      minX = Math.min(minX, piece.x - extra);
+      minY = Math.min(minY, piece.y - extra);
+      maxX = Math.max(maxX, piece.x + PIECE + extra);
+      maxY = Math.max(maxY, piece.y + PIECE + extra);
+    }
+
+    const contentWidth = Math.max(1, maxX - minX);
+    const contentHeight = Math.max(1, maxY - minY);
+    const padding = Math.max(24, Math.min(workspace.clientWidth, workspace.clientHeight) * .055);
+    const targetZoom = clamp(Math.min(
+      (workspace.clientWidth - padding * 2) / contentWidth,
+      (workspace.clientHeight - padding * 2) / contentHeight
+    ), .35, 3);
+
+    zoom = targetZoom;
+    viewX = minX + contentWidth / 2 - workspace.clientWidth / zoom / 2;
+    viewY = minY + contentHeight / 2 - workspace.clientHeight / zoom / 2;
+    resizeView();
+  }
+
   function setZoom(next, centerX, centerY) {
     const oldWidth = workspace.clientWidth / zoom;
     const oldHeight = workspace.clientHeight / zoom;
@@ -735,6 +771,10 @@
     beginTimerOnInteraction();
     setZoom(zoom * 1.2);
   });
+  recenterButton.addEventListener("click", () => {
+    beginTimerOnInteraction();
+    fitAllPieces();
+  });
   document.querySelector("#zoom-out").addEventListener("click", () => {
     beginTimerOnInteraction();
     setZoom(zoom / 1.2);
@@ -747,7 +787,13 @@
     } catch (_) {}
   });
 
-  menuButton.addEventListener("click", () => setMenuOpen(!settings.classList.contains("is-open")));
+  menuButton.addEventListener("click", () => {
+    if (complete) {
+      showCompletionOverlay();
+      return;
+    }
+    setMenuOpen(!settings.classList.contains("is-open"));
+  });
 
   workspace.addEventListener("pointerdown", event => {
     if (paused || complete || event.button !== 0 || event.target.closest?.(".puzzle-piece") || event.target.closest?.(".puzzle-canvas-toolbar") || event.target.closest?.(".puzzle-settings") || event.target.closest?.(".puzzle-complete-overlay")) return;
@@ -792,7 +838,9 @@
     event.preventDefault();
     beginTimerOnInteraction();
     const point = svgPoint(event);
-    setZoom(zoom * (event.deltaY < 0 ? 1.1 : .9), point.x, point.y);
+    const wheelDelta = clamp(event.deltaY, -120, 120);
+    const factor = Math.exp(-wheelDelta * .00045);
+    setZoom(zoom * factor, point.x, point.y);
   }, { passive: false });
 
   function restartCurrentPuzzle() {
@@ -802,6 +850,10 @@
 
   document.querySelector("#restart-button").addEventListener("click", restartCurrentPuzzle);
   document.querySelector("#complete-restart-button").addEventListener("click", restartCurrentPuzzle);
+  completeClose.addEventListener("click", () => {
+    completeOverlay.hidden = true;
+    setMenuOpen(false);
+  });
 
   document.querySelector("#change-pieces-button").addEventListener("click", () => {
     changePanel.hidden = !changePanel.hidden;

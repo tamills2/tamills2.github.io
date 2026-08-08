@@ -145,3 +145,41 @@ These are the only files that need to be copied into the repository for the Puzz
 - Confirm workspace panning is smooth with mouse and trackpad at several zoom levels.
 - Verify pause transparency in both light and dark themes.
 - Verify the completion fit/center animation and completion card after solving a puzzle.
+
+# Repo audit update — 2026-08-08 — Puzzle Maker Jigidi-shape + recenter/completion pass
+
+## Puzzle Maker changes completed
+
+- Reworked the piece edge geometry again toward a conventional online/physical jigsaw silhouette: long straight runs, a short concave shoulder/neck, and a broad rounded tab/socket head. The supplied Jigidi creator HTML was reviewed as the reference page; its inline code initializes `JigidiCreator`, while the actual creator implementation is loaded from the external `/creator/js/release.js` asset, so no Jigidi source implementation was copied into this repository.
+- Kept several restrained standard edge profiles by varying only tab width/depth. Tab centers remain centered so opposite sides of a shared edge are guaranteed to trace the same geometry when traversed in reverse.
+- Centered the Create Puzzle page content: heading, upload area, default-image selector, source details, piece slider, and Create Puzzle button now share a centered single-column layout with a bounded setup width.
+- Slowed mouse-wheel/trackpad zoom substantially. Wheel zoom now scales continuously from the wheel delta instead of applying a fixed 10% jump on every wheel event, making it much harder to overshoot and lose the pieces.
+- Added a Recenter Pieces toolbar button immediately beside Zoom In. Its inline SVG recreates the supplied inward-arrows/center-dot symbol without adding another asset file.
+- Added Recenter Pieces behavior that calculates the bounds of every current puzzle piece (including tab clearance), fits all pieces into the workspace, and centers the resulting view.
+- Added a close (`×`) control to the Puzzle Completed card so the completion message can be dismissed to view the completed image unobstructed.
+- Changed the three-dot Puzzle Menu button after completion: once the puzzle is complete, pressing the three-dot button reopens the Puzzle Completed message instead of opening the normal in-progress settings panel.
+- Preserved the prior Puzzle Maker fixes: delayed timer start, translucent pause/completion coverings, click-to-resume pause, stable screen-delta panning, completion fit/center transition, restart/new-puzzle actions, restart icon repair, and neutral minimized-clock toggle.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/puzzle-maker/index.html`
+- `public/games/puzzle-maker/game.css`
+- `public/games/puzzle-maker/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes.
+- `git diff --check` passes for the Puzzle Maker files.
+- Recenter and completion controls use unique HTML IDs.
+- Shared jigsaw edges use centered, mirrored tab/socket geometry so neighboring pieces retain matching boundaries.
+
+## Next Puzzle Maker manual checks
+
+- Compare the new rounded jigsaw tabs/sockets visually against Jigidi at low, medium, and high piece counts and tune only tab width/depth if the silhouette still needs adjustment.
+- Test wheel/trackpad zoom speed on the primary browser and confirm it is slow enough without feeling unresponsive.
+- Scatter pieces, deliberately pan/zoom away from them, then confirm Recenter Pieces reliably brings every piece back into view.
+- Complete a puzzle, close the completion card with `×`, confirm the full image remains visible, then press the three-dot button and confirm the completion card reopens.
+- Recheck the centered Create Puzzle setup on both wide and narrow screens.
