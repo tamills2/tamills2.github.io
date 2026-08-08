@@ -1,1 +1,37 @@
-[]
+[
+    {
+        "id": "snowy_mountains",
+        "title": "Snowy Mountains",
+        "file": "snowy_mountains.jpg"
+    },
+    {
+        "id": "forest_path",
+        "title": "Forest Path",
+        "file": "forest_path.jpg"
+    },
+    {
+        "id": "sunset_beach",
+        "title": "Sunset Beach",
+        "file": "sunset_beach.jpg"
+    },
+    {
+        "id": "rainbow_universe",
+        "title": "Rainbow Universe",
+        "file": "rainbow_universe.jpg"
+    },
+    {
+        "id": "northern_lights",
+        "title": "Northern Lights",
+        "file": "northern_lights.jpg"
+    },
+    {
+        "id": "pastel_flower",
+        "title": "Pastel Flower",
+        "file": "pastel_flower.jpg"
+    },
+    {
+        "id": "grayscale_flowers",
+        "title": "Grayscale Flowers",
+        "file": "grayscale_flowers.jpg"
+    }
+]
