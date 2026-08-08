@@ -92,3 +92,12 @@
 @media (prefers-reduced-motion: reduce) {
   .wordle-row.shake, .wordle-tile.pop, .wordle-tile.reveal, .wordle-tile.dance { animation-duration: 1ms !important; animation-delay: 0ms !important; }
 }
+
+/* Keep Matrix rain visible without letting it compete with the game surface. */
+html[data-site-theme="matrix"] .wordle-tile {
+  background: rgba(6, 17, 8, .985);
+}
+
+html[data-site-theme="matrix"] .wordle-key {
+  background: rgba(10, 25, 13, .975);
+}

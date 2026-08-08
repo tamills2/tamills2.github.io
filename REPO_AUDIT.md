@@ -407,3 +407,25 @@ Only these files need to be copied into the repository:
 - Reduce both browser width and height and confirm the board/keyboard continue to fit without horizontal scrolling or clipping.
 - Enlarge the window again and confirm the board and keyboard return to their original size rather than remaining shrunken.
 - Test both Daily and Practice modes, including a completed Daily board, and confirm each state remains correctly fitted.
+
+# Repo audit update — 2026-08-08 — Wordle Matrix readability
+
+## Wordle changes completed
+
+- Increased the opacity of the unsolved Wordle board tiles specifically in the Matrix theme so the animated binary rain remains visible as atmosphere without showing strongly through the game board.
+- Increased the opacity of the on-screen keyboard specifically in the Matrix theme for the same reason.
+- Correct/present/absent result colors are unchanged, and no other site themes are affected.
+- The Matrix rain animation itself is unchanged.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/wordle/game.css`
+- `REPO_AUDIT.md`
+
+## Next Wordle manual checks
+
+- Open Wordle in the Matrix theme and confirm the binary rain is much less distracting through empty/active board tiles and keyboard keys.
+- Confirm the Matrix effect is still visible around the game and has not been disabled or dimmed globally.
+- Switch through several other themes and confirm their Wordle board/keyboard appearance is unchanged.
