@@ -521,3 +521,45 @@ Only these files need to be copied into the repository:
 - Added a Matrix-only stacking context to `.wordle-main` (`position: relative; z-index: 1`) so the rain stays behind Wordle's actual game surfaces.
 - Removed the temporary solid backing from `.wordle-board` and `.wordle-keyboard`; Matrix rain remains visible naturally through the gaps around/between tiles and keys, but not over their filled faces.
 - Existing Matrix solid unscored tile/key fills and scored-state color overrides remain intact.
+
+# Repo audit update — 2026-08-08 — Sudoku control layout, Candidate mode, pause, and completion stats
+
+## Sudoku changes completed
+
+- Reorganized the Sudoku toolbar so Stats appears before Settings, and converted Settings to an icon-only control with an accessible label/title.
+- Added a Pause/Resume icon button immediately beside Settings. Pausing stops the timer, blocks board/number/action input, and obscures the board with a resumable paused cover. Starting a new Daily or Practice puzzle clears the paused state.
+- Reworked the right-side controls so their top remains aligned with the top of the Sudoku board.
+- Added two explicit entry-mode buttons above the number pad: Normal and Candidate. The selected mode is visually highlighted and exposed through `aria-pressed`.
+- Reused the existing notes/candidate data model for Candidate mode rather than introducing a second system. Candidate digits render as small values in their natural 3×3 positions within each cell (1 upper-left through 9 lower-right).
+- Reduced the desktop number-pad buttons to roughly 70% of their previous visual size while retaining the existing spacing between buttons.
+- Replaced the text action controls below the number pad with four icon-only controls in this order: Undo, Redo, Backspace/Erase, Hint. Each icon button has an accessible label and title.
+- Removed the old standalone Notes button; Normal/Candidate now directly controls that same notes-entry behavior.
+- Undo and Redo are blocked while paused, consistent with the rest of puzzle interaction.
+- Sudoku stats now open automatically shortly after any puzzle is completed. The existing Close button remains available so the user can dismiss the modal and view the completed board again.
+- The completed board remains non-interactive through the existing `complete` guards after the stats modal is closed.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/sudoku/index.html`
+- `public/games/sudoku/game.css`
+- `public/games/sudoku/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/sudoku/game.js` passes.
+- Confirmed all controls referenced by the revised JavaScript exist in the updated Sudoku HTML.
+- Confirmed Normal/Candidate share the existing `notesMode` state and Candidate entries continue using the existing 3×3 note renderer.
+- Confirmed `startTimer()` will not restart the timer while the explicit Pause state is active.
+- Confirmed a fresh Daily or Practice game resets Pause before rendering/starting its timer.
+
+## Next Sudoku manual checks
+
+- Confirm Stats and the Settings icon appear in the intended swapped order and Pause is immediately beside Settings.
+- Confirm Pause stops the timer, blocks puzzle entry, obscures the board, and resumes from either the Pause/Play icon or the paused-board cover.
+- Confirm Normal/Candidate highlighting follows both button clicks and the `N` keyboard shortcut.
+- Enter several Candidate digits into a cell and confirm each digit occupies its expected 3×3 mini-grid location.
+- Check the compact number pad and icon action row at desktop and narrow/mobile window widths.
+- Complete both a Daily and Practice puzzle and confirm stats automatically opens, can be closed, and the completed board remains visible but read-only.
