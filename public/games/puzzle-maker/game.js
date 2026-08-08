@@ -984,6 +984,20 @@
     }
   }
 
-  document.querySelector("#new-button").addEventListener("click", resetToSetup);
-  document.querySelector("#complete-new-button").addEventListener("click", resetToSetup);
+  async function newPuzzle() {
+    try {
+      const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
+      if (fullscreenElement) {
+        const exitFullscreen = document.exitFullscreen || document.webkitExitFullscreen;
+        const result = exitFullscreen?.call(document);
+        if (result && typeof result.then === "function") await result;
+      }
+    } catch (_) {
+      // Still return to setup if the browser refuses or fails to exit fullscreen.
+    }
+    resetToSetup();
+  }
+
+  document.querySelector("#new-button").addEventListener("click", newPuzzle);
+  document.querySelector("#complete-new-button").addEventListener("click", newPuzzle);
 })();

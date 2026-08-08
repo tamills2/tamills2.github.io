@@ -279,3 +279,32 @@ Only these files need to be copied into the repository:
 - Finish a high-piece-count puzzle on a smaller browser window and verify the whole solved image still fits, including when the required zoom is below `0.35`.
 - Test square, landscape, portrait, and panoramic source images on the Create Puzzle page. Confirm non-square sources do not offer square grids and that the displayed low/high piece counts change appropriately with image dimensions/aspect ratio.
 - Dismiss the completion card and verify mouse-wheel/Mac-trackpad zoom remains anchored and smooth on the solved image. Confirm the three-dot button still restores the Puzzle Completed card afterward.
+
+# Repo audit update — 2026-08-08 — Exit fullscreen on New Puzzle
+
+## Puzzle Maker changes completed
+
+- Changed both New Puzzle actions (the settings-menu button and the completion-card button) to exit any active browser fullscreen session before returning to the Create Puzzle setup screen.
+- Supports both the standard Fullscreen API and the WebKit-prefixed fullscreen properties/method used by older Safari implementations.
+- If exiting fullscreen returns a Promise, the setup reset waits for it to settle so the create screen does not remain visually trapped inside the old fullscreen state.
+- If the browser refuses or fails to exit fullscreen, the existing setup reset still runs so the user is not blocked from starting a new puzzle.
+- Restart Puzzle behavior is unchanged; restarting the current puzzle can remain fullscreen.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/puzzle-maker/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes.
+- Confirmed both New Puzzle buttons now use the same fullscreen-aware handler.
+- Confirmed Restart Puzzle still calls the existing restart handler directly and does not exit fullscreen.
+
+## Next Puzzle Maker manual checks
+
+- Enter fullscreen during an active puzzle, choose New Puzzle from the menu, and confirm fullscreen exits before the blank Create Puzzle page appears.
+- Complete a puzzle in fullscreen, choose New Puzzle from the completion card, and confirm the same behavior.
+- Verify Restart Puzzle still stays fullscreen.
