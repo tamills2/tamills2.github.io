@@ -1,17 +1,28 @@
 <!doctype html>
 <html lang="en" data-theme="light" data-repo-root="../../">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Puzzle Maker | Repo</title>
   <script>(()=>{const s=localStorage.getItem('repo-theme');document.documentElement.dataset.theme=s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');})();</script>
-  <link rel="stylesheet" href="../../css/styles.css"><link rel="stylesheet" href="../../css/tools.css"><link rel="stylesheet" href="../../css/games.css"><link rel="stylesheet" href="./game.css">
-  <script src="../../js/theme.js" defer></script><script src="../../js/tool-base.js" defer></script><script src="./game.js" defer></script>
+  <link rel="stylesheet" href="../../css/styles.css">
+  <link rel="stylesheet" href="../../css/tools.css">
+  <link rel="stylesheet" href="../../css/games.css">
+  <link rel="stylesheet" href="./game.css">
+  <script src="../../js/theme.js" defer></script>
+  <script src="../../js/tool-base.js" defer></script>
+  <script src="./game.js" defer></script>
 </head>
-<body class="tool-page-shell"><div id="shared-tool-header"></div>
-<main class="game-main puzzle-main">
-  <div class="game-heading"><p class="eyebrow">Games</p><h1>Puzzle Maker</h1></div>
-  <section class="puzzle-setup game-panel" id="puzzle-setup">
-    <div class="puzzle-source-row">
+<body class="tool-page-shell">
+  <div id="shared-tool-header"></div>
+
+  <main class="game-main puzzle-main">
+    <div class="game-heading">
+      <p class="eyebrow">Games</p>
+      <h1>Puzzle Maker</h1>
+    </div>
+
+    <section class="puzzle-setup game-panel" id="puzzle-setup">
       <label class="upload-dropzone" id="upload-dropzone" for="image-upload" tabindex="0">
         <input id="image-upload" type="file" accept="image/jpeg,image/png,image/webp">
         <span class="upload-dropzone-icon" aria-hidden="true">+</span>
@@ -19,23 +30,102 @@
         <span>Drop an image here or click to browse</span>
         <small>JPG, PNG, or WebP</small>
       </label>
-      <div><label for="default-image">Default image</label><select class="game-select" id="default-image"><option value="">Choose an image…</option></select></div>
-    </div>
-    <div class="puzzle-options" id="puzzle-options" hidden>
-      <div><strong id="image-info"></strong><div class="puzzle-help" id="piece-range"></div></div>
-      <label>Pieces <select class="game-select" id="piece-count"></select></label>
-      <button class="game-button primary" id="create-puzzle" type="button">Create puzzle</button>
-    </div>
-  </section>
-  <section class="puzzle-game" id="puzzle-game" hidden>
-    <div class="puzzle-toolbar game-toolbar">
-      <button class="game-button" id="pause-button" type="button">Pause</button><span id="puzzle-timer">00:00</span><span id="puzzle-progress">0%</span>
-      <button class="game-button" id="zoom-out" type="button">−</button><button class="game-button" id="zoom-in" type="button">+</button><button class="game-button" id="fit-button" type="button">Fit</button>
-      <button class="game-button" id="shuffle-button" type="button">Shuffle loose</button><button class="game-button" id="gather-button" type="button">Gather loose</button>
-      <button class="game-button" id="reference-button" type="button">Reference</button><button class="game-button" id="fullscreen-button" type="button">Fullscreen</button><button class="game-button" id="new-button" type="button">New puzzle</button>
-    </div>
-    <div class="puzzle-workspace" id="puzzle-workspace"><svg id="puzzle-svg" aria-label="Jigsaw puzzle workspace"></svg><div class="puzzle-paused" id="puzzle-paused" hidden>Paused</div></div>
-  </section>
-</main>
-<div class="game-modal" id="reference-modal" hidden><div class="game-modal-card reference-card"><img id="reference-image" alt="Puzzle reference"><button class="game-button" id="close-reference" type="button">Close</button></div></div>
-</body></html>
+
+      <div class="default-image-picker">
+        <label for="default-image">Choose Image</label>
+        <select class="game-select" id="default-image">
+          <option value="">Choose an image…</option>
+        </select>
+      </div>
+
+      <div class="puzzle-options" id="puzzle-options" hidden>
+        <div class="puzzle-source-details">
+          <strong id="image-info"></strong>
+          <div class="puzzle-help" id="piece-range"></div>
+        </div>
+
+        <div class="piece-slider-field">
+          <div class="piece-slider-heading">
+            <label for="piece-count">Pieces</label>
+            <strong id="piece-count-value">100 pieces</strong>
+          </div>
+          <input id="piece-count" type="range" min="0" max="0" value="0" step="1">
+          <div class="piece-slider-scale" aria-hidden="true">
+            <span id="piece-min">9</span>
+            <span id="piece-grid-value">10 × 10</span>
+            <span id="piece-max">600</span>
+          </div>
+        </div>
+
+        <button class="game-button primary" id="create-puzzle" type="button">Create puzzle</button>
+      </div>
+    </section>
+
+    <section class="puzzle-game" id="puzzle-game" hidden>
+      <div class="puzzle-workspace" id="puzzle-workspace">
+        <svg id="puzzle-svg" aria-label="Jigsaw puzzle workspace"></svg>
+
+        <div class="puzzle-canvas-toolbar" aria-label="Puzzle controls">
+          <span class="puzzle-mini-clock" id="puzzle-mini-clock" hidden>00:00</span>
+          <button class="puzzle-icon-button" id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in">+</button>
+          <button class="puzzle-icon-button" id="zoom-out" type="button" aria-label="Zoom out" title="Zoom out">−</button>
+          <button class="puzzle-icon-button" id="fullscreen-button" type="button" aria-label="Fullscreen" title="Fullscreen">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"></path></svg>
+          </button>
+          <button class="puzzle-icon-button" id="menu-button" type="button" aria-label="Open puzzle menu" title="Puzzle menu" aria-expanded="false">
+            <svg class="menu-dots-icon" aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6"></circle><circle cx="12" cy="12" r="1.6"></circle><circle cx="12" cy="19" r="1.6"></circle></svg>
+            <svg class="menu-close-icon" aria-hidden="true" viewBox="0 0 24 24" hidden><path d="M5 5l14 14M19 5 5 19"></path></svg>
+          </button>
+        </div>
+
+        <aside class="puzzle-settings" id="puzzle-settings" aria-label="Puzzle menu" aria-hidden="true">
+          <div class="puzzle-settings-content">
+            <img class="puzzle-settings-preview" id="settings-preview" alt="Puzzle reference">
+            <div class="puzzle-settings-summary">
+              <strong id="settings-title">Puzzle</strong>
+              <span id="settings-piece-info">0 pieces (0 × 0)</span>
+            </div>
+
+            <div class="puzzle-status-row">
+              <button class="puzzle-status-button" id="pause-button" type="button" aria-label="Pause puzzle" title="Pause">
+                <svg class="pause-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"></path></svg>
+                <svg class="resume-icon" aria-hidden="true" viewBox="0 0 24 24" hidden><path d="m8 5 11 7-11 7z"></path></svg>
+              </button>
+              <span class="puzzle-settings-clock" id="puzzle-timer">00:00</span>
+              <button class="puzzle-status-button" id="restart-button" type="button" aria-label="Restart puzzle" title="Restart">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 7v5h-5"></path><path d="M19 12a7 7 0 1 1-2-5"></path></svg>
+              </button>
+            </div>
+
+            <label class="puzzle-settings-line toggle-line">
+              <span>Show minimized clock</span>
+              <input id="show-mini-clock" type="checkbox">
+            </label>
+
+            <div class="change-pieces-panel" id="change-pieces-panel" hidden>
+              <div class="piece-slider-heading">
+                <label for="change-piece-count">Pieces</label>
+                <strong id="change-piece-count-value"></strong>
+              </div>
+              <input id="change-piece-count" type="range" min="0" max="0" value="0" step="1">
+              <div class="piece-slider-scale" aria-hidden="true">
+                <span id="change-piece-min"></span>
+                <span id="change-piece-grid"></span>
+                <span id="change-piece-max"></span>
+              </div>
+              <button class="game-button primary" id="apply-piece-count" type="button">Recreate puzzle</button>
+            </div>
+
+            <button class="game-button puzzle-menu-action" id="change-pieces-button" type="button">Change number of pieces</button>
+            <button class="game-button puzzle-menu-action" id="new-button" type="button">Create new puzzle</button>
+          </div>
+        </aside>
+
+        <div class="puzzle-paused" id="puzzle-paused" hidden>
+          <strong>Paused</strong>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
