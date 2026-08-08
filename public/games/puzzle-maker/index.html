@@ -93,13 +93,13 @@
               </button>
               <span class="puzzle-settings-clock" id="puzzle-timer">00:00</span>
               <button class="puzzle-status-button" id="restart-button" type="button" aria-label="Restart puzzle" title="Restart">
-                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M20 7v5h-5"></path><path d="M19 12a7 7 0 1 1-2-5"></path></svg>
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M19.25 9.25A7.5 7.5 0 1 0 19.1 15"></path><path d="M19.5 3.75v4.5H15"></path></svg>
               </button>
             </div>
 
             <label class="puzzle-settings-line toggle-line">
               <span>Show minimized clock</span>
-              <input id="show-mini-clock" type="checkbox">
+              <input id="show-mini-clock" class="puzzle-toggle" type="checkbox" role="switch" aria-label="Show minimized clock">
             </label>
 
             <div class="change-pieces-panel" id="change-pieces-panel" hidden>
@@ -123,6 +123,20 @@
 
         <div class="puzzle-paused" id="puzzle-paused" hidden>
           <strong>Paused</strong>
+          <span>Click anywhere to resume</span>
+        </div>
+
+        <div class="puzzle-complete-overlay" id="puzzle-complete-overlay" hidden>
+          <section class="puzzle-complete-card" role="dialog" aria-modal="true" aria-labelledby="puzzle-complete-title">
+            <h2 id="puzzle-complete-title">Puzzle Completed</h2>
+            <div class="puzzle-complete-time" id="puzzle-complete-time">00:00</div>
+            <div class="puzzle-complete-name" id="puzzle-complete-name">Puzzle</div>
+            <img class="puzzle-complete-preview" id="puzzle-complete-preview" alt="Completed puzzle">
+            <div class="puzzle-complete-actions">
+              <button class="game-button" id="complete-restart-button" type="button">Restart Puzzle</button>
+              <button class="game-button primary" id="complete-new-button" type="button">New Puzzle</button>
+            </div>
+          </section>
         </div>
       </div>
     </section>

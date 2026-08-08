@@ -72,3 +72,76 @@ The uploaded archive included `.git`, `__MACOSX`, `.DS_Store`, and a Python `__p
 .nm-inspector-tabs {
   grid-template-columns: repeat(3, 1fr);
 }
+# Repo audit update — 2026-08-08 — Puzzle Maker polish pass
+
+## Puzzle Maker changes completed
+
+- Changed the paused overlay from an almost-solid surface to a translucent, lightly blurred covering so the puzzle colors remain vaguely visible underneath.
+- Added click/tap-anywhere resume behavior to the paused puzzle overlay.
+- Changed puzzle timing so a newly created or restarted puzzle remains at `00:00` until the player first interacts with the puzzle workspace. Piece dragging, workspace panning, wheel zooming, and the zoom controls start the timer; opening menus or creating the puzzle does not.
+- Added explicit timer-start state so pausing before the first move does not accidentally begin the timer when resumed.
+- Reworked jigsaw edge geometry to use a shallower, symmetric classic tab/socket profile with balanced shoulders and rounded centered tabs instead of the previous pinched/deep shape.
+- Added a completion camera transition that centers the solved puzzle and zooms out only as far as needed to fit the full completed image in the current workspace.
+- Added a completion overlay using the same translucent treatment as pause. It appears after the fit/center transition and includes:
+  - `Puzzle Completed`
+  - final elapsed time
+  - puzzle title
+  - completed-image preview
+  - `Restart Puzzle` and `New Puzzle` buttons
+- `Restart Puzzle` recreates the same puzzle with the same edge layout, resets the timer to `00:00`, and again waits for the first interaction before timing.
+- `New Puzzle` returns to the setup screen with the current image and piece options cleared so the user starts from a blank puzzle-creation state.
+- Replaced the malformed restart SVG with a separated circular-arrow arc and arrowhead so the visual gap is at the top instead of the bottom and the arrowhead is not incorrectly joined to the circle.
+- Replaced the `Show minimized clock` checkbox appearance with a neutral gray/dark-gray slider switch that matches the site's light/dark visual language without using the accent blue.
+- Added small-screen stacking for the completion action buttons.
+
+## Files changed in this update
+
+- `public/games/puzzle-maker/index.html`
+- `public/games/puzzle-maker/game.css`
+- `public/games/puzzle-maker/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes.
+- Confirmed the new Puzzle Maker completion/pause controls exist and have no duplicate HTML IDs.
+- No generated site manifest rebuild was required because this pass did not change game metadata, tool metadata, notes, links, or generated manifest inputs.
+
+## Puzzle Maker follow-up testing
+
+The Puzzle Maker is still the active game being hardened before moving on to Wordle and Sudoku. On the next browser/manual pass, specifically verify the feel of the revised jigsaw tab shape at several piece counts, the amount of pause/completion translucency in both themes, the completion fit/center transition at different zoom levels and window sizes, and the final spacing of the completion card.
+
+# Repo audit update — 2026-08-08 — Puzzle Maker reference-shape + pan stability pass
+
+## Puzzle Maker changes completed
+
+- Reworked jigsaw geometry again using the supplied physical puzzle-piece reference as the visual guide. Pieces now use conventional straight runs, narrow necks, and rounded tabs/sockets rather than the earlier pinched profile.
+- Added six restrained edge-profile variations (centered, slightly offset, wider, narrower, shallower, and deeper) so the generated puzzle is not limited to a small set of identical silhouettes while still looking like a standard jigsaw.
+- Shared edges now carry both their direction and profile, and neighboring pieces receive the exact inverse of the same edge so every tab/socket pair remains geometrically matched.
+- Reduced overall tab depth slightly to keep the shapes closer to common manufactured puzzle pieces.
+- Fixed shaky workspace panning. Panning no longer converts every pointer movement through the SVG viewBox while that same viewBox is moving; it now uses stable screen-space pointer deltas divided by the current zoom.
+- Added pointer capture during workspace panning so dragging remains continuous even when the pointer moves quickly.
+- Canvas panning now starts the clock only after actual pointer movement (2 px threshold), so a simple background click does not start the timer.
+- Increased pause/completion-overlay transparency from the previous polish pass so the colors and rough arrangement of the puzzle remain visible beneath the dim layer.
+
+## Files changed across the current Puzzle Maker update set
+
+These are the only files that need to be copied into the repository for the Puzzle Maker changes from this session:
+
+- `public/games/puzzle-maker/index.html`
+- `public/games/puzzle-maker/game.css`
+- `public/games/puzzle-maker/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes after the new edge-profile and panning changes.
+- `git diff --check` passes.
+- Confirmed the generated edge data is deterministic for a given image/grid and that adjacent pieces use inverse directions with the same profile identifier.
+
+## Next Puzzle Maker manual checks
+
+- Visually compare several generated puzzles at low, medium, and high piece counts against the supplied reference and tune tab width/depth only if needed.
+- Confirm workspace panning is smooth with mouse and trackpad at several zoom levels.
+- Verify pause transparency in both light and dark themes.
+- Verify the completion fit/center animation and completion card after solving a puzzle.

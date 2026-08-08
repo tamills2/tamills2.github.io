@@ -3,7 +3,7 @@
 (() => {
   const NS = "http://www.w3.org/2000/svg";
   const PIECE = 92;
-  const TAB_DEPTH = PIECE * 0.27;
+  const TAB_DEPTH = PIECE * 0.20;
   const SNAP_SCREEN_PX = 4;
   const MAX_PIECES = 600;
 
@@ -25,6 +25,10 @@
   const menuButton = document.querySelector("#menu-button");
   const pauseButton = document.querySelector("#pause-button");
   const pauseOverlay = document.querySelector("#puzzle-paused");
+  const completeOverlay = document.querySelector("#puzzle-complete-overlay");
+  const completeTime = document.querySelector("#puzzle-complete-time");
+  const completeName = document.querySelector("#puzzle-complete-name");
+  const completePreview = document.querySelector("#puzzle-complete-preview");
   const showMiniClock = document.querySelector("#show-mini-clock");
   const changePanel = document.querySelector("#change-pieces-panel");
   const changeSlider = document.querySelector("#change-piece-count");
@@ -49,6 +53,7 @@
   let viewY = 0;
   let elapsed = 0;
   let timerId = 0;
+  let timerStarted = false;
   let paused = false;
   let complete = false;
   let currentCols = 0;
@@ -244,13 +249,32 @@
     };
   }
 
+  const EDGE_PROFILES = [
+    { center: .50, neck: .105, bulb: .175, depth: 1.00 },
+    { center: .50, neck: .095, bulb: .160, depth: .88 },
+    { center: .50, neck: .115, bulb: .190, depth: 1.05 },
+    { center: .46, neck: .100, bulb: .170, depth: .94 },
+    { center: .54, neck: .100, bulb: .170, depth: .94 },
+    { center: .50, neck: .085, bulb: .145, depth: 1.08 },
+  ];
+
+  function makeEdge(random) {
+    return {
+      direction: random() < .5 ? -1 : 1,
+      profile: Math.floor(random() * EDGE_PROFILES.length),
+    };
+  }
+
   function makeEdges(cols, rows) {
     const random = seededRandom(`${sourceTitle}|${imgW}x${imgH}|${cols}x${rows}`);
-    const sign = () => random() < .5 ? -1 : 1;
     return {
-      horizontal: Array.from({ length: (rows - 1) * cols }, sign),
-      vertical: Array.from({ length: rows * (cols - 1) }, sign),
+      horizontal: Array.from({ length: (rows - 1) * cols }, () => makeEdge(random)),
+      vertical: Array.from({ length: rows * (cols - 1) }, () => makeEdge(random)),
     };
+  }
+
+  function oppositeEdge(edge) {
+    return edge ? { direction: -edge.direction, profile: edge.profile } : null;
   }
 
   function pointOnEdge(startX, startY, dx, dy, normalX, normalY, t, normalAmount) {
@@ -260,29 +284,43 @@
     };
   }
 
-  function appendClassicEdge(path, startX, startY, endX, endY, normalX, normalY, direction) {
+  function appendClassicEdge(path, startX, startY, endX, endY, normalX, normalY, edge) {
     const dx = endX - startX;
     const dy = endY - startY;
-    const depth = TAB_DEPTH * direction;
-    const p30 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .30, 0);
-    const c1 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .36, 0);
-    const c2 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .37, depth * .18);
-    const p40 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .41, depth * .18);
-    const c3 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .43, depth * .18);
-    const c4 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .42, depth);
-    const p50 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .50, depth);
-    const c5 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .58, depth);
-    const c6 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .57, depth * .18);
-    const p59 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .59, depth * .18);
-    const c7 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .63, depth * .18);
-    const c8 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .64, 0);
-    const p70 = pointOnEdge(startX, startY, dx, dy, normalX, normalY, .70, 0);
+    const profile = EDGE_PROFILES[edge.profile] || EDGE_PROFILES[0];
+    const depth = TAB_DEPTH * profile.depth * edge.direction;
+    const center = profile.center;
+    const neckLeft = center - profile.neck;
+    const neckRight = center + profile.neck;
+    const bulbLeft = center - profile.bulb;
+    const bulbRight = center + profile.bulb;
+    const point = (t, normalAmount = 0) => pointOnEdge(startX, startY, dx, dy, normalX, normalY, t, normalAmount);
 
-    path.push(`L ${p30.x} ${p30.y}`);
-    path.push(`C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${p40.x} ${p40.y}`);
-    path.push(`C ${c3.x} ${c3.y} ${c4.x} ${c4.y} ${p50.x} ${p50.y}`);
-    path.push(`C ${c5.x} ${c5.y} ${c6.x} ${c6.y} ${p59.x} ${p59.y}`);
-    path.push(`C ${c7.x} ${c7.y} ${c8.x} ${c8.y} ${p70.x} ${p70.y}`);
+    // A conventional jigsaw connection: straight run, narrow neck, rounded bulb,
+    // matching narrow neck, then straight run. The slight horizontal reversal
+    // around the neck gives tabs and sockets the familiar puzzle-piece silhouette.
+    const shoulderIn = point(bulbLeft);
+    const neckIn = point(neckLeft, depth * .18);
+    const crown = point(center, depth);
+    const neckOut = point(neckRight, depth * .18);
+    const shoulderOut = point(bulbRight);
+
+    const c1 = point(bulbLeft + .025, 0);
+    const c2 = point(neckLeft + .018, depth * .02);
+    const c3 = point(neckLeft - .025, depth * .38);
+    const c4 = point(center - profile.bulb * .72, depth * .96);
+    const c5 = point(center - profile.bulb * .38, depth);
+    const c6 = point(center + profile.bulb * .38, depth);
+    const c7 = point(center + profile.bulb * .72, depth * .96);
+    const c8 = point(neckRight + .025, depth * .38);
+    const c9 = point(neckRight - .018, depth * .02);
+    const c10 = point(bulbRight - .025, 0);
+
+    path.push(`L ${shoulderIn.x} ${shoulderIn.y}`);
+    path.push(`C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${neckIn.x} ${neckIn.y}`);
+    path.push(`C ${c3.x} ${c3.y} ${c4.x} ${c4.y} ${crown.x} ${crown.y}`);
+    path.push(`C ${c6.x} ${c6.y} ${c7.x} ${c7.y} ${neckOut.x} ${neckOut.y}`);
+    path.push(`C ${c8.x} ${c8.y} ${c9.x} ${c9.y} ${shoulderOut.x} ${shoulderOut.y}`);
     path.push(`L ${endX} ${endY}`);
   }
 
@@ -316,10 +354,13 @@
     currentRows = rows;
     complete = false;
     elapsed = 0;
+    timerStarted = false;
     paused = false;
     pauseOverlay.hidden = true;
+    completeOverlay.hidden = true;
     syncPauseIcons();
-    startTimer();
+    stopTimer();
+    updateClock();
     zoom = 1;
     viewX = 0;
     viewY = 0;
@@ -349,10 +390,10 @@
         const solvedX = col * PIECE;
         const solvedY = row * PIECE;
         const edge = {
-          top: row === 0 ? 0 : -edges.horizontal[(row - 1) * cols + col],
-          bottom: row === rows - 1 ? 0 : edges.horizontal[row * cols + col],
-          left: col === 0 ? 0 : -edges.vertical[row * (cols - 1) + (col - 1)],
-          right: col === cols - 1 ? 0 : edges.vertical[row * (cols - 1) + col],
+          top: row === 0 ? null : oppositeEdge(edges.horizontal[(row - 1) * cols + col]),
+          bottom: row === rows - 1 ? null : edges.horizontal[row * cols + col],
+          left: col === 0 ? null : oppositeEdge(edges.vertical[row * (cols - 1) + (col - 1)]),
+          right: col === cols - 1 ? null : edges.vertical[row * (cols - 1) + col],
         };
 
         const pathData = piecePath(edge);
@@ -459,6 +500,7 @@
 
   function startPieceDrag(event, piece) {
     if (paused || complete) return;
+    beginTimerOnInteraction();
     event.preventDefault();
     event.stopPropagation();
 
@@ -573,16 +615,72 @@
   }
 
   function updateCompletion() {
-    if (groups.size !== 1 || !pieces.length) return;
+    if (groups.size !== 1 || !pieces.length || complete) return;
     complete = true;
     stopTimer();
+    fitCompletedPuzzle();
     workspace.classList.add("puzzle-complete-flash");
     setTimeout(() => workspace.classList.remove("puzzle-complete-flash"), 900);
+    window.setTimeout(showCompletionOverlay, 520);
+  }
+
+  function fitCompletedPuzzle() {
+    const anchor = pieces[0];
+    if (!anchor) return;
+
+    const puzzleX = anchor.x - anchor.solvedX;
+    const puzzleY = anchor.y - anchor.solvedY;
+    const puzzleWidth = currentCols * PIECE;
+    const puzzleHeight = currentRows * PIECE;
+    const padding = Math.max(28, Math.min(workspace.clientWidth, workspace.clientHeight) * .06);
+    const fitZoom = clamp(Math.min(
+      (workspace.clientWidth - padding * 2) / puzzleWidth,
+      (workspace.clientHeight - padding * 2) / puzzleHeight
+    ), .35, 3);
+    const targetZoom = Math.min(zoom, fitZoom);
+    const targetWidth = workspace.clientWidth / targetZoom;
+    const targetHeight = workspace.clientHeight / targetZoom;
+    const targetX = puzzleX + puzzleWidth / 2 - targetWidth / 2;
+    const targetY = puzzleY + puzzleHeight / 2 - targetHeight / 2;
+
+    const startZoom = zoom;
+    const startX = viewX;
+    const startY = viewY;
+    const startedAt = performance.now();
+    const duration = 460;
+
+    const animate = now => {
+      const raw = clamp((now - startedAt) / duration, 0, 1);
+      const t = 1 - Math.pow(1 - raw, 3);
+      zoom = startZoom + (targetZoom - startZoom) * t;
+      viewX = startX + (targetX - startX) * t;
+      viewY = startY + (targetY - startY) * t;
+      resizeView();
+      if (raw < 1) requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+  }
+
+  function showCompletionOverlay() {
+    if (!complete) return;
+    setMenuOpen(false);
+    completeTime.textContent = formatTime(elapsed);
+    completeName.textContent = sourceTitle || "Puzzle";
+    completePreview.src = source;
+    completeOverlay.hidden = false;
+  }
+
+  function beginTimerOnInteraction() {
+    if (timerStarted || paused || complete) return;
+    timerStarted = true;
+    startTimer();
   }
 
   function startTimer() {
     stopTimer();
     updateClock();
+    if (!timerStarted || paused || complete) return;
     timerId = window.setInterval(() => {
       if (!paused && !complete) {
         elapsed += 1;
@@ -604,12 +702,19 @@
   }
 
   function setPaused(next) {
+    if (complete) return;
     paused = next;
     pauseOverlay.hidden = !paused;
+    if (paused) stopTimer();
+    else if (timerStarted) startTimer();
     syncPauseIcons();
   }
 
   pauseButton.addEventListener("click", () => setPaused(!paused));
+  pauseOverlay.addEventListener("pointerdown", event => {
+    event.preventDefault();
+    setPaused(false);
+  });
   showMiniClock.addEventListener("change", syncMiniClock);
 
   function setZoom(next, centerX, centerY) {
@@ -626,8 +731,14 @@
     resizeView();
   }
 
-  document.querySelector("#zoom-in").addEventListener("click", () => setZoom(zoom * 1.2));
-  document.querySelector("#zoom-out").addEventListener("click", () => setZoom(zoom / 1.2));
+  document.querySelector("#zoom-in").addEventListener("click", () => {
+    beginTimerOnInteraction();
+    setZoom(zoom * 1.2);
+  });
+  document.querySelector("#zoom-out").addEventListener("click", () => {
+    beginTimerOnInteraction();
+    setZoom(zoom / 1.2);
+  });
 
   document.querySelector("#fullscreen-button").addEventListener("click", async () => {
     try {
@@ -639,33 +750,58 @@
   menuButton.addEventListener("click", () => setMenuOpen(!settings.classList.contains("is-open")));
 
   workspace.addEventListener("pointerdown", event => {
-    if (paused || event.button !== 0 || event.target.closest?.(".puzzle-piece") || event.target.closest?.(".puzzle-canvas-toolbar") || event.target.closest?.(".puzzle-settings")) return;
-    const point = svgPoint(event);
-    pan = { start: point, x: viewX, y: viewY };
+    if (paused || complete || event.button !== 0 || event.target.closest?.(".puzzle-piece") || event.target.closest?.(".puzzle-canvas-toolbar") || event.target.closest?.(".puzzle-settings") || event.target.closest?.(".puzzle-complete-overlay")) return;
+    pan = {
+      pointerId: event.pointerId,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      viewX,
+      viewY,
+      moved: false,
+    };
+    workspace.setPointerCapture?.(event.pointerId);
   });
 
   workspace.addEventListener("pointermove", event => {
-    if (!pan || drag) return;
-    const point = svgPoint(event);
-    viewX = pan.x - (point.x - pan.start.x);
-    viewY = pan.y - (point.y - pan.start.y);
+    if (!pan || drag || event.pointerId !== pan.pointerId) return;
+    const dx = event.clientX - pan.clientX;
+    const dy = event.clientY - pan.clientY;
+
+    if (!pan.moved && Math.hypot(dx, dy) >= 2) {
+      pan.moved = true;
+      beginTimerOnInteraction();
+    }
+
+    if (!pan.moved) return;
+    viewX = pan.viewX - dx / zoom;
+    viewY = pan.viewY - dy / zoom;
     resizeView();
   });
 
-  workspace.addEventListener("pointerup", () => { pan = null; });
-  workspace.addEventListener("pointercancel", () => { pan = null; });
+  function finishPan(event) {
+    if (!pan || event.pointerId !== pan.pointerId) return;
+    try { workspace.releasePointerCapture?.(event.pointerId); } catch (_) {}
+    pan = null;
+  }
+
+  workspace.addEventListener("pointerup", finishPan);
+  workspace.addEventListener("pointercancel", finishPan);
 
   workspace.addEventListener("wheel", event => {
-    if (event.target.closest?.(".puzzle-settings")) return;
+    if (paused || complete || event.target.closest?.(".puzzle-settings") || event.target.closest?.(".puzzle-complete-overlay")) return;
     event.preventDefault();
+    beginTimerOnInteraction();
     const point = svgPoint(event);
     setZoom(zoom * (event.deltaY < 0 ? 1.1 : .9), point.x, point.y);
   }, { passive: false });
 
-  document.querySelector("#restart-button").addEventListener("click", () => {
+  function restartCurrentPuzzle() {
     const currentEdges = edges;
     createPuzzle(currentCols, currentRows, currentEdges);
-  });
+  }
+
+  document.querySelector("#restart-button").addEventListener("click", restartCurrentPuzzle);
+  document.querySelector("#complete-restart-button").addEventListener("click", restartCurrentPuzzle);
 
   document.querySelector("#change-pieces-button").addEventListener("click", () => {
     changePanel.hidden = !changePanel.hidden;
@@ -680,6 +816,9 @@
 
   function resetToSetup() {
     stopTimer();
+    timerStarted = false;
+    complete = false;
+    completeOverlay.hidden = true;
     setPaused(false);
     setMenuOpen(false);
     game.hidden = true;
@@ -703,4 +842,5 @@
   }
 
   document.querySelector("#new-button").addEventListener("click", resetToSetup);
+  document.querySelector("#complete-new-button").addEventListener("click", resetToSetup);
 })();
