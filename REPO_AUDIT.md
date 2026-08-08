@@ -212,3 +212,36 @@ Only these files need to be copied into the repository:
 - Compare several generated pieces directly against Jigidi at low and medium piece counts; the curve profile should now be materially closer because it is based on the supplied cutter implementation rather than visual approximation.
 - Test both a mouse wheel and a Mac trackpad at the center and near all four edges of the workspace. Zoom should stay anchored beneath the pointer and should no longer fling the viewport sideways/up/down.
 - Confirm the new slower zoom rate still has enough range when using several consecutive scroll gestures.
+
+# Repo audit update — 2026-08-08 — Puzzle Maker group stacking + pause-layer pass
+
+## Puzzle Maker changes completed
+
+- Added connected-group-aware render ordering. Puzzle groups are now layered primarily by connected piece count: larger connected groups render farther back, while smaller groups render above them. For example, all loose single pieces render above all 2-piece groups, and all 2-piece groups render above all 3-piece groups.
+- Preserved most-recent interaction ordering within each equal-size tier. Clicking/dragging a group records it as the most recently used group, so among groups containing the same number of pieces it renders above the other groups of that size.
+- Removed the temporary SVG drag wrapper used during piece movement. Dragged members are now translated directly while moving, which prevents a large connected group from temporarily jumping above smaller groups and violating the size-based stacking rule.
+- Reorders groups again after snapping/merging so a newly enlarged group immediately moves into the correct connected-size layer.
+- Moved the paused canvas covering below the puzzle toolbar and settings drawer in the z-order. The three-dot menu, pause/resume button, restart control, clock option, piece-count controls, fullscreen, zoom, and recenter controls remain visible and interactive while the puzzle is paused.
+- Increased the visual concealment of the paused puzzle itself with a substantially stronger surface tint and blur. Broad underlying color can remain faintly perceptible, but individual piece silhouettes should no longer be clearly readable through the pause layer.
+- Kept click-on-the-covered-canvas-to-resume behavior; clicks on the toolbar/settings menu are intercepted by those higher layers and do not dismiss pause unless the user explicitly uses the resume control.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/puzzle-maker/game.js`
+- `public/games/puzzle-maker/game.css`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes.
+- Confirmed there are no remaining runtime references to the removed temporary drag wrapper.
+- Confirmed pause z-order is canvas cover (15), settings drawer (20), and toolbar (30), leaving the controls above the paused covering.
+
+## Next Puzzle Maker manual checks
+
+- Create several separate 1-, 2-, 3-, and 4-piece connected groups and confirm smaller groups always visually overlap larger groups regardless of click order.
+- With two or more groups of the same size, click each in turn and confirm the most recently clicked group becomes the top group only within that size tier.
+- Drag a large connected group underneath smaller groups and verify it remains underneath them during the drag, not only after release.
+- Pause with the menu both open and closed. Confirm the canvas is strongly obscured, clicking the covered canvas resumes, and every visible toolbar/menu control remains interactive without implicitly resuming the puzzle.

@@ -46,6 +46,8 @@
   let grids = [];
   let pieces = [];
   let groups = new Map();
+  let groupRecency = new Map();
+  let groupRecencyCounter = 0;
   let edges = null;
   let layer = null;
   let drag = null;
@@ -386,6 +388,8 @@
     viewY = 0;
     pieces = [];
     groups.clear();
+    groupRecency.clear();
+    groupRecencyCounter = 0;
     svg.replaceChildren();
 
     const defs = svgEl("defs");
@@ -438,6 +442,7 @@
         };
         pieces.push(piece);
         groups.set(id, new Set([id]));
+        groupRecency.set(id, groupRecencyCounter++);
         pieceGroup.addEventListener("pointerdown", event => startPieceDrag(event, piece));
       }
     }
@@ -483,8 +488,27 @@
     return [...(groups.get(groupId) || [])].map(id => pieces[id]);
   }
 
+  function touchGroup(groupId) {
+    groupRecency.set(groupId, groupRecencyCounter++);
+  }
+
+  function reorderGroups() {
+    if (!layer) return;
+
+    const ordered = [...groups.keys()].sort((a, b) => {
+      const sizeDiff = (groups.get(b)?.size || 0) - (groups.get(a)?.size || 0);
+      if (sizeDiff) return sizeDiff;
+      return (groupRecency.get(a) || 0) - (groupRecency.get(b) || 0);
+    });
+
+    for (const groupId of ordered) {
+      for (const piece of groupPieces(groupId)) layer.append(piece.el);
+    }
+  }
+
   function raiseGroup(groupId) {
-    for (const piece of groupPieces(groupId)) layer.append(piece.el);
+    touchGroup(groupId);
+    reorderGroups();
   }
 
   function scatterAllPieces() {
@@ -499,8 +523,8 @@
       piece.x = viewX + margin + Math.random() * safeWidth;
       piece.y = viewY + margin + Math.random() * safeHeight;
       position(piece);
-      layer.append(piece.el);
     }
+    reorderGroups();
   }
 
   function svgPoint(event) {
@@ -521,13 +545,8 @@
     raiseGroup(groupId);
     const members = groupPieces(groupId);
     const start = svgPoint(event);
-    const wrapper = svgEl("g", { class: "puzzle-drag-group" });
-    layer.append(wrapper);
 
-    for (const member of members) {
-      wrapper.append(member.el);
-      member.el.classList.add("dragging");
-    }
+    for (const member of members) member.el.classList.add("dragging");
 
     drag = {
       pointerId: event.pointerId,
@@ -536,7 +555,6 @@
       start,
       dx: 0,
       dy: 0,
-      wrapper,
     };
 
     piece.el.setPointerCapture?.(event.pointerId);
@@ -548,13 +566,15 @@
     const point = svgPoint(event);
     drag.dx = point.x - drag.start.x;
     drag.dy = point.y - drag.start.y;
-    drag.wrapper.setAttribute("transform", `translate(${drag.dx} ${drag.dy})`);
+    for (const member of drag.members) {
+      member.el.setAttribute("transform", `translate(${member.x + drag.dx} ${member.y + drag.dy})`);
+    }
   });
 
   function finishDrag(event) {
     if (!drag || event.pointerId !== drag.pointerId) return;
 
-    const { groupId, members, wrapper, dx, dy } = drag;
+    const { groupId, members, dx, dy } = drag;
     drag = null;
 
     for (const member of members) {
@@ -562,12 +582,11 @@
       member.y += dy;
       position(member);
       member.el.classList.remove("dragging");
-      layer.append(member.el);
     }
 
-    wrapper.remove();
     svg.classList.remove("dragging");
     trySnaps(groupId);
+    reorderGroups();
   }
 
   svg.addEventListener("pointerup", finishDrag);
@@ -623,7 +642,9 @@
       pieces[id].group = a;
     }
     groups.delete(b);
-    raiseGroup(a);
+    groupRecency.delete(b);
+    touchGroup(a);
+    reorderGroups();
     return a;
   }
 
@@ -901,6 +922,8 @@
     svg.replaceChildren();
     pieces = [];
     groups.clear();
+    groupRecency.clear();
+    groupRecencyCounter = 0;
     edges = null;
     source = null;
     sourceTitle = "";

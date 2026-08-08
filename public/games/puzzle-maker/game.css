@@ -358,13 +358,13 @@
 .puzzle-complete-overlay {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--surface) 62%, transparent);
   color: var(--text);
-  backdrop-filter: blur(2px);
 }
 
 .puzzle-paused {
-  z-index: 40;
+  z-index: 15;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(10px);
   display: grid;
   place-content: center;
   gap: .35rem;
@@ -383,6 +383,8 @@
 
 .puzzle-complete-overlay {
   z-index: 50;
+  background: color-mix(in srgb, var(--surface) 62%, transparent);
+  backdrop-filter: blur(2px);
   display: grid;
   place-items: center;
   padding: 1rem;
