@@ -380,21 +380,60 @@ Only these files need to be copied into the repository:
 - Click and immediately drag loose pieces and connected groups; confirm the prior drag-start improvement remains.
 - Use `+`, `-`, and wheel/trackpad zoom only to establish the stable baseline again. Zoom lag is expected to remain and should be treated as a separate profiling task after stability is confirmed.
 
-## 2026-08-14 — Puzzle Maker zoom diagnostic: solid-fill control build
-- Created a temporary diagnostic build from the last stable drag-performance baseline.
-- Kept the current Jigidi-derived piece geometry, SVG piece/group count, scattering, dragging, snapping, connected-group ordering, camera/viewBox zoom, and controls unchanged.
-- Removed only the per-piece clipped source-image rendering (`clipPath` + shifted `<use>` of the full puzzle image) and replaced it with one plain filled path per piece plus the existing outline.
-- Purpose: determine whether large-puzzle zoom lag is caused primarily by hundreds of live clipped-image operations or by the SVG path/group count/camera machinery itself.
-- Interpretation: if wheel and +/- zoom become smooth at 400–600 pieces, image clipping is the confirmed bottleneck and a per-piece cached/raster visual representation is justified. If zoom remains slow, do not pursue per-piece rasterization as the primary fix; investigate SVG node count/camera architecture instead.
-- This build is diagnostic only and intentionally does not display the puzzle image on pieces.
+# Repo audit update — 2026-08-14 — Puzzle Maker Canvas renderer prototype
 
+## Prototype purpose
 
-## 2026-08-14 — Puzzle Maker zoom diagnostic 2: simple-rectangle control build
-- Built from the prior solid-fill diagnostic after that test showed large zoom lag still occurs even without clipped source-image rendering.
-- Kept the same puzzle size, SVG group count, two visual child nodes per piece, scatter/drag/snap/group logic, stacking rules, camera/viewBox zoom, and controls.
-- Replaced only the complex Jigidi jigsaw path geometry with simple square `<rect>` elements.
-- Purpose: separate complex path rasterization cost from raw SVG node/group count.
-- Interpretation:
-  - If 400–600 rectangles zoom smoothly, the dominant bottleneck is the complex jigsaw path geometry/stroking and future work should focus on simplifying/caching piece geometry while preserving interaction.
-  - If 400–600 rectangles still lag badly, the dominant bottleneck is the number of live SVG elements/viewBox redraw itself; further SVG micro-optimizations are unlikely to solve it and a Canvas/WebGL visual renderer should be evaluated.
-- This build is diagnostic only and intentionally displays square solid-color pieces instead of the puzzle image/jigsaw shapes.
+- Added a contained Canvas-renderer prototype based on the last known stable drag-performance build.
+- This prototype is intended to test whether replacing live SVG jigsaw rendering with cached per-piece Canvas bitmaps removes the high-piece-count zoom ceiling.
+- The existing SVG element remains in the page but is hidden by `game.js`; no HTML/CSS migration is required for this prototype.
+
+## Puzzle Maker prototype changes
+
+- The existing Jigidi-derived cut geometry, grid distortion, snapping logic, group membership, group-size/recency stacking rules, timer, pause, completion, menu, fullscreen, and setup flows remain the logical source of truth.
+- Each piece still receives the same Jigidi-style `Path2D` geometry.
+- The source image is scaled once to the solved puzzle dimensions when a puzzle is created.
+- Each jigsaw piece is pre-rendered once into its own small transparent offscreen canvas:
+  - the piece path clips the appropriate source-image section;
+  - the piece outline is drawn into the cached bitmap;
+  - the live renderer no longer tessellates/strokes the jigsaw path on every camera update.
+- The visible puzzle is rendered onto one Canvas surface created dynamically by `game.js`.
+- Live frames draw cached piece canvases with `drawImage()` in the existing group-size/recency order.
+- Zoom and pan now change the Canvas camera transform rather than an SVG `viewBox`.
+- Wheel input remains cursor anchored and is coalesced naturally through the Canvas render requestAnimationFrame queue.
+- Dragging uses the already-optimized client-pixel delta approach and redraws the Canvas rather than changing hundreds of SVG transforms.
+- Hit testing uses the retained `Path2D` piece geometry, checked from topmost group downward, so tabs/sockets remain part of the clickable piece shape.
+- Cached group ordering is invalidated only when group size/recency changes, avoiding a full group sort on every Canvas frame.
+
+## Prototype tradeoffs / expected differences
+
+- Piece bitmaps are intentionally cached at a conservative resolution for this first performance test; at very high zoom they may look softer than the original SVG. Visual-resolution tuning should happen only after performance is validated.
+- Initial puzzle creation may take slightly longer because piece visuals are cached up front. This is intentional: the prototype moves expensive shape work from every zoom/drag frame to one-time puzzle creation.
+- This is a test renderer, not yet the final production migration. If performance is successful, follow-up work should focus on bitmap resolution/shading fidelity and any interaction edge cases found during testing.
+
+## Files changed in this prototype
+
+Only these files need to be copied into the test repository:
+
+- `public/games/puzzle-maker/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes.
+- Confirmed no live SVG piece nodes, clip paths, per-piece SVG image uses, or SVG `viewBox` camera updates are created by the prototype.
+- Confirmed the same Jigidi piece path generator remains in use and is converted to `Path2D` for bitmap creation/hit testing.
+- Confirmed group ordering remains size-first (larger groups behind smaller groups) and recency-second.
+- Confirmed zoom, pan, drag, snap, pause, completion, restart, New Puzzle, and fullscreen handlers remain wired through the existing game state.
+
+## Required manual prototype checks
+
+- Create a 400–600 piece puzzle and note how long initial piece creation takes.
+- Test wheel/trackpad zoom continuously for several seconds and compare browser/system responsiveness with the stable SVG build.
+- Test the native `+` / `-` buttons and confirm camera changes occur without the previous approximately one-second SVG repaint stall.
+- Click and immediately drag loose pieces; confirm the prior drag-start performance improvement remains.
+- Connect and drag several groups; confirm snapping and relative image alignment remain correct.
+- Confirm larger connected groups stay behind smaller groups and recent interaction still wins within equal-size groups.
+- Pan empty workspace, use Recenter, pause/resume, open the menu, and enter/exit fullscreen.
+- Complete a small puzzle and confirm the completion zoom/card flow still works.
+- Check piece-image quality at normal zoom and high zoom; softness is acceptable for this prototype but missing/misaligned imagery is not.

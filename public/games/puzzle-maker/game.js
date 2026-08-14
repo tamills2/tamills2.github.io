@@ -4,6 +4,7 @@
   const NS = "http://www.w3.org/2000/svg";
   const PIECE = 92;
   const TAB_DEPTH = PIECE * 0.22;
+  const BITMAP_PAD = Math.ceil(PIECE * .40);
   const SNAP_SCREEN_PX = 4;
   const MAX_PIECES = 600;
 
@@ -11,6 +12,24 @@
   const game = document.querySelector("#puzzle-game");
   const workspace = document.querySelector("#puzzle-workspace");
   const svg = document.querySelector("#puzzle-svg");
+  const canvas = document.createElement("canvas");
+  canvas.id = "puzzle-canvas";
+  canvas.setAttribute("aria-label", "Puzzle workspace");
+  Object.assign(canvas.style, {
+    position: "absolute",
+    inset: "0",
+    width: "100%",
+    height: "100%",
+    display: "block",
+    zIndex: "1",
+    cursor: "grab",
+    touchAction: "none",
+  });
+  svg.style.display = "none";
+  svg.insertAdjacentElement("afterend", canvas);
+  const ctx = canvas.getContext("2d", { alpha: true, desynchronized: true });
+  const hitCanvas = document.createElement("canvas");
+  const hitCtx = hitCanvas.getContext("2d");
   const options = document.querySelector("#puzzle-options");
   const countSlider = document.querySelector("#piece-count");
   const countValue = document.querySelector("#piece-count-value");
@@ -40,6 +59,7 @@
   const changeMax = document.querySelector("#change-piece-max");
 
   let source = null;
+  let sourceImage = null;
   let sourceTitle = "";
   let imgW = 0;
   let imgH = 0;
@@ -48,6 +68,8 @@
   let groups = new Map();
   let groupRecency = new Map();
   let groupRecencyCounter = 0;
+  let cachedGroupOrder = [];
+  let groupOrderDirty = true;
   let edges = null;
   let layer = null;
   let drag = null;
@@ -63,6 +85,11 @@
   let currentCols = 0;
   let currentRows = 0;
   let uploadedObjectUrl = null;
+  let renderFrame = 0;
+  let canvasCssWidth = 1;
+  let canvasCssHeight = 1;
+  let canvasDpr = 1;
+  let scaledSourceCanvas = null;
 
   const svgEl = (tag, attrs = {}) => {
     const element = document.createElementNS(NS, tag);
@@ -162,6 +189,7 @@
     const image = new Image();
     image.onload = () => {
       source = url;
+      sourceImage = image;
       sourceTitle = title;
       imgW = image.naturalWidth;
       imgH = image.naturalHeight;
@@ -435,45 +463,26 @@
     groups.clear();
     groupRecency.clear();
     groupRecencyCounter = 0;
+    cachedGroupOrder = [];
+    groupOrderDirty = true;
     svg.replaceChildren();
-
-    // DIAGNOSTIC BUILD: deliberately do not render the source image inside
-    // each piece. Keeping the same SVG paths/groups while replacing the
-    // clipped-image rendering with plain fills lets us isolate whether zoom
-    // cost comes from the piece geometry itself or from hundreds of live image
-    // clipping operations. Do not ship this visual mode as the final puzzle.
-    layer = svgEl("g", { id: "pieces-layer" });
-    svg.append(layer);
     edges = reuseEdges || makeEdges(cols, rows);
+    scaledSourceCanvas = document.createElement("canvas");
+    scaledSourceCanvas.width = cols * PIECE;
+    scaledSourceCanvas.height = rows * PIECE;
+    const scaledCtx = scaledSourceCanvas.getContext("2d", { alpha: false });
+    scaledCtx.imageSmoothingEnabled = true;
+    scaledCtx.imageSmoothingQuality = "high";
+    scaledCtx.drawImage(sourceImage, 0, 0, scaledSourceCanvas.width, scaledSourceCanvas.height);
 
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
         const id = row * cols + col;
         const solvedX = col * PIECE;
         const solvedY = row * PIECE;
-        // DIAGNOSTIC BUILD 2: keep the same number of SVG groups and visual
-        // child nodes, but replace the complex Jigidi paths with simple
-        // rectangles. This isolates path-geometry/rasterization cost from
-        // raw SVG node/group count.
-        const pieceGroup = svgEl("g", { class: "puzzle-piece", "data-id": id });
-        const diagnosticFill = svgEl("rect", {
-          x: solvedX,
-          y: solvedY,
-          width: PIECE,
-          height: PIECE,
-          fill: `hsl(${(id * 47) % 360} 32% 42%)`,
-          stroke: "none",
-          "data-diagnostic-rect": "true",
-        });
-        const diagnosticOutline = svgEl("rect", {
-          x: solvedX,
-          y: solvedY,
-          width: PIECE,
-          height: PIECE,
-          class: "puzzle-piece-outline",
-        });
-        pieceGroup.append(diagnosticFill, diagnosticOutline);
-        layer.append(pieceGroup);
+        const pathData = piecePath(row, col, edges);
+        const path = new Path2D(pathData);
+        const bitmap = renderPieceBitmap(path, solvedX, solvedY, cols, rows);
 
         const piece = {
           id,
@@ -484,24 +493,125 @@
           x: 0,
           y: 0,
           group: id,
-          el: pieceGroup,
+          path,
+          bitmap,
         };
         pieces.push(piece);
         groups.set(id, new Set([id]));
         groupRecency.set(id, groupRecencyCounter++);
-        pieceGroup.addEventListener("pointerdown", event => startPieceDrag(event, piece));
       }
     }
 
+    groupOrderDirty = true;
     document.querySelector("#settings-preview").src = source;
     document.querySelector("#settings-title").textContent = sourceTitle;
     document.querySelector("#settings-piece-info").textContent = `${pieces.length} pieces (${cols} × ${rows})`;
 
     configureChangeSlider(cols, rows);
     requestAnimationFrame(() => {
-      resizeView();
+      syncCanvasSize();
       scatterAllPieces();
     });
+  }
+
+
+  function renderPieceBitmap(path, solvedX, solvedY, cols, rows) {
+    const size = PIECE + BITMAP_PAD * 2;
+    const pieceCanvas = document.createElement("canvas");
+    pieceCanvas.width = size;
+    pieceCanvas.height = size;
+    const pieceCtx = pieceCanvas.getContext("2d", { alpha: true });
+
+    pieceCtx.save();
+    pieceCtx.translate(BITMAP_PAD, BITMAP_PAD);
+    pieceCtx.clip(path);
+    pieceCtx.drawImage(scaledSourceCanvas, -solvedX, -solvedY);
+    pieceCtx.restore();
+
+    pieceCtx.save();
+    pieceCtx.translate(BITMAP_PAD, BITMAP_PAD);
+    pieceCtx.strokeStyle = "rgba(0, 0, 0, .58)";
+    pieceCtx.lineWidth = .8;
+    pieceCtx.stroke(path);
+    pieceCtx.restore();
+    return pieceCanvas;
+  }
+
+  function syncCanvasSize() {
+    if (game.hidden) return;
+    const rect = workspace.getBoundingClientRect();
+    canvasCssWidth = Math.max(1, rect.width);
+    canvasCssHeight = Math.max(1, rect.height);
+    // Keep the prototype's backing surface bounded. The expensive piece shape
+    // work is already cached; this avoids huge Retina backing stores while we
+    // validate interaction/zoom performance.
+    canvasDpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    const width = Math.max(1, Math.round(canvasCssWidth * canvasDpr));
+    const height = Math.max(1, Math.round(canvasCssHeight * canvasDpr));
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+    requestRender();
+  }
+
+  function requestRender() {
+    if (renderFrame || game.hidden) return;
+    renderFrame = requestAnimationFrame(() => {
+      renderFrame = 0;
+      renderPuzzle();
+    });
+  }
+
+  function renderPuzzle() {
+    if (game.hidden || !ctx) return;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(
+      canvasDpr * zoom, 0,
+      0, canvasDpr * zoom,
+      -viewX * canvasDpr * zoom,
+      -viewY * canvasDpr * zoom
+    );
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "medium";
+
+    for (const groupId of orderedGroupIds()) {
+      const activeDrag = drag && drag.groupId === groupId;
+      const dx = activeDrag ? drag.dx : 0;
+      const dy = activeDrag ? drag.dy : 0;
+      for (const id of groups.get(groupId) || []) {
+        const piece = pieces[id];
+        if (!piece?.bitmap) continue;
+        ctx.drawImage(
+          piece.bitmap,
+          piece.x + dx - BITMAP_PAD,
+          piece.y + dy - BITMAP_PAD
+        );
+      }
+    }
+  }
+
+  function clientToWorld(clientX, clientY) {
+    const rect = workspace.getBoundingClientRect();
+    return {
+      x: viewX + (clientX - rect.left) / zoom,
+      y: viewY + (clientY - rect.top) / zoom,
+    };
+  }
+
+  function pieceAt(clientX, clientY) {
+    const point = clientToWorld(clientX, clientY);
+    const ordered = orderedGroupIds();
+    for (let g = ordered.length - 1; g >= 0; g--) {
+      const ids = [...(groups.get(ordered[g]) || [])];
+      for (let i = ids.length - 1; i >= 0; i--) {
+        const piece = pieces[ids[i]];
+        if (!piece?.path) continue;
+        if (hitCtx.isPointInPath(piece.path, point.x - piece.x, point.y - piece.y)) return piece;
+      }
+    }
+    return null;
   }
 
   function configureChangeSlider(cols, rows) {
@@ -517,17 +627,13 @@
   changeSlider.addEventListener("input", () => updateSliderDisplay(changeSlider, changeValue, changeGrid));
 
   function resizeView() {
-    if (game.hidden) return;
-    const rect = workspace.getBoundingClientRect();
-    const width = Math.max(1, rect.width) / zoom;
-    const height = Math.max(1, rect.height) / zoom;
-    svg.setAttribute("viewBox", `${viewX} ${viewY} ${width} ${height}`);
+    requestRender();
   }
 
-  new ResizeObserver(resizeView).observe(workspace);
+  new ResizeObserver(syncCanvasSize).observe(workspace);
 
   function position(piece) {
-    piece.el.setAttribute("transform", `translate(${piece.x} ${piece.y})`);
+    requestRender();
   }
 
   function groupPieces(groupId) {
@@ -536,47 +642,31 @@
 
   function touchGroup(groupId) {
     groupRecency.set(groupId, groupRecencyCounter++);
+    groupOrderDirty = true;
   }
 
   function orderedGroupIds() {
-    return [...groups.keys()].sort((a, b) => {
+    if (!groupOrderDirty) return cachedGroupOrder;
+    cachedGroupOrder = [...groups.keys()].sort((a, b) => {
       const sizeDiff = (groups.get(b)?.size || 0) - (groups.get(a)?.size || 0);
       if (sizeDiff) return sizeDiff;
       return (groupRecency.get(a) || 0) - (groupRecency.get(b) || 0);
     });
+    groupOrderDirty = false;
+    return cachedGroupOrder;
   }
 
   function placeGroup(groupId) {
-    if (!layer || !groups.has(groupId)) return;
-
-    const ordered = orderedGroupIds();
-    const index = ordered.indexOf(groupId);
-    const nextGroupId = index >= 0 ? ordered[index + 1] : null;
-    const nextGroup = nextGroupId == null ? null : groups.get(nextGroupId);
-    const nextId = nextGroup?.values().next().value;
-    const referenceNode = nextId == null ? null : pieces[nextId]?.el || null;
-
-    for (const id of groups.get(groupId)) {
-      const element = pieces[id]?.el;
-      if (!element) continue;
-      if (referenceNode) layer.insertBefore(element, referenceNode);
-      else layer.append(element);
-    }
+    requestRender();
   }
 
   function reorderGroups() {
-    if (!layer) return;
-    for (const groupId of orderedGroupIds()) {
-      for (const id of groups.get(groupId) || []) layer.append(pieces[id].el);
-    }
+    requestRender();
   }
 
   function raiseGroup(groupId) {
     touchGroup(groupId);
-    // Only move the active group within the already-sorted stack. The old
-    // implementation re-appended every puzzle piece on pointerdown, which
-    // caused a noticeable grab delay on high-piece-count puzzles.
-    placeGroup(groupId);
+    requestRender();
   }
 
   function scatterAllPieces() {
@@ -605,8 +695,6 @@
     raiseGroup(groupId);
     const members = groupPieces(groupId);
 
-    for (const member of members) member.el.classList.add("dragging");
-
     drag = {
       pointerId: event.pointerId,
       groupId,
@@ -618,21 +706,23 @@
       dy: 0,
     };
 
-    piece.el.setPointerCapture?.(event.pointerId);
-    svg.classList.add("dragging");
+    canvas.setPointerCapture?.(event.pointerId);
+    canvas.style.cursor = "grabbing";
+    requestRender();
   }
 
-  svg.addEventListener("pointermove", event => {
+  canvas.addEventListener("pointerdown", event => {
+    if (paused || complete || event.button !== 0) return;
+    if (event.target.closest?.(".puzzle-canvas-toolbar") || event.target.closest?.(".puzzle-settings") || event.target.closest?.(".puzzle-complete-overlay")) return;
+    const piece = pieceAt(event.clientX, event.clientY);
+    if (piece) startPieceDrag(event, piece);
+  });
+
+  canvas.addEventListener("pointermove", event => {
     if (!drag || event.pointerId !== drag.pointerId) return;
-    // The SVG viewBox is defined directly from the workspace dimensions and
-    // zoom, so screen-pixel deltas convert to puzzle units with / zoom. This
-    // avoids getScreenCTM().inverse() on every pointermove and makes movement
-    // begin immediately after the pointer goes down.
     drag.dx = (event.clientX - drag.clientX) / drag.zoom;
     drag.dy = (event.clientY - drag.clientY) / drag.zoom;
-    for (const member of drag.members) {
-      member.el.setAttribute("transform", `translate(${member.x + drag.dx} ${member.y + drag.dy})`);
-    }
+    requestRender();
   });
 
   function finishDrag(event) {
@@ -644,16 +734,16 @@
     for (const member of members) {
       member.x += dx;
       member.y += dy;
-      position(member);
-      member.el.classList.remove("dragging");
     }
 
-    svg.classList.remove("dragging");
+    try { canvas.releasePointerCapture?.(event.pointerId); } catch (_) {}
+    canvas.style.cursor = "grab";
     trySnaps(groupId);
+    requestRender();
   }
 
-  svg.addEventListener("pointerup", finishDrag);
-  svg.addEventListener("pointercancel", finishDrag);
+  canvas.addEventListener("pointerup", finishDrag);
+  canvas.addEventListener("pointercancel", finishDrag);
 
   function areNeighbors(a, b) {
     return Math.abs(a.row - b.row) + Math.abs(a.col - b.col) === 1;
@@ -890,7 +980,7 @@
   });
 
   workspace.addEventListener("pointerdown", event => {
-    if (paused || complete || event.button !== 0 || event.target.closest?.(".puzzle-piece") || event.target.closest?.(".puzzle-canvas-toolbar") || event.target.closest?.(".puzzle-settings") || event.target.closest?.(".puzzle-complete-overlay")) return;
+    if (paused || complete || event.button !== 0 || event.target.closest?.(".puzzle-canvas-toolbar") || event.target.closest?.(".puzzle-settings") || event.target.closest?.(".puzzle-complete-overlay")) return;
     pan = {
       pointerId: event.pointerId,
       clientX: event.clientX,
@@ -986,12 +1076,17 @@
     game.hidden = true;
     setup.hidden = false;
     svg.replaceChildren();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     pieces = [];
     groups.clear();
     groupRecency.clear();
     groupRecencyCounter = 0;
+    cachedGroupOrder = [];
+    groupOrderDirty = true;
     edges = null;
     source = null;
+    sourceImage = null;
+    scaledSourceCanvas = null;
     sourceTitle = "";
     imgW = 0;
     imgH = 0;
