@@ -387,3 +387,14 @@ Only these files need to be copied into the repository:
 - Purpose: determine whether large-puzzle zoom lag is caused primarily by hundreds of live clipped-image operations or by the SVG path/group count/camera machinery itself.
 - Interpretation: if wheel and +/- zoom become smooth at 400–600 pieces, image clipping is the confirmed bottleneck and a per-piece cached/raster visual representation is justified. If zoom remains slow, do not pursue per-piece rasterization as the primary fix; investigate SVG node count/camera architecture instead.
 - This build is diagnostic only and intentionally does not display the puzzle image on pieces.
+
+
+## 2026-08-14 — Puzzle Maker zoom diagnostic 2: simple-rectangle control build
+- Built from the prior solid-fill diagnostic after that test showed large zoom lag still occurs even without clipped source-image rendering.
+- Kept the same puzzle size, SVG group count, two visual child nodes per piece, scatter/drag/snap/group logic, stacking rules, camera/viewBox zoom, and controls.
+- Replaced only the complex Jigidi jigsaw path geometry with simple square `<rect>` elements.
+- Purpose: separate complex path rasterization cost from raw SVG node/group count.
+- Interpretation:
+  - If 400–600 rectangles zoom smoothly, the dominant bottleneck is the complex jigsaw path geometry/stroking and future work should focus on simplifying/caching piece geometry while preserving interaction.
+  - If 400–600 rectangles still lag badly, the dominant bottleneck is the number of live SVG elements/viewBox redraw itself; further SVG micro-optimizations are unlikely to solve it and a Canvas/WebGL visual renderer should be evaluated.
+- This build is diagnostic only and intentionally displays square solid-color pieces instead of the puzzle image/jigsaw shapes.

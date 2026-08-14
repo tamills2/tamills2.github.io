@@ -451,15 +451,28 @@
         const id = row * cols + col;
         const solvedX = col * PIECE;
         const solvedY = row * PIECE;
-        const pathData = piecePath(row, col, edges);
+        // DIAGNOSTIC BUILD 2: keep the same number of SVG groups and visual
+        // child nodes, but replace the complex Jigidi paths with simple
+        // rectangles. This isolates path-geometry/rasterization cost from
+        // raw SVG node/group count.
         const pieceGroup = svgEl("g", { class: "puzzle-piece", "data-id": id });
-        const diagnosticFill = svgEl("path", {
-          d: pathData,
+        const diagnosticFill = svgEl("rect", {
+          x: solvedX,
+          y: solvedY,
+          width: PIECE,
+          height: PIECE,
           fill: `hsl(${(id * 47) % 360} 32% 42%)`,
           stroke: "none",
-          "data-diagnostic-fill": "true",
+          "data-diagnostic-rect": "true",
         });
-        pieceGroup.append(diagnosticFill, svgEl("path", { d: pathData, class: "puzzle-piece-outline" }));
+        const diagnosticOutline = svgEl("rect", {
+          x: solvedX,
+          y: solvedY,
+          width: PIECE,
+          height: PIECE,
+          class: "puzzle-piece-outline",
+        });
+        pieceGroup.append(diagnosticFill, diagnosticOutline);
         layer.append(pieceGroup);
 
         const piece = {
