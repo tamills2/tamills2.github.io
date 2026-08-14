@@ -515,23 +515,58 @@
 
   changeSlider.addEventListener("input", () => updateSliderDisplay(changeSlider, changeValue, changeGrid));
 
-  let viewFrame = 0;
   let wheelRect = null;
+  let wheelCommitTimer = 0;
+  let committedZoom = 1;
+  let committedViewX = 0;
+  let committedViewY = 0;
+
+  function clearWheelPreview() {
+    window.clearTimeout(wheelCommitTimer);
+    wheelCommitTimer = 0;
+    svg.style.transform = "";
+    svg.style.transformOrigin = "";
+    svg.style.willChange = "";
+  }
 
   function resizeView() {
     if (game.hidden) return;
+    clearWheelPreview();
     const rect = workspace.getBoundingClientRect();
     const width = Math.max(1, rect.width) / zoom;
     const height = Math.max(1, rect.height) / zoom;
     svg.setAttribute("viewBox", `${viewX} ${viewY} ${width} ${height}`);
+    committedZoom = zoom;
+    committedViewX = viewX;
+    committedViewY = viewY;
   }
 
-  function scheduleViewResize() {
-    if (viewFrame) return;
-    viewFrame = requestAnimationFrame(() => {
-      viewFrame = 0;
-      resizeView();
-    });
+  function previewWheelView() {
+    // Rendering a new SVG viewBox forces every clipped puzzle piece to be
+    // repainted. During an active wheel/trackpad gesture, leave the SVG at
+    // the last committed camera and preview the new camera with a compositor
+    // transform instead. The final camera is committed once scrolling stops.
+    const scale = zoom / committedZoom;
+    const translateX = (committedViewX - viewX) * zoom;
+    const translateY = (committedViewY - viewY) * zoom;
+    svg.style.transformOrigin = "0 0";
+    svg.style.willChange = "transform";
+    svg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+    window.clearTimeout(wheelCommitTimer);
+    wheelCommitTimer = window.setTimeout(() => {
+      wheelCommitTimer = 0;
+      const rect = workspace.getBoundingClientRect();
+      const width = Math.max(1, rect.width) / zoom;
+      const height = Math.max(1, rect.height) / zoom;
+      svg.setAttribute("viewBox", `${viewX} ${viewY} ${width} ${height}`);
+      committedZoom = zoom;
+      committedViewX = viewX;
+      committedViewY = viewY;
+      svg.style.transform = "";
+      svg.style.transformOrigin = "";
+      svg.style.willChange = "";
+    }, 90);
   }
 
   new ResizeObserver(() => {
@@ -945,10 +980,10 @@
     event.preventDefault();
     if (!complete) beginTimerOnInteraction();
 
-    // Wheel/trackpad events can arrive much faster than the browser can paint a
-    // 400–600 piece SVG. Keep the camera math responsive for every event, but
-    // commit the expensive SVG viewBox redraw at most once per animation frame.
-    // This also avoids forcing a layout read for every tiny trackpad delta.
+    // Wheel/trackpad events can arrive much faster than the browser can repaint
+    // hundreds of clipped SVG pieces. Update the logical camera immediately,
+    // but preview the gesture with a compositor transform and defer the single
+    // expensive viewBox commit until the gesture has gone idle.
     const rect = wheelRect || (wheelRect = workspace.getBoundingClientRect());
     const pointerX = clamp(event.clientX - rect.left, 0, rect.width);
     const pointerY = clamp(event.clientY - rect.top, 0, rect.height);
@@ -964,7 +999,7 @@
     zoom = nextZoom;
     viewX = anchorX - pointerX / zoom;
     viewY = anchorY - pointerY / zoom;
-    scheduleViewResize();
+    previewWheelView();
   }, { passive: false });
 
   function restartCurrentPuzzle() {
