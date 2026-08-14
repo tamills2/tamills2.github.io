@@ -344,18 +344,24 @@ Only these files need to be copied into the repository:
 - Connect groups of different sizes repeatedly and confirm stacking tiers remain correct after every snap.
 - Test dragging at several zoom levels to confirm screen-pixel motion maps correctly to puzzle movement at each zoom.
 
-# Repo audit update — 2026-08-14 — Puzzle Maker zoom performance
+# Repo audit update — 2026-08-14 — Puzzle Maker emergency zoom/render rollback
 
 ## Puzzle Maker changes completed
 
-- Optimized wheel/trackpad zoom performance on high-piece-count puzzles without changing zoom speed, limits, or cursor anchoring.
-- Wheel input still updates the virtual camera for every incoming delta, but SVG `viewBox` writes are now coalesced through `requestAnimationFrame()` so the expensive 400–600 piece redraw happens at most once per display frame instead of once per wheel event.
-- Added `scheduleViewResize()` specifically for high-frequency camera updates while preserving the existing immediate `resizeView()` path for one-off operations such as recentering, button zoom, completion fitting, and setup.
-- Cached the workspace geometry used during wheel gestures and invalidate it when the workspace resizes, avoiding repeated `getBoundingClientRect()` layout reads for every tiny trackpad delta.
-- Added a no-op guard when zoom is already at its minimum or maximum so further wheel events at the limit do not schedule unnecessary SVG redraws.
-- The previous drag-start performance optimization remains unchanged.
+- Reverted all zoom/rendering experiments added after the stable drag-performance build because the shared-pattern rendering rewrite caused severe compounding browser/system slowdown during any puzzle movement.
+- Restored `public/games/puzzle-maker/game.js` exactly to the last known stable drag-performance version from 2026-08-14.
+- This rollback preserves the successful high-piece-count drag-start optimizations:
+  - incremental connected-group stacking instead of full SVG DOM reorder on pointerdown;
+  - stable client-pixel drag deltas instead of per-move SVG matrix inversion.
+- This rollback intentionally restores the older live-SVG zoom implementation. Zoom may still be laggy on very large puzzles, but the page should no longer accumulate multi-second stalls or continue degrading system performance after interaction.
+- Removed by rollback:
+  - requestAnimationFrame-coalesced zoom experiment;
+  - temporary whole-SVG compositor zoom experiment;
+  - raster-snapshot wheel zoom experiment;
+  - shared SVG image-pattern rendering rewrite.
+- Do not reintroduce the shared-pattern renderer or the previous temporary zoom strategies without isolated profiling/testing first.
 
-## Files changed in this update
+## Files changed in this rollback
 
 Only these files need to be copied into the repository:
 
@@ -365,105 +371,11 @@ Only these files need to be copied into the repository:
 ## Validation performed
 
 - `node --check public/games/puzzle-maker/game.js` passes.
-- Confirmed the wheel handler no longer calls `resizeView()` directly for every wheel event.
-- Confirmed repeated wheel events within one animation frame share a single scheduled `viewBox` update.
-- Confirmed cursor-anchored world-point math is still applied for every wheel delta before the frame is rendered.
-- Confirmed ResizeObserver invalidates the cached workspace rectangle before refreshing the view.
-- Confirmed minimum/maximum zoom limits remain `0.35–3` during active play and `0.1–3` after completion.
+- Confirmed the restored file matches the previously packaged stable drag-performance build byte-for-byte.
+- Confirmed no raster-snapshot, temporary wheel-transform, requestAnimationFrame zoom queue, or shared-pattern rendering code remains.
 
 ## Next Puzzle Maker manual checks
 
-- On a 400–600 piece puzzle, zoom continuously with a Mac trackpad and verify the view follows the gesture smoothly without falling noticeably behind.
-- Repeat with a mouse wheel and confirm zoom remains appropriately slow and cursor anchored.
-- Zoom all the way to both limits and confirm continued scrolling at the limit does not produce stutter or movement.
-- Test zoom after resizing the browser and after entering/exiting fullscreen to confirm the pointer anchor remains correct.
-- Reconfirm immediate piece dragging remains responsive after the previous performance patch.
-
-# Repo audit update — 2026-08-14 — Puzzle Maker zoom compositor pass
-
-## Puzzle Maker changes completed
-
-- Replaced the previous requestAnimationFrame-based wheel optimization after manual testing showed that it did not improve large-puzzle zoom and could feel worse.
-- Removed continuous SVG `viewBox` commits during an active wheel/trackpad gesture. Even one `viewBox` write per display frame still forces the browser to repaint hundreds of clipped SVG puzzle pieces.
-- Added a lightweight wheel-preview camera path: logical `zoom`, `viewX`, and `viewY` still update for every wheel delta, but the already-rendered SVG is temporarily translated/scaled with a CSS compositor transform while scrolling is active.
-- Added committed-camera state (`committedZoom`, `committedViewX`, `committedViewY`) so the temporary transform exactly represents the difference between the last rendered SVG camera and the current logical camera.
-- Added a short 90 ms wheel-idle commit. Once scrolling stops, the final camera is written to the SVG `viewBox` once, then the temporary transform and `will-change` hint are cleared so the puzzle returns to a crisp native SVG render.
-- Immediate camera operations such as zoom buttons, recenter, completion fitting, resize/fullscreen changes, and panning still use the normal committed `resizeView()` path and automatically clear any pending wheel preview.
-- Cursor-anchored zoom math, existing zoom speed/limits, completed-puzzle zoom, and the earlier drag-start performance improvements remain unchanged.
-
-## Files changed in this update
-
-Only these files need to be copied into the repository:
-
-- `public/games/puzzle-maker/game.js`
-- `REPO_AUDIT.md`
-
-## Validation performed
-
-- `node --check public/games/puzzle-maker/game.js` passes.
-- Confirmed the wheel handler no longer writes the SVG `viewBox` or schedules a `viewBox` write on every animation frame while a wheel gesture is active.
-- Confirmed wheel input updates the same cursor-anchored logical camera values used previously.
-- Confirmed the final SVG camera is committed once after wheel input goes idle and the temporary CSS transform is removed immediately afterward.
-- Confirmed one-off `resizeView()` calls cancel/clear any pending wheel preview before committing a new camera.
-- Confirmed minimum/maximum zoom limits remain `0.35–3` during active play and `0.1–3` after completion.
-
-## Next Puzzle Maker manual checks
-
-- On a 400–600 piece puzzle, perform a continuous two-finger zoom gesture and confirm the puzzle follows smoothly rather than repainting in delayed steps.
-- Stop scrolling and confirm the image remains at exactly the same apparent position/scale when the final SVG view is committed (no visible snap).
-- Test repeated short trackpad flicks as well as a conventional mouse wheel.
-- Confirm the point under the cursor remains anchored while zooming near all four edges/corners of the workspace.
-- Immediately drag or pan after zooming and confirm the pending preview is committed/cleared without a jump.
-- Reconfirm immediate piece dragging remains responsive.
-
-# Repo audit update — 2026-08-14 — Puzzle Maker wheel-zoom history review + raster preview
-
-## What the history review found
-
-- Compared Puzzle Maker `game.js` from the pre-anchor-fix update, v2, v3, v4, v5, v6, the drag-performance patch, the requestAnimationFrame zoom patch, and the compositor zoom patch.
-- Confirmed the wheel handler from v3 through the drag-performance patch was effectively the same cursor-anchored `viewBox` implementation; the recent drag optimization did not introduce the underlying SVG zoom cost.
-- Confirmed the earlier pre-v3 versions used the same live-SVG camera concept but had incorrect/over-aggressive anchor behavior. Restoring that old code would reintroduce the scroll-fling bug without removing the expensive SVG repaint.
-- Manual feedback also showed the requestAnimationFrame coalescing pass did not improve the issue and the whole-SVG compositor transform could make system-wide lag worse, so that approach has been removed rather than layered on further.
-
-## Puzzle Maker changes completed
-
-- Replaced the whole-live-SVG wheel preview with a cached raster viewport used only during active wheel/trackpad gestures.
-- The raster preview is generated while the puzzle is idle and includes overscan around the visible workspace so modest zoom-out gestures do not immediately expose blank edges.
-- During wheel input, `zoom`, `viewX`, and `viewY` continue to update with the existing slow cursor-anchored math, but only the single flat canvas snapshot is translated/scaled. The live SVG is temporarily hidden instead of being continuously repainted or promoted as one enormous GPU layer.
-- After 120 ms of wheel inactivity, the final camera is committed to the SVG `viewBox` once. The flat preview remains visible during that expensive commit and is removed on the next animation frame.
-- A fresh wheel snapshot is scheduled after stable camera changes, puzzle scattering, and piece drag/snap completion so subsequent wheel gestures normally start from an up-to-date image.
-- Snapshot rasterization prefers `createImageBitmap()` when available and falls back to an `Image` decode path.
-- Puzzle piece geometry, group stacking, drag performance, zoom speed/limits, cursor anchoring, completion behavior, and button zoom behavior are otherwise unchanged.
-
-## Files changed in this update
-
-Only these files need to be copied into the repository:
-
-- `public/games/puzzle-maker/game.js`
-- `REPO_AUDIT.md`
-
-## Validation performed
-
-- `node --check public/games/puzzle-maker/game.js` passes.
-- Confirmed the previous live-SVG CSS transform / `will-change` wheel implementation is no longer present.
-- Confirmed active wheel events do not write the live SVG `viewBox`; the final view is committed once after wheel input becomes idle.
-- Confirmed the raster preview is pointer-transparent and sits below the existing toolbar/settings/pause layers.
-- Confirmed snapshot invalidation occurs after piece movement and committed camera changes so stale snapshots are not intentionally reused as the next stable baseline.
-- Confirmed active-play zoom limits remain `0.35–3` and completed-puzzle limits remain `0.1–3`.
-
-## Next Puzzle Maker manual checks
-
-- On a 400–600 piece puzzle, use a continuous Mac trackpad wheel gesture and verify CPU/GPU load no longer spills over into other open applications.
-- Confirm the wheel gesture follows the cursor smoothly and that the final crisp SVG does not visibly jump when the gesture stops.
-- Try zooming immediately after moving a piece and again after leaving the board idle for a moment; the second case should always use the cached raster path, while the first should still commit safely if a fresh cache has not finished building.
-- Test zooming both in and out far enough to exercise the snapshot overscan area.
-- Confirm the `+`/`−` buttons, recenter, fullscreen, panning, immediate piece dragging, snapping, and completed-puzzle zoom still behave as before.
-
-## 2026-08-14 Puzzle Maker zoom rendering optimization
-- Investigated the remaining zoom lag after the raster-snapshot experiment. The screenshot supplied by the user showed that serialized SVG snapshots preserved piece outlines but failed to reproduce the clipped image fills reliably, so that workaround was removed.
-- Identified the actual repaint bottleneck: every puzzle piece was rendered as its own `clipPath` plus a clipped `<use>` of the full source image plus a separate outline path. A 600-piece puzzle therefore required hundreds of full-image clip evaluations for every `viewBox` change, which also explained the 0.5–0.75 second delay on the +/- zoom buttons.
-- Reworked piece rendering without changing Jigidi cut geometry or puzzle behavior. Piece paths are now kept in solved/global puzzle coordinates and each piece is rendered as a single SVG `<path>` filled from one shared user-space image pattern and stroked directly for its outline.
-- Piece transforms now represent the offset from solved position to current position (`current - solved`), preserving scatter, dragging, connected groups, snapping, completion, and z-order rules while allowing every piece to share the same image paint server.
-- Removed the wheel raster-snapshot system and restored direct cursor-anchored `viewBox` zoom. With the expensive per-piece clipping structure removed, both wheel/trackpad zoom and +/- button zoom should no longer require repainting hundreds of separately clipped full-image references.
-- Preserved completed-puzzle wheel zoom, pause/menu exclusions, existing wheel speed, and cursor anchoring.
-- Validation: `node --check public/games/puzzle-maker/game.js` passes. Manual browser validation is still required for visual crop alignment and high-piece-count zoom performance.
+- Build a 400–600 piece puzzle and drag pieces repeatedly for several minutes; confirm responsiveness does not progressively degrade.
+- Click and immediately drag loose pieces and connected groups; confirm the prior drag-start improvement remains.
+- Use `+`, `-`, and wheel/trackpad zoom only to establish the stable baseline again. Zoom lag is expected to remain and should be treated as a separate profiling task after stability is confirmed.

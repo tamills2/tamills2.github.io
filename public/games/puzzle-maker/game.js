@@ -378,6 +378,8 @@
 
   function piecePath(row, col, cutGrid) {
     const nodes = cutGrid.nodes;
+    const originX = col * PIECE;
+    const originY = row * PIECE;
     const topLeft = nodes[2 * col][2 * row];
     const topRight = nodes[2 * col + 2][2 * row];
     const bottomRight = nodes[2 * col + 2][2 * row + 2];
@@ -386,23 +388,25 @@
     const rightMid = nodes[2 * col + 2][2 * row + 1];
     const bottomMid = nodes[2 * col + 1][2 * row + 2];
     const leftMid = nodes[2 * col][2 * row + 1];
-    const path = [`M ${topLeft.x} ${topLeft.y}`];
+    const local = node => [node.x - originX, node.y - originY];
 
-    // Keep every piece path in solved/global puzzle coordinates. That lets all
-    // pieces share one image pattern instead of each piece clipping its own
-    // reference to the full source image. The piece's transform then represents
-    // only the offset from its solved position to its current position.
-    if (topMid.mode) appendJigidiEdge(path, topMid, 3, topMid.mode === 1, 0, 0);
-    path.push(`L ${topRight.x} ${topRight.y}`);
+    const [tlx, tly] = local(topLeft);
+    const [trx, try_] = local(topRight);
+    const [brx, bry] = local(bottomRight);
+    const [blx, bly] = local(bottomLeft);
+    const path = [`M ${tlx} ${tly}`];
 
-    if (rightMid.mode) appendJigidiEdge(path, rightMid, 0, rightMid.mode === 1, 0, 0);
-    path.push(`L ${bottomRight.x} ${bottomRight.y}`);
+    if (topMid.mode) appendJigidiEdge(path, topMid, 3, topMid.mode === 1, originX, originY);
+    path.push(`L ${trx} ${try_}`);
 
-    if (bottomMid.mode) appendJigidiEdge(path, bottomMid, 1, bottomMid.mode !== 1, 0, 0);
-    path.push(`L ${bottomLeft.x} ${bottomLeft.y}`);
+    if (rightMid.mode) appendJigidiEdge(path, rightMid, 0, rightMid.mode === 1, originX, originY);
+    path.push(`L ${brx} ${bry}`);
 
-    if (leftMid.mode) appendJigidiEdge(path, leftMid, 2, leftMid.mode !== 1, 0, 0);
-    path.push(`L ${topLeft.x} ${topLeft.y}`, "Z");
+    if (bottomMid.mode) appendJigidiEdge(path, bottomMid, 1, bottomMid.mode !== 1, originX, originY);
+    path.push(`L ${blx} ${bly}`);
+
+    if (leftMid.mode) appendJigidiEdge(path, leftMid, 2, leftMid.mode !== 1, originX, originY);
+    path.push(`L ${tlx} ${tly}`, "Z");
     return path.join(" ");
   }
 
@@ -434,23 +438,16 @@
     svg.replaceChildren();
 
     const defs = svgEl("defs");
-    const sourcePattern = svgEl("pattern", {
-      id: "puzzle-source-pattern",
-      patternUnits: "userSpaceOnUse",
-      x: 0,
-      y: 0,
-      width: cols * PIECE,
-      height: rows * PIECE,
-    });
-    sourcePattern.append(svgEl("image", {
+    const masterImage = svgEl("image", {
+      id: "puzzle-source-image",
       href: source,
       x: 0,
       y: 0,
       width: cols * PIECE,
       height: rows * PIECE,
       preserveAspectRatio: "none",
-    }));
-    defs.append(sourcePattern);
+    });
+    defs.append(masterImage);
 
     layer = svgEl("g", { id: "pieces-layer" });
     svg.append(defs, layer);
@@ -462,20 +459,20 @@
         const solvedX = col * PIECE;
         const solvedY = row * PIECE;
         const pathData = piecePath(row, col, edges);
+        const clip = svgEl("clipPath", { id: `clip-${id}`, clipPathUnits: "userSpaceOnUse" });
+        clip.append(svgEl("path", { d: pathData }));
+        defs.append(clip);
 
-        // One painted path per piece is dramatically cheaper to repaint than
-        // the old structure (clipPath + clipped group + full-image <use> +
-        // separate outline path for every piece). The shared user-space pattern
-        // preserves the exact source crop while the piece moves as a unit.
-        const pieceElement = svgEl("path", {
-          d: pathData,
-          class: "puzzle-piece",
-          fill: "url(#puzzle-source-pattern)",
-          stroke: "rgba(0, 0, 0, .58)",
-          "stroke-width": ".8",
-          "vector-effect": "non-scaling-stroke",
+        const pieceGroup = svgEl("g", { class: "puzzle-piece", "data-id": id });
+        const clipped = svgEl("g", { "clip-path": `url(#clip-${id})` });
+        const use = svgEl("use", {
+          href: "#puzzle-source-image",
+          x: -solvedX,
+          y: -solvedY,
         });
-        layer.append(pieceElement);
+        clipped.append(use);
+        pieceGroup.append(clipped, svgEl("path", { d: pathData, class: "puzzle-piece-outline" }));
+        layer.append(pieceGroup);
 
         const piece = {
           id,
@@ -486,12 +483,12 @@
           x: 0,
           y: 0,
           group: id,
-          el: pieceElement,
+          el: pieceGroup,
         };
         pieces.push(piece);
         groups.set(id, new Set([id]));
         groupRecency.set(id, groupRecencyCounter++);
-        pieceElement.addEventListener("pointerdown", event => startPieceDrag(event, piece));
+        pieceGroup.addEventListener("pointerdown", event => startPieceDrag(event, piece));
       }
     }
 
@@ -529,7 +526,7 @@
   new ResizeObserver(resizeView).observe(workspace);
 
   function position(piece) {
-    piece.el.setAttribute("transform", `translate(${piece.x - piece.solvedX} ${piece.y - piece.solvedY})`);
+    piece.el.setAttribute("transform", `translate(${piece.x} ${piece.y})`);
   }
 
   function groupPieces(groupId) {
@@ -633,7 +630,7 @@
     drag.dx = (event.clientX - drag.clientX) / drag.zoom;
     drag.dy = (event.clientY - drag.clientY) / drag.zoom;
     for (const member of drag.members) {
-      member.el.setAttribute("transform", `translate(${member.x + drag.dx - member.solvedX} ${member.y + drag.dy - member.solvedY})`);
+      member.el.setAttribute("transform", `translate(${member.x + drag.dx} ${member.y + drag.dy})`);
     }
   });
 
@@ -934,9 +931,10 @@
     event.preventDefault();
     if (!complete) beginTimerOnInteraction();
 
-    // With each piece now rendered as one painted path, direct viewBox zoom is
-    // cheap again. Keep the world point beneath the pointer locked to the same
-    // screen pixel so trackpad/wheel zoom does not fling the puzzle around.
+    // Normalize wheel/trackpad units, then keep the world point beneath the
+    // pointer locked to the same screen pixel while zooming. The old approach
+    // centered that point in the viewport on every wheel event, which caused
+    // even tiny scrolls near an edge to fling the whole puzzle across the view.
     const rect = workspace.getBoundingClientRect();
     const pointerX = clamp(event.clientX - rect.left, 0, rect.width);
     const pointerY = clamp(event.clientY - rect.top, 0, rect.height);
@@ -948,7 +946,6 @@
     const wheelDelta = clamp(event.deltaY * unit, -80, 80);
     const nextZoom = clamp(zoom * Math.exp(-wheelDelta * .00018), complete ? .1 : .35, 3);
 
-    if (nextZoom === zoom) return;
     zoom = nextZoom;
     viewX = anchorX - pointerX / zoom;
     viewY = anchorY - pointerY / zoom;
