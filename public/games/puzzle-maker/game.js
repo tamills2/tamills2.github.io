@@ -437,20 +437,13 @@
     groupRecencyCounter = 0;
     svg.replaceChildren();
 
-    const defs = svgEl("defs");
-    const masterImage = svgEl("image", {
-      id: "puzzle-source-image",
-      href: source,
-      x: 0,
-      y: 0,
-      width: cols * PIECE,
-      height: rows * PIECE,
-      preserveAspectRatio: "none",
-    });
-    defs.append(masterImage);
-
+    // DIAGNOSTIC BUILD: deliberately do not render the source image inside
+    // each piece. Keeping the same SVG paths/groups while replacing the
+    // clipped-image rendering with plain fills lets us isolate whether zoom
+    // cost comes from the piece geometry itself or from hundreds of live image
+    // clipping operations. Do not ship this visual mode as the final puzzle.
     layer = svgEl("g", { id: "pieces-layer" });
-    svg.append(defs, layer);
+    svg.append(layer);
     edges = reuseEdges || makeEdges(cols, rows);
 
     for (let row = 0; row < rows; row++) {
@@ -459,19 +452,14 @@
         const solvedX = col * PIECE;
         const solvedY = row * PIECE;
         const pathData = piecePath(row, col, edges);
-        const clip = svgEl("clipPath", { id: `clip-${id}`, clipPathUnits: "userSpaceOnUse" });
-        clip.append(svgEl("path", { d: pathData }));
-        defs.append(clip);
-
         const pieceGroup = svgEl("g", { class: "puzzle-piece", "data-id": id });
-        const clipped = svgEl("g", { "clip-path": `url(#clip-${id})` });
-        const use = svgEl("use", {
-          href: "#puzzle-source-image",
-          x: -solvedX,
-          y: -solvedY,
+        const diagnosticFill = svgEl("path", {
+          d: pathData,
+          fill: `hsl(${(id * 47) % 360} 32% 42%)`,
+          stroke: "none",
+          "data-diagnostic-fill": "true",
         });
-        clipped.append(use);
-        pieceGroup.append(clipped, svgEl("path", { d: pathData, class: "puzzle-piece-outline" }));
+        pieceGroup.append(diagnosticFill, svgEl("path", { d: pathData, class: "puzzle-piece-outline" }));
         layer.append(pieceGroup);
 
         const piece = {

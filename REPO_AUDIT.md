@@ -379,3 +379,11 @@ Only these files need to be copied into the repository:
 - Build a 400–600 piece puzzle and drag pieces repeatedly for several minutes; confirm responsiveness does not progressively degrade.
 - Click and immediately drag loose pieces and connected groups; confirm the prior drag-start improvement remains.
 - Use `+`, `-`, and wheel/trackpad zoom only to establish the stable baseline again. Zoom lag is expected to remain and should be treated as a separate profiling task after stability is confirmed.
+
+## 2026-08-14 — Puzzle Maker zoom diagnostic: solid-fill control build
+- Created a temporary diagnostic build from the last stable drag-performance baseline.
+- Kept the current Jigidi-derived piece geometry, SVG piece/group count, scattering, dragging, snapping, connected-group ordering, camera/viewBox zoom, and controls unchanged.
+- Removed only the per-piece clipped source-image rendering (`clipPath` + shifted `<use>` of the full puzzle image) and replaced it with one plain filled path per piece plus the existing outline.
+- Purpose: determine whether large-puzzle zoom lag is caused primarily by hundreds of live clipped-image operations or by the SVG path/group count/camera machinery itself.
+- Interpretation: if wheel and +/- zoom become smooth at 400–600 pieces, image clipping is the confirmed bottleneck and a per-piece cached/raster visual representation is justified. If zoom remains slow, do not pursue per-piece rasterization as the primary fix; investigate SVG node count/camera architecture instead.
+- This build is diagnostic only and intentionally does not display the puzzle image on pieces.
