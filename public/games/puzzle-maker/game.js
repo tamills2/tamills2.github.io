@@ -515,6 +515,9 @@
 
   changeSlider.addEventListener("input", () => updateSliderDisplay(changeSlider, changeValue, changeGrid));
 
+  let viewFrame = 0;
+  let wheelRect = null;
+
   function resizeView() {
     if (game.hidden) return;
     const rect = workspace.getBoundingClientRect();
@@ -523,7 +526,18 @@
     svg.setAttribute("viewBox", `${viewX} ${viewY} ${width} ${height}`);
   }
 
-  new ResizeObserver(resizeView).observe(workspace);
+  function scheduleViewResize() {
+    if (viewFrame) return;
+    viewFrame = requestAnimationFrame(() => {
+      viewFrame = 0;
+      resizeView();
+    });
+  }
+
+  new ResizeObserver(() => {
+    wheelRect = null;
+    resizeView();
+  }).observe(workspace);
 
   function position(piece) {
     piece.el.setAttribute("transform", `translate(${piece.x} ${piece.y})`);
@@ -931,11 +945,11 @@
     event.preventDefault();
     if (!complete) beginTimerOnInteraction();
 
-    // Normalize wheel/trackpad units, then keep the world point beneath the
-    // pointer locked to the same screen pixel while zooming. The old approach
-    // centered that point in the viewport on every wheel event, which caused
-    // even tiny scrolls near an edge to fling the whole puzzle across the view.
-    const rect = workspace.getBoundingClientRect();
+    // Wheel/trackpad events can arrive much faster than the browser can paint a
+    // 400–600 piece SVG. Keep the camera math responsive for every event, but
+    // commit the expensive SVG viewBox redraw at most once per animation frame.
+    // This also avoids forcing a layout read for every tiny trackpad delta.
+    const rect = wheelRect || (wheelRect = workspace.getBoundingClientRect());
     const pointerX = clamp(event.clientX - rect.left, 0, rect.width);
     const pointerY = clamp(event.clientY - rect.top, 0, rect.height);
     const anchorX = viewX + pointerX / zoom;
@@ -946,10 +960,11 @@
     const wheelDelta = clamp(event.deltaY * unit, -80, 80);
     const nextZoom = clamp(zoom * Math.exp(-wheelDelta * .00018), complete ? .1 : .35, 3);
 
+    if (nextZoom === zoom) return;
     zoom = nextZoom;
     viewX = anchorX - pointerX / zoom;
     viewY = anchorY - pointerY / zoom;
-    resizeView();
+    scheduleViewResize();
   }, { passive: false });
 
   function restartCurrentPuzzle() {

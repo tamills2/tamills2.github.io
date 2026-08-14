@@ -343,3 +343,38 @@ Only these files need to be copied into the repository:
 - Confirm smaller connected groups still render above larger groups and most-recently clicked groups still render above other groups of the same size.
 - Connect groups of different sizes repeatedly and confirm stacking tiers remain correct after every snap.
 - Test dragging at several zoom levels to confirm screen-pixel motion maps correctly to puzzle movement at each zoom.
+
+# Repo audit update — 2026-08-14 — Puzzle Maker zoom performance
+
+## Puzzle Maker changes completed
+
+- Optimized wheel/trackpad zoom performance on high-piece-count puzzles without changing zoom speed, limits, or cursor anchoring.
+- Wheel input still updates the virtual camera for every incoming delta, but SVG `viewBox` writes are now coalesced through `requestAnimationFrame()` so the expensive 400–600 piece redraw happens at most once per display frame instead of once per wheel event.
+- Added `scheduleViewResize()` specifically for high-frequency camera updates while preserving the existing immediate `resizeView()` path for one-off operations such as recentering, button zoom, completion fitting, and setup.
+- Cached the workspace geometry used during wheel gestures and invalidate it when the workspace resizes, avoiding repeated `getBoundingClientRect()` layout reads for every tiny trackpad delta.
+- Added a no-op guard when zoom is already at its minimum or maximum so further wheel events at the limit do not schedule unnecessary SVG redraws.
+- The previous drag-start performance optimization remains unchanged.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/puzzle-maker/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes.
+- Confirmed the wheel handler no longer calls `resizeView()` directly for every wheel event.
+- Confirmed repeated wheel events within one animation frame share a single scheduled `viewBox` update.
+- Confirmed cursor-anchored world-point math is still applied for every wheel delta before the frame is rendered.
+- Confirmed ResizeObserver invalidates the cached workspace rectangle before refreshing the view.
+- Confirmed minimum/maximum zoom limits remain `0.35–3` during active play and `0.1–3` after completion.
+
+## Next Puzzle Maker manual checks
+
+- On a 400–600 piece puzzle, zoom continuously with a Mac trackpad and verify the view follows the gesture smoothly without falling noticeably behind.
+- Repeat with a mouse wheel and confirm zoom remains appropriately slow and cursor anchored.
+- Zoom all the way to both limits and confirm continued scrolling at the limit does not produce stutter or movement.
+- Test zoom after resizing the browser and after entering/exiting fullscreen to confirm the pointer anchor remains correct.
+- Reconfirm immediate piece dragging remains responsive after the previous performance patch.
