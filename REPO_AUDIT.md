@@ -437,3 +437,53 @@ Only these files need to be copied into the test repository:
 - Pan empty workspace, use Recenter, pause/resume, open the menu, and enter/exit fullscreen.
 - Complete a small puzzle and confirm the completion zoom/card flow still works.
 - Check piece-image quality at normal zoom and high zoom; softness is acceptable for this prototype but missing/misaligned imagery is not.
+
+# Repo audit update — 2026-08-14 — Puzzle Maker Canvas prototype interaction tuning
+
+## Purpose
+
+- Continued the Canvas renderer prototype after initial testing showed a major improvement over SVG zoom, but a small remaining feel delay during piece movement and a desire for Jigidi-like variable wheel zoom.
+- Kept the renderer aligned with the architecture observed in Jigidi: cached per-piece bitmaps, one visible Canvas, JavaScript camera/group state, and requestAnimationFrame-driven visual updates.
+
+## Drag performance changes
+
+- Added a temporary stationary-scene cache for active drags.
+- When a piece/group is picked up, the non-dragging puzzle is rendered once into an offscreen Canvas at the current camera state.
+- During pointer movement, each frame now:
+  - draws the cached stationary frame once;
+  - draws only the active group at its current drag delta.
+- This avoids redrawing hundreds of stationary piece bitmaps on every drag frame while preserving the existing Jigidi-style group-size/recency ordering.
+- The stationary cache is discarded when the drag ends so snapping, merges, and subsequent camera changes return to a normal full render.
+- Pointer events remain coalesced through the existing requestAnimationFrame render queue.
+
+## Variable wheel zoom changes
+
+- Replaced the heavily flattened wheel clamp with velocity-sensitive wheel scaling.
+- Wheel/trackpad input remains cursor anchored.
+- Slow/small wheel movement now produces small zoom changes for fine control.
+- Faster/larger gestures receive a bounded acceleration multiplier so they cover substantially more zoom range, closer to Jigidi's variable zoom feel.
+- Browser line/page wheel units are still normalized before the velocity calculation.
+- Zoom remains clamped to the existing gameplay/completion limits.
+
+## Files changed in this prototype update
+
+Only these files need to be copied into the test repository:
+
+- `public/games/puzzle-maker/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes.
+- Confirmed the Canvas renderer and cached per-piece bitmap model remain intact.
+- Confirmed drag caching excludes the active group and preserves its live draw order above the cached stationary scene.
+- Confirmed drag cache is cleared before snap/merge processing completes.
+- Confirmed wheel zoom still anchors the world point beneath the pointer.
+
+## Required manual checks
+
+- Test immediate click-and-drag on a 400–600 piece puzzle and compare the subtle drag latency with the first Canvas prototype.
+- Test a connected group as well as a single piece.
+- Slowly roll/scroll one or two increments and confirm zoom is precise and gradual.
+- Perform a faster wheel/trackpad gesture and confirm zoom accelerates noticeably without flinging the camera.
+- Confirm `+` / `-`, pan, Recenter, snapping, group stacking, pause, completion, and fullscreen remain unchanged.

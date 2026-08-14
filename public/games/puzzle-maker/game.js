@@ -90,6 +90,9 @@
   let canvasCssHeight = 1;
   let canvasDpr = 1;
   let scaledSourceCanvas = null;
+  let dragStaticCanvas = null;
+  let dragStaticCtx = null;
+  let lastWheelAt = 0;
 
   const svgEl = (tag, attrs = {}) => {
     const element = document.createElementNS(NS, tag);
@@ -563,31 +566,72 @@
     });
   }
 
-  function renderPuzzle() {
-    if (game.hidden || !ctx) return;
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.setTransform(
+  function setCameraTransform(target) {
+    target.setTransform(
       canvasDpr * zoom, 0,
       0, canvasDpr * zoom,
       -viewX * canvasDpr * zoom,
       -viewY * canvasDpr * zoom
     );
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "medium";
+    target.imageSmoothingEnabled = true;
+    target.imageSmoothingQuality = "medium";
+  }
 
+  function ensureDragStaticLayer() {
+    if (!dragStaticCanvas) {
+      dragStaticCanvas = document.createElement("canvas");
+      dragStaticCtx = dragStaticCanvas.getContext("2d", { alpha: true, desynchronized: true });
+    }
+    if (dragStaticCanvas.width !== canvas.width || dragStaticCanvas.height !== canvas.height) {
+      dragStaticCanvas.width = canvas.width;
+      dragStaticCanvas.height = canvas.height;
+    }
+  }
+
+  function buildDragStaticLayer(activeGroupId) {
+    ensureDragStaticLayer();
+    dragStaticCtx.setTransform(1, 0, 0, 1, 0, 0);
+    dragStaticCtx.clearRect(0, 0, dragStaticCanvas.width, dragStaticCanvas.height);
+    setCameraTransform(dragStaticCtx);
     for (const groupId of orderedGroupIds()) {
-      const activeDrag = drag && drag.groupId === groupId;
-      const dx = activeDrag ? drag.dx : 0;
-      const dy = activeDrag ? drag.dy : 0;
+      if (groupId === activeGroupId) continue;
       for (const id of groups.get(groupId) || []) {
+        const piece = pieces[id];
+        if (!piece?.bitmap) continue;
+        dragStaticCtx.drawImage(piece.bitmap, piece.x - BITMAP_PAD, piece.y - BITMAP_PAD);
+      }
+    }
+  }
+
+  function renderPuzzle() {
+    if (game.hidden || !ctx) return;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // During a drag the stationary puzzle does not change. Reuse one cached
+    // frame and redraw only the active group, matching Jigidi's cached-piece
+    // rendering model while avoiding hundreds of drawImage calls per move.
+    if (drag && dragStaticCanvas) {
+      ctx.drawImage(dragStaticCanvas, 0, 0);
+      setCameraTransform(ctx);
+      for (const id of groups.get(drag.groupId) || []) {
         const piece = pieces[id];
         if (!piece?.bitmap) continue;
         ctx.drawImage(
           piece.bitmap,
-          piece.x + dx - BITMAP_PAD,
-          piece.y + dy - BITMAP_PAD
+          piece.x + drag.dx - BITMAP_PAD,
+          piece.y + drag.dy - BITMAP_PAD
         );
+      }
+      return;
+    }
+
+    setCameraTransform(ctx);
+    for (const groupId of orderedGroupIds()) {
+      for (const id of groups.get(groupId) || []) {
+        const piece = pieces[id];
+        if (!piece?.bitmap) continue;
+        ctx.drawImage(piece.bitmap, piece.x - BITMAP_PAD, piece.y - BITMAP_PAD);
       }
     }
   }
@@ -708,6 +752,7 @@
 
     canvas.setPointerCapture?.(event.pointerId);
     canvas.style.cursor = "grabbing";
+    buildDragStaticLayer(groupId);
     requestRender();
   }
 
@@ -730,6 +775,8 @@
 
     const { groupId, members, dx, dy } = drag;
     drag = null;
+    dragStaticCanvas = null;
+    dragStaticCtx = null;
 
     for (const member of members) {
       member.x += dx;
@@ -1034,9 +1081,20 @@
     const unit = event.deltaMode === WheelEvent.DOM_DELTA_LINE ? 16
       : event.deltaMode === WheelEvent.DOM_DELTA_PAGE ? rect.height
       : 1;
-    const wheelDelta = clamp(event.deltaY * unit, -80, 80);
-    const nextZoom = clamp(zoom * Math.exp(-wheelDelta * .00018), complete ? .1 : .35, 3);
+    const rawDelta = event.deltaY * unit;
+    const now = performance.now();
+    const elapsedMs = lastWheelAt ? clamp(now - lastWheelAt, 8, 80) : 16;
+    lastWheelAt = now;
 
+    // Wheel deltas already grow with gesture speed on modern mice/trackpads.
+    // Add a modest velocity multiplier so deliberate slow scrolling stays fine
+    // grained while a fast gesture covers more zoom range, like Jigidi.
+    const velocity = Math.abs(rawDelta) / elapsedMs;
+    const acceleration = 1 + Math.min(2.25, velocity * .85);
+    const wheelDelta = clamp(rawDelta * acceleration, -220, 220);
+    const nextZoom = clamp(zoom * Math.exp(-wheelDelta * .00095), complete ? .1 : .35, 3);
+
+    if (nextZoom === zoom) return;
     zoom = nextZoom;
     viewX = anchorX - pointerX / zoom;
     viewY = anchorY - pointerY / zoom;
