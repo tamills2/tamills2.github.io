@@ -378,8 +378,6 @@
 
   function piecePath(row, col, cutGrid) {
     const nodes = cutGrid.nodes;
-    const originX = col * PIECE;
-    const originY = row * PIECE;
     const topLeft = nodes[2 * col][2 * row];
     const topRight = nodes[2 * col + 2][2 * row];
     const bottomRight = nodes[2 * col + 2][2 * row + 2];
@@ -388,25 +386,23 @@
     const rightMid = nodes[2 * col + 2][2 * row + 1];
     const bottomMid = nodes[2 * col + 1][2 * row + 2];
     const leftMid = nodes[2 * col][2 * row + 1];
-    const local = node => [node.x - originX, node.y - originY];
+    const path = [`M ${topLeft.x} ${topLeft.y}`];
 
-    const [tlx, tly] = local(topLeft);
-    const [trx, try_] = local(topRight);
-    const [brx, bry] = local(bottomRight);
-    const [blx, bly] = local(bottomLeft);
-    const path = [`M ${tlx} ${tly}`];
+    // Keep every piece path in solved/global puzzle coordinates. That lets all
+    // pieces share one image pattern instead of each piece clipping its own
+    // reference to the full source image. The piece's transform then represents
+    // only the offset from its solved position to its current position.
+    if (topMid.mode) appendJigidiEdge(path, topMid, 3, topMid.mode === 1, 0, 0);
+    path.push(`L ${topRight.x} ${topRight.y}`);
 
-    if (topMid.mode) appendJigidiEdge(path, topMid, 3, topMid.mode === 1, originX, originY);
-    path.push(`L ${trx} ${try_}`);
+    if (rightMid.mode) appendJigidiEdge(path, rightMid, 0, rightMid.mode === 1, 0, 0);
+    path.push(`L ${bottomRight.x} ${bottomRight.y}`);
 
-    if (rightMid.mode) appendJigidiEdge(path, rightMid, 0, rightMid.mode === 1, originX, originY);
-    path.push(`L ${brx} ${bry}`);
+    if (bottomMid.mode) appendJigidiEdge(path, bottomMid, 1, bottomMid.mode !== 1, 0, 0);
+    path.push(`L ${bottomLeft.x} ${bottomLeft.y}`);
 
-    if (bottomMid.mode) appendJigidiEdge(path, bottomMid, 1, bottomMid.mode !== 1, originX, originY);
-    path.push(`L ${blx} ${bly}`);
-
-    if (leftMid.mode) appendJigidiEdge(path, leftMid, 2, leftMid.mode !== 1, originX, originY);
-    path.push(`L ${tlx} ${tly}`, "Z");
+    if (leftMid.mode) appendJigidiEdge(path, leftMid, 2, leftMid.mode !== 1, 0, 0);
+    path.push(`L ${topLeft.x} ${topLeft.y}`, "Z");
     return path.join(" ");
   }
 
@@ -438,16 +434,23 @@
     svg.replaceChildren();
 
     const defs = svgEl("defs");
-    const masterImage = svgEl("image", {
-      id: "puzzle-source-image",
+    const sourcePattern = svgEl("pattern", {
+      id: "puzzle-source-pattern",
+      patternUnits: "userSpaceOnUse",
+      x: 0,
+      y: 0,
+      width: cols * PIECE,
+      height: rows * PIECE,
+    });
+    sourcePattern.append(svgEl("image", {
       href: source,
       x: 0,
       y: 0,
       width: cols * PIECE,
       height: rows * PIECE,
       preserveAspectRatio: "none",
-    });
-    defs.append(masterImage);
+    }));
+    defs.append(sourcePattern);
 
     layer = svgEl("g", { id: "pieces-layer" });
     svg.append(defs, layer);
@@ -459,20 +462,20 @@
         const solvedX = col * PIECE;
         const solvedY = row * PIECE;
         const pathData = piecePath(row, col, edges);
-        const clip = svgEl("clipPath", { id: `clip-${id}`, clipPathUnits: "userSpaceOnUse" });
-        clip.append(svgEl("path", { d: pathData }));
-        defs.append(clip);
 
-        const pieceGroup = svgEl("g", { class: "puzzle-piece", "data-id": id });
-        const clipped = svgEl("g", { "clip-path": `url(#clip-${id})` });
-        const use = svgEl("use", {
-          href: "#puzzle-source-image",
-          x: -solvedX,
-          y: -solvedY,
+        // One painted path per piece is dramatically cheaper to repaint than
+        // the old structure (clipPath + clipped group + full-image <use> +
+        // separate outline path for every piece). The shared user-space pattern
+        // preserves the exact source crop while the piece moves as a unit.
+        const pieceElement = svgEl("path", {
+          d: pathData,
+          class: "puzzle-piece",
+          fill: "url(#puzzle-source-pattern)",
+          stroke: "rgba(0, 0, 0, .58)",
+          "stroke-width": ".8",
+          "vector-effect": "non-scaling-stroke",
         });
-        clipped.append(use);
-        pieceGroup.append(clipped, svgEl("path", { d: pathData, class: "puzzle-piece-outline" }));
-        layer.append(pieceGroup);
+        layer.append(pieceElement);
 
         const piece = {
           id,
@@ -483,12 +486,12 @@
           x: 0,
           y: 0,
           group: id,
-          el: pieceGroup,
+          el: pieceElement,
         };
         pieces.push(piece);
         groups.set(id, new Set([id]));
         groupRecency.set(id, groupRecencyCounter++);
-        pieceGroup.addEventListener("pointerdown", event => startPieceDrag(event, piece));
+        pieceElement.addEventListener("pointerdown", event => startPieceDrag(event, piece));
       }
     }
 
@@ -515,211 +518,18 @@
 
   changeSlider.addEventListener("input", () => updateSliderDisplay(changeSlider, changeValue, changeGrid));
 
-  let wheelRect = null;
-  let wheelCommitTimer = 0;
-  let snapshotBuildTimer = 0;
-  let snapshotBuildToken = 0;
-  let snapshotReady = false;
-  let snapshotZoom = 1;
-  let snapshotViewX = 0;
-  let snapshotViewY = 0;
-  let snapshotLeft = 0;
-  let snapshotTop = 0;
-
-  // Wheel zoom uses a flat raster preview of the current viewport instead of
-  // continuously transforming/repainting the live hundreds-piece SVG. The
-  // real SVG is committed once after the wheel gesture becomes idle.
-  const wheelSnapshot = document.createElement("canvas");
-  wheelSnapshot.setAttribute("aria-hidden", "true");
-  Object.assign(wheelSnapshot.style, {
-    position: "absolute",
-    display: "none",
-    pointerEvents: "none",
-    zIndex: "5",
-    transformOrigin: "0 0",
-  });
-  svg.insertAdjacentElement("afterend", wheelSnapshot);
-
-  function hideWheelSnapshot() {
-    wheelSnapshot.style.display = "none";
-    wheelSnapshot.style.transform = "";
-    svg.style.visibility = "";
-  }
-
-  function cancelWheelGesture() {
-    window.clearTimeout(wheelCommitTimer);
-    wheelCommitTimer = 0;
-    hideWheelSnapshot();
-  }
-
-  function invalidateWheelSnapshot() {
-    snapshotReady = false;
-    snapshotBuildToken++;
-    window.clearTimeout(snapshotBuildTimer);
-    snapshotBuildTimer = 0;
-  }
-
-  function inlineSnapshotStyles(clone) {
-    const outline = svg.querySelector(".puzzle-piece-outline");
-    if (!outline) return;
-    const style = getComputedStyle(outline);
-    for (const path of clone.querySelectorAll(".puzzle-piece-outline")) {
-      path.setAttribute("fill", style.fill || "none");
-      path.setAttribute("stroke", style.stroke || "rgba(0, 0, 0, .58)");
-      path.setAttribute("stroke-width", style.strokeWidth || ".8px");
-      path.setAttribute("vector-effect", "non-scaling-stroke");
-    }
-  }
-
-  async function buildWheelSnapshot(token) {
-    snapshotBuildTimer = 0;
-    if (token !== snapshotBuildToken || game.hidden || !pieces.length || drag || pan) return;
-
-    const rect = workspace.getBoundingClientRect();
-    if (rect.width < 2 || rect.height < 2) return;
-
-    // Include a modest overscan margin so zooming out does not immediately
-    // expose empty strips around the cached viewport.
-    const overscan = .22;
-    const left = -Math.round(rect.width * overscan);
-    const top = -Math.round(rect.height * overscan);
-    const width = Math.max(1, Math.round(rect.width * (1 + overscan * 2)));
-    const height = Math.max(1, Math.round(rect.height * (1 + overscan * 2)));
-    const snapViewX = viewX + left / zoom;
-    const snapViewY = viewY + top / zoom;
-    const snapZoom = zoom;
-
-    const clone = svg.cloneNode(true);
-    clone.removeAttribute("style");
-    clone.setAttribute("xmlns", NS);
-    clone.setAttribute("width", String(width));
-    clone.setAttribute("height", String(height));
-    clone.setAttribute("viewBox", `${snapViewX} ${snapViewY} ${width / snapZoom} ${height / snapZoom}`);
-    inlineSnapshotStyles(clone);
-
-    const sourceImage = clone.querySelector("#puzzle-source-image");
-    if (sourceImage && source) {
-      try { sourceImage.setAttribute("href", new URL(source, window.location.href).href); } catch (_) {}
-    }
-
-    const markup = new XMLSerializer().serializeToString(clone);
-    const blob = new Blob([markup], { type: "image/svg+xml" });
-
-    const canvasWidth = width;
-    const canvasHeight = height;
-    let rendered = false;
-
-    if ("createImageBitmap" in window) {
-      try {
-        const bitmap = await createImageBitmap(blob);
-        if (token === snapshotBuildToken) {
-          wheelSnapshot.width = canvasWidth;
-          wheelSnapshot.height = canvasHeight;
-          const context = wheelSnapshot.getContext("2d");
-          context.clearRect(0, 0, canvasWidth, canvasHeight);
-          context.drawImage(bitmap, 0, 0, canvasWidth, canvasHeight);
-          rendered = true;
-        }
-        bitmap.close?.();
-      } catch (_) {}
-    }
-
-    if (!rendered && token === snapshotBuildToken) {
-      const url = URL.createObjectURL(blob);
-      try {
-        await new Promise((resolve, reject) => {
-          const image = new Image();
-          image.onload = () => {
-            if (token !== snapshotBuildToken) return resolve();
-            wheelSnapshot.width = canvasWidth;
-            wheelSnapshot.height = canvasHeight;
-            const context = wheelSnapshot.getContext("2d");
-            context.clearRect(0, 0, canvasWidth, canvasHeight);
-            context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
-            rendered = true;
-            resolve();
-          };
-          image.onerror = reject;
-          image.src = url;
-        });
-      } catch (_) {
-        rendered = false;
-      } finally {
-        URL.revokeObjectURL(url);
-      }
-    }
-
-    if (!rendered || token !== snapshotBuildToken) return;
-    wheelSnapshot.style.left = `${left}px`;
-    wheelSnapshot.style.top = `${top}px`;
-    wheelSnapshot.style.width = `${width}px`;
-    wheelSnapshot.style.height = `${height}px`;
-    snapshotLeft = left;
-    snapshotTop = top;
-    snapshotViewX = snapViewX;
-    snapshotViewY = snapViewY;
-    snapshotZoom = snapZoom;
-    snapshotReady = true;
-  }
-
-  function scheduleWheelSnapshot(delay = 350) {
-    window.clearTimeout(snapshotBuildTimer);
-    const token = snapshotBuildToken;
-    snapshotBuildTimer = window.setTimeout(() => buildWheelSnapshot(token), delay);
-  }
-
   function resizeView() {
     if (game.hidden) return;
-    cancelWheelGesture();
     const rect = workspace.getBoundingClientRect();
     const width = Math.max(1, rect.width) / zoom;
     const height = Math.max(1, rect.height) / zoom;
     svg.setAttribute("viewBox", `${viewX} ${viewY} ${width} ${height}`);
-    wheelRect = null;
-    invalidateWheelSnapshot();
-    scheduleWheelSnapshot();
   }
 
-  function previewWheelSnapshot() {
-    if (snapshotReady) {
-      const scale = zoom / snapshotZoom;
-      const translateX = (snapshotViewX - viewX) * zoom - snapshotLeft;
-      const translateY = (snapshotViewY - viewY) * zoom - snapshotTop;
-      wheelSnapshot.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-      wheelSnapshot.style.display = "block";
-      svg.style.visibility = "hidden";
-    }
-
-    window.clearTimeout(wheelCommitTimer);
-    wheelCommitTimer = window.setTimeout(commitWheelView, 120);
-  }
-
-  function commitWheelView() {
-    wheelCommitTimer = 0;
-    if (game.hidden) return;
-
-    const rect = wheelRect || workspace.getBoundingClientRect();
-    const width = Math.max(1, rect.width) / zoom;
-    const height = Math.max(1, rect.height) / zoom;
-
-    // Keep the flat preview visible while the one expensive SVG repaint is
-    // committed, then swap the crisp live SVG back in on the next frame.
-    svg.setAttribute("viewBox", `${viewX} ${viewY} ${width} ${height}`);
-    wheelRect = null;
-    invalidateWheelSnapshot();
-    requestAnimationFrame(() => {
-      hideWheelSnapshot();
-      scheduleWheelSnapshot(450);
-    });
-  }
-
-  new ResizeObserver(() => {
-    wheelRect = null;
-    resizeView();
-  }).observe(workspace);
+  new ResizeObserver(resizeView).observe(workspace);
 
   function position(piece) {
-    piece.el.setAttribute("transform", `translate(${piece.x} ${piece.y})`);
+    piece.el.setAttribute("transform", `translate(${piece.x - piece.solvedX} ${piece.y - piece.solvedY})`);
   }
 
   function groupPieces(groupId) {
@@ -785,8 +595,6 @@
       position(piece);
     }
     reorderGroups();
-    invalidateWheelSnapshot();
-    scheduleWheelSnapshot(140);
   }
 
   function startPieceDrag(event, piece) {
@@ -825,7 +633,7 @@
     drag.dx = (event.clientX - drag.clientX) / drag.zoom;
     drag.dy = (event.clientY - drag.clientY) / drag.zoom;
     for (const member of drag.members) {
-      member.el.setAttribute("transform", `translate(${member.x + drag.dx} ${member.y + drag.dy})`);
+      member.el.setAttribute("transform", `translate(${member.x + drag.dx - member.solvedX} ${member.y + drag.dy - member.solvedY})`);
     }
   });
 
@@ -844,8 +652,6 @@
 
     svg.classList.remove("dragging");
     trySnaps(groupId);
-    invalidateWheelSnapshot();
-    scheduleWheelSnapshot(140);
   }
 
   svg.addEventListener("pointerup", finishDrag);
@@ -1128,11 +934,10 @@
     event.preventDefault();
     if (!complete) beginTimerOnInteraction();
 
-    // Wheel/trackpad events can arrive much faster than the browser can repaint
-    // hundreds of clipped SVG pieces. Update the logical camera immediately,
-    // but animate a flat cached viewport during the gesture and repaint the
-    // live SVG only once after wheel input goes idle.
-    const rect = wheelRect || (wheelRect = workspace.getBoundingClientRect());
+    // With each piece now rendered as one painted path, direct viewBox zoom is
+    // cheap again. Keep the world point beneath the pointer locked to the same
+    // screen pixel so trackpad/wheel zoom does not fling the puzzle around.
+    const rect = workspace.getBoundingClientRect();
     const pointerX = clamp(event.clientX - rect.left, 0, rect.width);
     const pointerY = clamp(event.clientY - rect.top, 0, rect.height);
     const anchorX = viewX + pointerX / zoom;
@@ -1147,7 +952,7 @@
     zoom = nextZoom;
     viewX = anchorX - pointerX / zoom;
     viewY = anchorY - pointerY / zoom;
-    previewWheelSnapshot();
+    resizeView();
   }, { passive: false });
 
   function restartCurrentPuzzle() {

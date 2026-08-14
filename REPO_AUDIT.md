@@ -458,3 +458,12 @@ Only these files need to be copied into the repository:
 - Try zooming immediately after moving a piece and again after leaving the board idle for a moment; the second case should always use the cached raster path, while the first should still commit safely if a fresh cache has not finished building.
 - Test zooming both in and out far enough to exercise the snapshot overscan area.
 - Confirm the `+`/`−` buttons, recenter, fullscreen, panning, immediate piece dragging, snapping, and completed-puzzle zoom still behave as before.
+
+## 2026-08-14 Puzzle Maker zoom rendering optimization
+- Investigated the remaining zoom lag after the raster-snapshot experiment. The screenshot supplied by the user showed that serialized SVG snapshots preserved piece outlines but failed to reproduce the clipped image fills reliably, so that workaround was removed.
+- Identified the actual repaint bottleneck: every puzzle piece was rendered as its own `clipPath` plus a clipped `<use>` of the full source image plus a separate outline path. A 600-piece puzzle therefore required hundreds of full-image clip evaluations for every `viewBox` change, which also explained the 0.5–0.75 second delay on the +/- zoom buttons.
+- Reworked piece rendering without changing Jigidi cut geometry or puzzle behavior. Piece paths are now kept in solved/global puzzle coordinates and each piece is rendered as a single SVG `<path>` filled from one shared user-space image pattern and stroked directly for its outline.
+- Piece transforms now represent the offset from solved position to current position (`current - solved`), preserving scatter, dragging, connected groups, snapping, completion, and z-order rules while allowing every piece to share the same image paint server.
+- Removed the wheel raster-snapshot system and restored direct cursor-anchored `viewBox` zoom. With the expensive per-piece clipping structure removed, both wheel/trackpad zoom and +/- button zoom should no longer require repainting hundreds of separately clipped full-image references.
+- Preserved completed-puzzle wheel zoom, pause/menu exclusions, existing wheel speed, and cursor anchoring.
+- Validation: `node --check public/games/puzzle-maker/game.js` passes. Manual browser validation is still required for visual crop alignment and high-piece-count zoom performance.
