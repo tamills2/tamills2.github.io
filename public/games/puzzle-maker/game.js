@@ -517,56 +517,200 @@
 
   let wheelRect = null;
   let wheelCommitTimer = 0;
-  let committedZoom = 1;
-  let committedViewX = 0;
-  let committedViewY = 0;
+  let snapshotBuildTimer = 0;
+  let snapshotBuildToken = 0;
+  let snapshotReady = false;
+  let snapshotZoom = 1;
+  let snapshotViewX = 0;
+  let snapshotViewY = 0;
+  let snapshotLeft = 0;
+  let snapshotTop = 0;
 
-  function clearWheelPreview() {
+  // Wheel zoom uses a flat raster preview of the current viewport instead of
+  // continuously transforming/repainting the live hundreds-piece SVG. The
+  // real SVG is committed once after the wheel gesture becomes idle.
+  const wheelSnapshot = document.createElement("canvas");
+  wheelSnapshot.setAttribute("aria-hidden", "true");
+  Object.assign(wheelSnapshot.style, {
+    position: "absolute",
+    display: "none",
+    pointerEvents: "none",
+    zIndex: "5",
+    transformOrigin: "0 0",
+  });
+  svg.insertAdjacentElement("afterend", wheelSnapshot);
+
+  function hideWheelSnapshot() {
+    wheelSnapshot.style.display = "none";
+    wheelSnapshot.style.transform = "";
+    svg.style.visibility = "";
+  }
+
+  function cancelWheelGesture() {
     window.clearTimeout(wheelCommitTimer);
     wheelCommitTimer = 0;
-    svg.style.transform = "";
-    svg.style.transformOrigin = "";
-    svg.style.willChange = "";
+    hideWheelSnapshot();
+  }
+
+  function invalidateWheelSnapshot() {
+    snapshotReady = false;
+    snapshotBuildToken++;
+    window.clearTimeout(snapshotBuildTimer);
+    snapshotBuildTimer = 0;
+  }
+
+  function inlineSnapshotStyles(clone) {
+    const outline = svg.querySelector(".puzzle-piece-outline");
+    if (!outline) return;
+    const style = getComputedStyle(outline);
+    for (const path of clone.querySelectorAll(".puzzle-piece-outline")) {
+      path.setAttribute("fill", style.fill || "none");
+      path.setAttribute("stroke", style.stroke || "rgba(0, 0, 0, .58)");
+      path.setAttribute("stroke-width", style.strokeWidth || ".8px");
+      path.setAttribute("vector-effect", "non-scaling-stroke");
+    }
+  }
+
+  async function buildWheelSnapshot(token) {
+    snapshotBuildTimer = 0;
+    if (token !== snapshotBuildToken || game.hidden || !pieces.length || drag || pan) return;
+
+    const rect = workspace.getBoundingClientRect();
+    if (rect.width < 2 || rect.height < 2) return;
+
+    // Include a modest overscan margin so zooming out does not immediately
+    // expose empty strips around the cached viewport.
+    const overscan = .22;
+    const left = -Math.round(rect.width * overscan);
+    const top = -Math.round(rect.height * overscan);
+    const width = Math.max(1, Math.round(rect.width * (1 + overscan * 2)));
+    const height = Math.max(1, Math.round(rect.height * (1 + overscan * 2)));
+    const snapViewX = viewX + left / zoom;
+    const snapViewY = viewY + top / zoom;
+    const snapZoom = zoom;
+
+    const clone = svg.cloneNode(true);
+    clone.removeAttribute("style");
+    clone.setAttribute("xmlns", NS);
+    clone.setAttribute("width", String(width));
+    clone.setAttribute("height", String(height));
+    clone.setAttribute("viewBox", `${snapViewX} ${snapViewY} ${width / snapZoom} ${height / snapZoom}`);
+    inlineSnapshotStyles(clone);
+
+    const sourceImage = clone.querySelector("#puzzle-source-image");
+    if (sourceImage && source) {
+      try { sourceImage.setAttribute("href", new URL(source, window.location.href).href); } catch (_) {}
+    }
+
+    const markup = new XMLSerializer().serializeToString(clone);
+    const blob = new Blob([markup], { type: "image/svg+xml" });
+
+    const canvasWidth = width;
+    const canvasHeight = height;
+    let rendered = false;
+
+    if ("createImageBitmap" in window) {
+      try {
+        const bitmap = await createImageBitmap(blob);
+        if (token === snapshotBuildToken) {
+          wheelSnapshot.width = canvasWidth;
+          wheelSnapshot.height = canvasHeight;
+          const context = wheelSnapshot.getContext("2d");
+          context.clearRect(0, 0, canvasWidth, canvasHeight);
+          context.drawImage(bitmap, 0, 0, canvasWidth, canvasHeight);
+          rendered = true;
+        }
+        bitmap.close?.();
+      } catch (_) {}
+    }
+
+    if (!rendered && token === snapshotBuildToken) {
+      const url = URL.createObjectURL(blob);
+      try {
+        await new Promise((resolve, reject) => {
+          const image = new Image();
+          image.onload = () => {
+            if (token !== snapshotBuildToken) return resolve();
+            wheelSnapshot.width = canvasWidth;
+            wheelSnapshot.height = canvasHeight;
+            const context = wheelSnapshot.getContext("2d");
+            context.clearRect(0, 0, canvasWidth, canvasHeight);
+            context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
+            rendered = true;
+            resolve();
+          };
+          image.onerror = reject;
+          image.src = url;
+        });
+      } catch (_) {
+        rendered = false;
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    if (!rendered || token !== snapshotBuildToken) return;
+    wheelSnapshot.style.left = `${left}px`;
+    wheelSnapshot.style.top = `${top}px`;
+    wheelSnapshot.style.width = `${width}px`;
+    wheelSnapshot.style.height = `${height}px`;
+    snapshotLeft = left;
+    snapshotTop = top;
+    snapshotViewX = snapViewX;
+    snapshotViewY = snapViewY;
+    snapshotZoom = snapZoom;
+    snapshotReady = true;
+  }
+
+  function scheduleWheelSnapshot(delay = 350) {
+    window.clearTimeout(snapshotBuildTimer);
+    const token = snapshotBuildToken;
+    snapshotBuildTimer = window.setTimeout(() => buildWheelSnapshot(token), delay);
   }
 
   function resizeView() {
     if (game.hidden) return;
-    clearWheelPreview();
+    cancelWheelGesture();
     const rect = workspace.getBoundingClientRect();
     const width = Math.max(1, rect.width) / zoom;
     const height = Math.max(1, rect.height) / zoom;
     svg.setAttribute("viewBox", `${viewX} ${viewY} ${width} ${height}`);
-    committedZoom = zoom;
-    committedViewX = viewX;
-    committedViewY = viewY;
+    wheelRect = null;
+    invalidateWheelSnapshot();
+    scheduleWheelSnapshot();
   }
 
-  function previewWheelView() {
-    // Rendering a new SVG viewBox forces every clipped puzzle piece to be
-    // repainted. During an active wheel/trackpad gesture, leave the SVG at
-    // the last committed camera and preview the new camera with a compositor
-    // transform instead. The final camera is committed once scrolling stops.
-    const scale = zoom / committedZoom;
-    const translateX = (committedViewX - viewX) * zoom;
-    const translateY = (committedViewY - viewY) * zoom;
-    svg.style.transformOrigin = "0 0";
-    svg.style.willChange = "transform";
-    svg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  function previewWheelSnapshot() {
+    if (snapshotReady) {
+      const scale = zoom / snapshotZoom;
+      const translateX = (snapshotViewX - viewX) * zoom - snapshotLeft;
+      const translateY = (snapshotViewY - viewY) * zoom - snapshotTop;
+      wheelSnapshot.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+      wheelSnapshot.style.display = "block";
+      svg.style.visibility = "hidden";
+    }
 
     window.clearTimeout(wheelCommitTimer);
-    wheelCommitTimer = window.setTimeout(() => {
-      wheelCommitTimer = 0;
-      const rect = workspace.getBoundingClientRect();
-      const width = Math.max(1, rect.width) / zoom;
-      const height = Math.max(1, rect.height) / zoom;
-      svg.setAttribute("viewBox", `${viewX} ${viewY} ${width} ${height}`);
-      committedZoom = zoom;
-      committedViewX = viewX;
-      committedViewY = viewY;
-      svg.style.transform = "";
-      svg.style.transformOrigin = "";
-      svg.style.willChange = "";
-    }, 90);
+    wheelCommitTimer = window.setTimeout(commitWheelView, 120);
+  }
+
+  function commitWheelView() {
+    wheelCommitTimer = 0;
+    if (game.hidden) return;
+
+    const rect = wheelRect || workspace.getBoundingClientRect();
+    const width = Math.max(1, rect.width) / zoom;
+    const height = Math.max(1, rect.height) / zoom;
+
+    // Keep the flat preview visible while the one expensive SVG repaint is
+    // committed, then swap the crisp live SVG back in on the next frame.
+    svg.setAttribute("viewBox", `${viewX} ${viewY} ${width} ${height}`);
+    wheelRect = null;
+    invalidateWheelSnapshot();
+    requestAnimationFrame(() => {
+      hideWheelSnapshot();
+      scheduleWheelSnapshot(450);
+    });
   }
 
   new ResizeObserver(() => {
@@ -641,6 +785,8 @@
       position(piece);
     }
     reorderGroups();
+    invalidateWheelSnapshot();
+    scheduleWheelSnapshot(140);
   }
 
   function startPieceDrag(event, piece) {
@@ -698,6 +844,8 @@
 
     svg.classList.remove("dragging");
     trySnaps(groupId);
+    invalidateWheelSnapshot();
+    scheduleWheelSnapshot(140);
   }
 
   svg.addEventListener("pointerup", finishDrag);
@@ -982,8 +1130,8 @@
 
     // Wheel/trackpad events can arrive much faster than the browser can repaint
     // hundreds of clipped SVG pieces. Update the logical camera immediately,
-    // but preview the gesture with a compositor transform and defer the single
-    // expensive viewBox commit until the gesture has gone idle.
+    // but animate a flat cached viewport during the gesture and repaint the
+    // live SVG only once after wheel input goes idle.
     const rect = wheelRect || (wheelRect = workspace.getBoundingClientRect());
     const pointerX = clamp(event.clientX - rect.left, 0, rect.width);
     const pointerY = clamp(event.clientY - rect.top, 0, rect.height);
@@ -999,7 +1147,7 @@
     zoom = nextZoom;
     viewX = anchorX - pointerX / zoom;
     viewY = anchorY - pointerY / zoom;
-    previewWheelView();
+    previewWheelSnapshot();
   }, { passive: false });
 
   function restartCurrentPuzzle() {

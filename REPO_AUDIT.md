@@ -415,3 +415,46 @@ Only these files need to be copied into the repository:
 - Confirm the point under the cursor remains anchored while zooming near all four edges/corners of the workspace.
 - Immediately drag or pan after zooming and confirm the pending preview is committed/cleared without a jump.
 - Reconfirm immediate piece dragging remains responsive.
+
+# Repo audit update — 2026-08-14 — Puzzle Maker wheel-zoom history review + raster preview
+
+## What the history review found
+
+- Compared Puzzle Maker `game.js` from the pre-anchor-fix update, v2, v3, v4, v5, v6, the drag-performance patch, the requestAnimationFrame zoom patch, and the compositor zoom patch.
+- Confirmed the wheel handler from v3 through the drag-performance patch was effectively the same cursor-anchored `viewBox` implementation; the recent drag optimization did not introduce the underlying SVG zoom cost.
+- Confirmed the earlier pre-v3 versions used the same live-SVG camera concept but had incorrect/over-aggressive anchor behavior. Restoring that old code would reintroduce the scroll-fling bug without removing the expensive SVG repaint.
+- Manual feedback also showed the requestAnimationFrame coalescing pass did not improve the issue and the whole-SVG compositor transform could make system-wide lag worse, so that approach has been removed rather than layered on further.
+
+## Puzzle Maker changes completed
+
+- Replaced the whole-live-SVG wheel preview with a cached raster viewport used only during active wheel/trackpad gestures.
+- The raster preview is generated while the puzzle is idle and includes overscan around the visible workspace so modest zoom-out gestures do not immediately expose blank edges.
+- During wheel input, `zoom`, `viewX`, and `viewY` continue to update with the existing slow cursor-anchored math, but only the single flat canvas snapshot is translated/scaled. The live SVG is temporarily hidden instead of being continuously repainted or promoted as one enormous GPU layer.
+- After 120 ms of wheel inactivity, the final camera is committed to the SVG `viewBox` once. The flat preview remains visible during that expensive commit and is removed on the next animation frame.
+- A fresh wheel snapshot is scheduled after stable camera changes, puzzle scattering, and piece drag/snap completion so subsequent wheel gestures normally start from an up-to-date image.
+- Snapshot rasterization prefers `createImageBitmap()` when available and falls back to an `Image` decode path.
+- Puzzle piece geometry, group stacking, drag performance, zoom speed/limits, cursor anchoring, completion behavior, and button zoom behavior are otherwise unchanged.
+
+## Files changed in this update
+
+Only these files need to be copied into the repository:
+
+- `public/games/puzzle-maker/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes.
+- Confirmed the previous live-SVG CSS transform / `will-change` wheel implementation is no longer present.
+- Confirmed active wheel events do not write the live SVG `viewBox`; the final view is committed once after wheel input becomes idle.
+- Confirmed the raster preview is pointer-transparent and sits below the existing toolbar/settings/pause layers.
+- Confirmed snapshot invalidation occurs after piece movement and committed camera changes so stale snapshots are not intentionally reused as the next stable baseline.
+- Confirmed active-play zoom limits remain `0.35–3` and completed-puzzle limits remain `0.1–3`.
+
+## Next Puzzle Maker manual checks
+
+- On a 400–600 piece puzzle, use a continuous Mac trackpad wheel gesture and verify CPU/GPU load no longer spills over into other open applications.
+- Confirm the wheel gesture follows the cursor smoothly and that the final crisp SVG does not visibly jump when the gesture stops.
+- Try zooming immediately after moving a piece and again after leaving the board idle for a moment; the second case should always use the cached raster path, while the first should still commit safely if a fresh cache has not finished building.
+- Test zooming both in and out far enough to exercise the snapshot overscan area.
+- Confirm the `+`/`−` buttons, recenter, fullscreen, panning, immediate piece dragging, snapping, and completed-puzzle zoom still behave as before.
