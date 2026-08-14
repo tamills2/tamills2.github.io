@@ -537,23 +537,45 @@
     groupRecency.set(groupId, groupRecencyCounter++);
   }
 
-  function reorderGroups() {
-    if (!layer) return;
-
-    const ordered = [...groups.keys()].sort((a, b) => {
+  function orderedGroupIds() {
+    return [...groups.keys()].sort((a, b) => {
       const sizeDiff = (groups.get(b)?.size || 0) - (groups.get(a)?.size || 0);
       if (sizeDiff) return sizeDiff;
       return (groupRecency.get(a) || 0) - (groupRecency.get(b) || 0);
     });
+  }
 
-    for (const groupId of ordered) {
-      for (const piece of groupPieces(groupId)) layer.append(piece.el);
+  function placeGroup(groupId) {
+    if (!layer || !groups.has(groupId)) return;
+
+    const ordered = orderedGroupIds();
+    const index = ordered.indexOf(groupId);
+    const nextGroupId = index >= 0 ? ordered[index + 1] : null;
+    const nextGroup = nextGroupId == null ? null : groups.get(nextGroupId);
+    const nextId = nextGroup?.values().next().value;
+    const referenceNode = nextId == null ? null : pieces[nextId]?.el || null;
+
+    for (const id of groups.get(groupId)) {
+      const element = pieces[id]?.el;
+      if (!element) continue;
+      if (referenceNode) layer.insertBefore(element, referenceNode);
+      else layer.append(element);
+    }
+  }
+
+  function reorderGroups() {
+    if (!layer) return;
+    for (const groupId of orderedGroupIds()) {
+      for (const id of groups.get(groupId) || []) layer.append(pieces[id].el);
     }
   }
 
   function raiseGroup(groupId) {
     touchGroup(groupId);
-    reorderGroups();
+    // Only move the active group within the already-sorted stack. The old
+    // implementation re-appended every puzzle piece on pointerdown, which
+    // caused a noticeable grab delay on high-piece-count puzzles.
+    placeGroup(groupId);
   }
 
   function scatterAllPieces() {
@@ -572,14 +594,6 @@
     reorderGroups();
   }
 
-  function svgPoint(event) {
-    const point = svg.createSVGPoint();
-    point.x = event.clientX;
-    point.y = event.clientY;
-    const matrix = svg.getScreenCTM();
-    return matrix ? point.matrixTransform(matrix.inverse()) : { x: event.clientX, y: event.clientY };
-  }
-
   function startPieceDrag(event, piece) {
     if (paused || complete) return;
     beginTimerOnInteraction();
@@ -589,7 +603,6 @@
     const groupId = piece.group;
     raiseGroup(groupId);
     const members = groupPieces(groupId);
-    const start = svgPoint(event);
 
     for (const member of members) member.el.classList.add("dragging");
 
@@ -597,7 +610,9 @@
       pointerId: event.pointerId,
       groupId,
       members,
-      start,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      zoom,
       dx: 0,
       dy: 0,
     };
@@ -608,9 +623,12 @@
 
   svg.addEventListener("pointermove", event => {
     if (!drag || event.pointerId !== drag.pointerId) return;
-    const point = svgPoint(event);
-    drag.dx = point.x - drag.start.x;
-    drag.dy = point.y - drag.start.y;
+    // The SVG viewBox is defined directly from the workspace dimensions and
+    // zoom, so screen-pixel deltas convert to puzzle units with / zoom. This
+    // avoids getScreenCTM().inverse() on every pointermove and makes movement
+    // begin immediately after the pointer goes down.
+    drag.dx = (event.clientX - drag.clientX) / drag.zoom;
+    drag.dy = (event.clientY - drag.clientY) / drag.zoom;
     for (const member of drag.members) {
       member.el.setAttribute("transform", `translate(${member.x + drag.dx} ${member.y + drag.dy})`);
     }
@@ -631,7 +649,6 @@
 
     svg.classList.remove("dragging");
     trySnaps(groupId);
-    reorderGroups();
   }
 
   svg.addEventListener("pointerup", finishDrag);
@@ -689,7 +706,10 @@
     groups.delete(b);
     groupRecency.delete(b);
     touchGroup(a);
-    reorderGroups();
+    // Only the newly merged group changed size/recency; all other groups are
+    // already in the correct relative order. Move this group to its new tier
+    // instead of rebuilding the entire SVG stack.
+    placeGroup(a);
     return a;
   }
 

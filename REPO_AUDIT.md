@@ -309,320 +309,37 @@ Only these files need to be copied into the repository:
 - Complete a puzzle in fullscreen, choose New Puzzle from the completion card, and confirm the same behavior.
 - Verify Restart Puzzle still stays fullscreen.
 
-# Repo audit update — 2026-08-08 — Wordle guess handling + Daily win stats
+# Repo audit update — 2026-08-14 — Puzzle Maker drag-start performance
 
-## Wordle changes completed
+## Puzzle Maker changes completed
 
-- Fixed inconsistent guess submission caused by browser default keyboard behavior. The document-level Wordle key handler now calls `preventDefault()` for gameplay Enter, Backspace, and letter keys before routing them into the game.
-- This prevents a physical Enter press from both submitting the current guess and also activating whichever toolbar/on-screen-keyboard button still had focus (for example Daily or New practice), which could previously make invalid guesses appear to reset the puzzle, disappear, or behave inconsistently.
-- Keyboard events are ignored while the stats modal is open so typing/Enter cannot affect the hidden completed board behind the modal.
-- A successful Daily puzzle now automatically opens the existing Daily stats modal after the win/dance animation finishes.
-- Closing the stats modal reveals the completed board and solved word again. The completed board remains read-only and the on-screen keyboard buttons are disabled once the game is finished.
-- Starting a fresh Practice game re-enables the on-screen keyboard. Loading Daily re-enables it only when the saved Daily puzzle is still active; a saved completed Daily remains locked.
-- Practice wins do not automatically open Daily stats and continue not to affect Daily statistics.
+- Optimized high-piece-count drag startup without changing the existing connected-group stacking rules.
+- Replaced the old `raiseGroup()` behavior that re-appended every SVG piece on each pointerdown. Clicking a group now only repositions that active group within the existing size/recency ordering.
+- Added `orderedGroupIds()` and `placeGroup()` helpers so larger connected groups remain behind smaller groups, while the most recently touched group still comes to the front within its own size tier.
+- Updated group merging so only the newly enlarged/merged group is moved into its new stacking tier instead of rebuilding the entire SVG DOM order.
+- Removed the redundant full-stack reorder after every completed drag. Snap/merge operations now maintain their own ordering incrementally.
+- Replaced drag-time `createSVGPoint()` / `getScreenCTM().inverse()` coordinate conversion with stable client-pixel deltas divided by the zoom captured at drag start. This avoids an SVG matrix calculation on every pointermove and matches the stable delta-based approach already used for canvas panning.
+- Puzzle behavior is otherwise unchanged: snapping, timer start, piece/group dragging, connected-group size ordering, same-size recency ordering, zoom, pause, completion, and fullscreen/new-puzzle behavior remain intact.
 
 ## Files changed in this update
 
 Only these files need to be copied into the repository:
 
-- `public/games/wordle/game.js`
+- `public/games/puzzle-maker/game.js`
 - `REPO_AUDIT.md`
 
 ## Validation performed
 
-- `node --check public/games/wordle/game.js` passes.
-- Confirmed recognized gameplay keys cancel their browser default action before calling `handleKey`, preventing focused buttons from receiving a second Enter activation.
-- Confirmed Daily stats are only auto-opened for a completed Daily win, after the tile dance delay.
-- Confirmed completed games disable the on-screen keyboard while `handleKey` also retains its existing `finished` guard.
-
-## Next Wordle manual checks
-
-- Click each toolbar button in turn so it has focus, type a five-letter invalid word with the physical keyboard, and press Enter. Confirm the same "Not in the offline dictionary." message appears every time and the board never resets or changes modes.
-- Repeat invalid-word entry using a mixture of physical keyboard and on-screen keyboard input and confirm the typed row remains intact while it shakes.
-- Win the Daily puzzle and confirm the tile celebration completes, then Daily stats opens automatically.
-- Close Daily stats and confirm the solved board remains visible but neither physical nor on-screen keyboard input can alter it.
-- Start a Practice puzzle after viewing a completed Daily and confirm the on-screen keyboard is enabled again.
-
-# Repo audit update — 2026-08-08 — Stable Daily Wordle target
-
-## Wordle changes completed
-
-- Fixed Daily puzzle answers changing when `la-words.txt` is edited. The previous selector used `hash(today) % answers.length`, so adding/removing even one answer changed the modulo result and could silently replace the current day's target.
-- Daily state now persists the selected `target` alongside the date, guesses, and finished flag as soon as that day's puzzle is first loaded. Editing, reordering, adding, or removing answer words later in the same day no longer changes an already-started Daily puzzle.
-- Every subsequent Daily-state save now retains the persisted target.
-- Added migration for legacy completed Daily wins that were saved before target persistence existed: when stats confirm the saved Daily was won, the final winning guess is used to recover and lock the original target. This repairs already-completed boards whose colors changed after the answer list length changed.
-- Legacy in-progress Daily state without a stored target cannot always reveal what the old target was, so it falls back to the current deterministic target once and then locks that target going forward.
-
-## Files changed in this update
-
-Only these files need to be copied into the repository:
-
-- `public/games/wordle/game.js`
-- `REPO_AUDIT.md`
-
-## Validation performed
-
-- `node --check public/games/wordle/game.js` passes.
-- Confirmed a new Daily stores `{ date, target, guesses, finished }` immediately on load.
-- Confirmed accepted Daily guesses continue saving the same target with the game state.
-- Confirmed legacy completed wins can recover the previous target from the final winning guess when Daily stats mark that date as won.
-
-## Next Wordle manual checks
-
-- Reload the Daily puzzle that changed after editing `la-words.txt`; if it was already completed as a win, confirm the original green/yellow/gray scoring is restored.
-- Start a fresh Daily, note its answer/state, then add another valid five-letter word to `la-words.txt` and reload. Confirm the target and all existing tile colors remain unchanged.
-- Verify Practice mode still draws from the current answer list normally.
-
-# Repo audit update — 2026-08-08 — Wordle viewport fitting
-
-## Wordle changes completed
-
-- Added responsive viewport fitting for the Wordle board and on-screen keyboard so the full playable area stays visible without requiring page scrolling.
-- The normal board/keyboard sizes remain unchanged whenever they already fit in the current window. The components only shrink when the available viewport is too small.
-- The fit is implemented by resizing the actual board dimensions, tile gaps, tile text, keyboard dimensions, key heights, key gaps, and key text through a shared CSS sizing variable. It does not use CSS `zoom` or a transform-based visual zoom.
-- The page heading, toolbar, Daily/Practice/Stats controls, Hard mode control, status row, and shared site header remain at their normal sizes; only the game board and keyboard participate in the shrink-to-fit behavior.
-- Fit calculations account for both available viewport height and width and are recalculated when the browser window is resized or the device orientation changes.
-- Rendering a new board or rebuilding the keyboard also requests a fresh fit calculation, so Daily/Practice transitions and restored saved games remain correctly sized.
-- Reduced the Wordle page's bottom padding to match the reserved viewport clearance, preventing otherwise-unused page padding from creating a scrollbar after the board and keyboard have been fitted.
-
-## Files changed in this update
-
-Only these files need to be copied into the repository:
-
-- `public/games/wordle/game.js`
-- `public/games/wordle/game.css`
-- `REPO_AUDIT.md`
-
-## Validation performed
-
-- `node --check public/games/wordle/game.js` passes.
-- Confirmed the fit factor is capped at `1`, so the board and keyboard never grow beyond their existing normal size.
-- Confirmed the implementation changes actual CSS dimensions rather than applying `zoom` or `transform: scale(...)`.
-- Confirmed resize and orientation-change events trigger a new viewport fit calculation.
-
-## Next Wordle manual checks
-
-- Open Wordle in a normal desktop-sized window and confirm the board and keyboard retain their existing size.
-- Gradually reduce the browser height and confirm the board and keyboard shrink smoothly enough to remain completely visible without vertical scrolling.
-- Reduce both browser width and height and confirm the board/keyboard continue to fit without horizontal scrolling or clipping.
-- Enlarge the window again and confirm the board and keyboard return to their original size rather than remaining shrunken.
-- Test both Daily and Practice modes, including a completed Daily board, and confirm each state remains correctly fitted.
-
-# Repo audit update — 2026-08-08 — Wordle Matrix readability
-
-## Wordle changes completed
-
-- Increased the opacity of the unsolved Wordle board tiles specifically in the Matrix theme so the animated binary rain remains visible as atmosphere without showing strongly through the game board.
-- Increased the opacity of the on-screen keyboard specifically in the Matrix theme for the same reason.
-- Correct/present/absent result colors are unchanged, and no other site themes are affected.
-- The Matrix rain animation itself is unchanged.
-
-## Files changed in this update
-
-Only these files need to be copied into the repository:
-
-- `public/games/wordle/game.css`
-- `REPO_AUDIT.md`
-
-## Next Wordle manual checks
-
-- Open Wordle in the Matrix theme and confirm the binary rain is much less distracting through empty/active board tiles and keyboard keys.
-- Confirm the Matrix effect is still visible around the game and has not been disabled or dimmed globally.
-- Switch through several other themes and confirm their Wordle board/keyboard appearance is unchanged.
-
-# Repo audit update — 2026-08-08 — Wordle theme-state corrections
-
-## Wordle changes completed
-
-- Corrected the Matrix-specific opacity selectors so the darker, more opaque Matrix surfaces apply only to unscored board tiles and unscored keyboard keys.
-- Matrix correct/present/absent tiles and keyboard keys now retain their normal filled green/yellow/gray result colors instead of having the Matrix surface background override the fill and leave only the result-colored outline visible.
-- Added DOS-specific scored-keyboard rules with sufficient selector strength to override the site's global DOS button styling. Correct, present, and absent keyboard keys now visually reflect submitted guesses in DOS mode, including while hovered.
-- Darkened only the unscored keyboard keys in the default Light theme to improve their visibility against the page background. Scored key colors and all hidden site themes remain unchanged.
-
-## Files changed in this update
-
-Only these files need to be copied into the repository:
-
-- `public/games/wordle/game.css`
-- `REPO_AUDIT.md`
-
-## Validation performed
-
-- Confirmed the Matrix opacity selectors explicitly exclude `.correct`, `.present`, and `.absent`, preventing them from overriding scored fills.
-- Confirmed DOS scored-key selectors target `button.wordle-key` and therefore outrank the global DOS button-background rule.
-- Confirmed the Light-theme contrast rule excludes scored keys and excludes hidden `data-site-theme` modes.
-
-## Next Wordle manual checks
-
-- In Matrix, submit guesses containing correct, present, and absent letters and confirm both tiles and keyboard keys use filled green/yellow/gray states while empty/unscored surfaces remain more opaque against the rain.
-- In DOS, submit a mixed-result guess and confirm the on-screen keyboard updates to green/yellow/gray and keeps those colors when hovered.
-- In Light, confirm unscored keyboard keys are modestly darker and easier to distinguish while result colors remain unchanged.
-
-
-# Repo audit update — 2026-08-08 — Wordle Matrix surface opacity correction
-
-## Wordle changes completed
-
-- Replaced the Matrix theme's near-opaque RGBA backgrounds on unscored Wordle tiles and keyboard keys with fully opaque solid Matrix-toned surfaces.
-- This prevents the falling binary rain from visibly showing through the board and keyboard while preserving the Matrix color palette.
-- Scored correct/present/absent tiles and keys remain excluded from the Matrix surface override, so their green/yellow/gray result fills continue to display normally.
-- No other themes were changed.
-
-## Files changed in this update
-
-Only these files need to be copied into the repository:
-
-- `public/games/wordle/game.css`
-- `REPO_AUDIT.md`
-
-## Validation performed
-
-- Confirmed the Matrix unscored tile background is now fully opaque (`#061108`).
-- Confirmed the Matrix unscored keyboard-key background is now fully opaque (`#0a190d`).
-- Confirmed `.correct`, `.present`, and `.absent` states remain excluded from those Matrix-only overrides.
-
-## Next Wordle manual checks
-
-- Open Wordle in Matrix and confirm no falling binary digits are visible through empty/active tiles or unscored keyboard keys.
-- Submit a mixed-result guess and confirm green/yellow/gray fills still display normally on both the board and keyboard.
-
-# Repo audit update — 2026-08-08 — Wordle Matrix container backing fix
-
-## Wordle changes completed
-
-- Corrected the Matrix readability approach after confirming the remaining visible rain was showing through the gaps between Wordle tiles and keyboard keys rather than through the individual surfaces themselves.
-- Added a fully opaque Matrix-only backing surface to the entire `.wordle-board` container so binary rain is blocked behind tile gaps as well as behind the tiles.
-- Added the same fully opaque backing surface to the entire `.wordle-keyboard` container so rain is blocked behind and between keyboard keys.
-- Kept the existing opaque unscored tile/key surfaces and the normal correct/present/absent state fills unchanged.
-- The Matrix rain remains visible around the game areas, and no other themes are affected.
-
-## Files changed in this update
-
-Only these files need to be copied into the repository:
-
-- `public/games/wordle/game.css`
-- `REPO_AUDIT.md`
-
-## Validation performed
-
-- Confirmed the new rules affect only the Matrix theme.
-- Confirmed no scored-state selectors were changed, so green/yellow/gray Wordle result fills remain intact.
-- Confirmed the board and keyboard container backgrounds do not alter their dimensions or responsive fit calculations.
-
-## Next Wordle manual checks
-
-- Open Wordle in Matrix and confirm falling binary digits are no longer visible anywhere inside the rectangular board region, including tile gaps.
-- Confirm binary digits are no longer visible inside the keyboard region, including gaps between keys and rows.
-- Submit a mixed-result guess and confirm correct/present/absent colors still display normally.
-- Confirm the Matrix rain remains visible around the board and keyboard.
-
-### 2026-08-08 — Wordle Matrix rain layering fix
-- Corrected the Matrix/Wordle transparency issue at the stacking-layer source: the Matrix rain canvas uses `z-index: 0`, while shared Matrix CSS only elevated `.tool-main`; Wordle uses `.game-main`, allowing the rain canvas to render over its tiles and keys.
-- Added a Matrix-only stacking context to `.wordle-main` (`position: relative; z-index: 1`) so the rain stays behind Wordle's actual game surfaces.
-- Removed the temporary solid backing from `.wordle-board` and `.wordle-keyboard`; Matrix rain remains visible naturally through the gaps around/between tiles and keys, but not over their filled faces.
-- Existing Matrix solid unscored tile/key fills and scored-state color overrides remain intact.
-
-# Repo audit update — 2026-08-08 — Sudoku control layout, Candidate mode, pause, and completion stats
-
-## Sudoku changes completed
-
-- Reorganized the Sudoku toolbar so Stats appears before Settings, and converted Settings to an icon-only control with an accessible label/title.
-- Added a Pause/Resume icon button immediately beside Settings. Pausing stops the timer, blocks board/number/action input, and obscures the board with a resumable paused cover. Starting a new Daily or Practice puzzle clears the paused state.
-- Reworked the right-side controls so their top remains aligned with the top of the Sudoku board.
-- Added two explicit entry-mode buttons above the number pad: Normal and Candidate. The selected mode is visually highlighted and exposed through `aria-pressed`.
-- Reused the existing notes/candidate data model for Candidate mode rather than introducing a second system. Candidate digits render as small values in their natural 3×3 positions within each cell (1 upper-left through 9 lower-right).
-- Reduced the desktop number-pad buttons to roughly 70% of their previous visual size while retaining the existing spacing between buttons.
-- Replaced the text action controls below the number pad with four icon-only controls in this order: Undo, Redo, Backspace/Erase, Hint. Each icon button has an accessible label and title.
-- Removed the old standalone Notes button; Normal/Candidate now directly controls that same notes-entry behavior.
-- Undo and Redo are blocked while paused, consistent with the rest of puzzle interaction.
-- Sudoku stats now open automatically shortly after any puzzle is completed. The existing Close button remains available so the user can dismiss the modal and view the completed board again.
-- The completed board remains non-interactive through the existing `complete` guards after the stats modal is closed.
-
-## Files changed in this update
-
-Only these files need to be copied into the repository:
-
-- `public/games/sudoku/index.html`
-- `public/games/sudoku/game.css`
-- `public/games/sudoku/game.js`
-- `REPO_AUDIT.md`
-
-## Validation performed
-
-- `node --check public/games/sudoku/game.js` passes.
-- Confirmed all controls referenced by the revised JavaScript exist in the updated Sudoku HTML.
-- Confirmed Normal/Candidate share the existing `notesMode` state and Candidate entries continue using the existing 3×3 note renderer.
-- Confirmed `startTimer()` will not restart the timer while the explicit Pause state is active.
-- Confirmed a fresh Daily or Practice game resets Pause before rendering/starting its timer.
-
-## Next Sudoku manual checks
-
-- Confirm Stats and the Settings icon appear in the intended swapped order and Pause is immediately beside Settings.
-- Confirm Pause stops the timer, blocks puzzle entry, obscures the board, and resumes from either the Pause/Play icon or the paused-board cover.
-- Confirm Normal/Candidate highlighting follows both button clicks and the `N` keyboard shortcut.
-- Enter several Candidate digits into a cell and confirm each digit occupies its expected 3×3 mini-grid location.
-- Check the compact number pad and icon action row at desktop and narrow/mobile window widths.
-- Complete both a Daily and Practice puzzle and confirm stats automatically opens, can be closed, and the completed board remains visible but read-only.
-
-# Repo audit update — 2026-08-08 — Sudoku icon polish and theme corrections
-
-## Sudoku changes completed
-
-- Reduced the Normal/Candidate mode controls and constrained their combined width to the exact desktop number-pad width so their left and right edges align with the 3×3 pad beneath them.
-- Changed the Candidate-mode number pad preview so each button now shows its digit in the same miniature 3×3 position used when that candidate is entered into a Sudoku cell (1 upper-left through 9 lower-right). Normal mode continues to show centered full-size digits.
-- Replaced the Settings artwork with a simple outlined cog closer to the supplied gear reference.
-- Replaced the Pause artwork with the same two vertical stroke lines used by Puzzle Maker; Resume retains the play triangle when the game is paused.
-- Replaced Undo with the exact two-path restart-arrow geometry used by Puzzle Maker and made Redo the horizontally mirrored version of that same icon.
-- Reworked Erase/Backspace to an outlined tag/backspace silhouette with a centered X, matching the supplied reference more closely.
-- Added small ray/tick marks around the Hint lightbulb while keeping the bulb itself as an outline icon.
-- Strengthened DOS Sudoku box boundaries with explicit 3px outer and 3×3 separator lines so the nine 3×3 regions are visually distinct from the ordinary cell grid.
-- Corrected Matrix control visibility by placing `.sudoku-main` above the Matrix rain canvas and giving Sudoku buttons/selects/number-pad keys a fully opaque Matrix surface. The animated rain may still be visible through page gaps but cannot render over the control faces.
-- Restored the visual weight of pre-filled/given digits in CRT, Amber, Fallout, and Matrix. Those single-face terminal fonts do not visibly respond enough to `font-weight` alone, so givens now use a very small current-color text stroke/shadow in addition to weight 900.
-
-## Files changed in this update
-
-Only these files need to be copied into the repository:
-
-- `public/games/sudoku/index.html`
-- `public/games/sudoku/game.css`
-- `public/games/sudoku/game.js`
-- `REPO_AUDIT.md`
-
-## Validation performed
-
-- `node --check public/games/sudoku/game.js` passes.
-- Confirmed Candidate-mode pad rendering reuses the same 1–9 positional mapping as in-cell Sudoku notes.
-- Confirmed Undo uses the Puzzle Maker restart SVG paths and Redo mirrors the same artwork rather than using a separate approximation.
-- Confirmed the new icons are stroke-based and inherit the current theme color through `currentColor`.
-- Confirmed Matrix opacity and DOS box-border fixes are scoped to Sudoku and do not modify shared theme CSS.
-
-## Next Sudoku manual checks
-
-- Compare the Normal/Candidate control edges against the number-pad edges at desktop width.
-- Toggle Candidate mode and confirm digits 1–9 shift to the expected mini-grid positions in the number-pad buttons.
-- Check Settings, Pause, Undo, Redo, Erase, and Hint icons at the actual rendered toolbar size.
-- In DOS, confirm all nine 3×3 Sudoku boxes have clearly heavier separators than ordinary cells.
-- In Matrix, verify binary rain cannot be seen over the face of any Sudoku button, select, or number-pad key.
-- In CRT, Amber, Fallout, and Matrix, compare given digits against user-entered digits and confirm givens are visibly heavier.
-
-# Repo audit update — 2026-08-08 — Sudoku final spacing/icon cleanup
-
-## Sudoku changes completed
-
-- Swapped the visual directions of the Undo and Redo icons so Undo now uses the mirrored restart-arrow artwork and Redo uses the unmirrored Puzzle Maker restart-arrow artwork.
-- Reduced the desktop gap between the Sudoku board and the right-side controls from `1.25rem` to `.75rem` so the controls sit closer to the board while preserving all internal number-pad spacing.
-- Added `1rem` of top margin above the stats modal's Close/Clear control so there is visible separation after the Hard statistics block.
-
-## Files changed in this update
-
-Only these files need to be copied into the repository:
-
-- `public/games/sudoku/index.html`
-- `public/games/sudoku/game.css`
-- `REPO_AUDIT.md`
-
-## Validation performed
-
-- Confirmed Undo and Redo keep their existing button IDs/behavior; only the SVG mirroring assignment changed.
-- Confirmed the number pad's internal cell/button gaps remain unchanged; only the board-to-controls column gap was reduced.
-- Confirmed the stats spacing is scoped to `#close-stats` and does not affect other modal buttons.
+- `node --check public/games/puzzle-maker/game.js` passes.
+- Confirmed the drag path no longer calls `getScreenCTM()` or performs inverse SVG matrix conversion.
+- Confirmed pointerdown stacking calls `placeGroup()` rather than a full `reorderGroups()` pass.
+- Confirmed full `reorderGroups()` remains available for initial scatter/setup, where a one-time complete ordering pass is appropriate.
+- Confirmed merges preserve the existing size-first / recency-second stacking rule by repositioning only the merged group.
+
+## Next Puzzle Maker manual checks
+
+- On a 400–600 piece puzzle, click and immediately drag several loose pieces. Movement should begin with the pointer instead of hesitating for a fraction of a second.
+- Repeat with 2-, 3-, and larger connected groups and confirm drag startup remains responsive.
+- Confirm smaller connected groups still render above larger groups and most-recently clicked groups still render above other groups of the same size.
+- Connect groups of different sizes repeatedly and confirm stacking tiers remain correct after every snap.
+- Test dragging at several zoom levels to confirm screen-pixel motion maps correctly to puzzle movement at each zoom.
