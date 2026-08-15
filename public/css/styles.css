@@ -2795,10 +2795,17 @@ html[data-site-theme="matrix"] #matrix-rain-canvas.is-active {
 }
 
 html[data-site-theme="matrix"] .site-header,
-html[data-site-theme="matrix"] .tool-main,
-html[data-site-theme="matrix"] .repo-theme-notice {
+html[data-site-theme="matrix"] .tool-main {
   position: relative;
   z-index: 1;
+}
+
+/* Theme notices must remain viewport-fixed in Matrix mode. The rain layer only
+   needs the notice raised above it; changing its positioning context moves the
+   toast into normal page flow and breaks the shared bottom-right placement. */
+html[data-site-theme="matrix"] .repo-theme-notice {
+  position: fixed;
+  z-index: 1000;
 }
 
 /* Keep homepage content and the Notes sidebar above the rain without

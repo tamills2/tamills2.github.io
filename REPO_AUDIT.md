@@ -596,3 +596,9 @@ Only these files need to be copied into the test repository:
 
 - Verified the DOS-only `.puzzle-workspace` override now uses `#c0c0c0`.
 - Verified no JavaScript files changed in this pass.
+
+### 2026-08-16 — Matrix theme notification positioning
+- Fixed the shared hidden-theme notification in Matrix mode.
+- Root cause: the Matrix rain layering rule changed `.repo-theme-notice` from its global `position: fixed` to `position: relative`, which removed the normal bottom-right viewport anchoring.
+- Matrix now keeps the notice fixed at the shared `right: 1rem; bottom: 1rem` position while retaining `z-index: 1000` above the rain canvas.
+- This is a global theme CSS fix; Puzzle Maker no longer receives the notice in the left-middle of its game area.
