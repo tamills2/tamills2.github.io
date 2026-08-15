@@ -578,3 +578,21 @@ Only these files need to be copied into the test repository:
 - Confirm the timer displays `00:00:00` initially and correctly rolls through minutes/hours.
 - Confirm the completion `X` is clearly visible in Matrix.
 - Confirm the DOS workspace is visibly darker/distinct from the main DOS blue background.
+
+
+# Repo audit update — 2026-08-16 — Puzzle Maker DOS workspace color
+
+## Changes
+
+- Changed the DOS-theme Puzzle Maker workspace background from dark navy (`#000033`) to the classic DOS UI gray (`#c0c0c0`) used by the theme's panels and controls.
+- No Puzzle Maker behavior, Canvas rendering, persistence, zoom, drag, snapping, or other theme styling was changed.
+
+## Files changed
+
+- `public/games/puzzle-maker/game.css`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- Verified the DOS-only `.puzzle-workspace` override now uses `#c0c0c0`.
+- Verified no JavaScript files changed in this pass.
