@@ -588,16 +588,39 @@
     }
   }
 
+  function visibleWorldBounds() {
+    // Piece bitmaps include padding for tabs/outlines. Use their real bitmap
+    // bounds for culling so high zoom only draws what can actually reach the
+    // viewport instead of scaling hundreds of fully offscreen images.
+    return {
+      left: viewX,
+      top: viewY,
+      right: viewX + canvasCssWidth / zoom,
+      bottom: viewY + canvasCssHeight / zoom,
+    };
+  }
+
+  function pieceIsVisible(piece, bounds, dx = 0, dy = 0) {
+    if (!piece?.bitmap) return false;
+    const left = piece.x + dx - BITMAP_PAD;
+    const top = piece.y + dy - BITMAP_PAD;
+    const right = left + piece.bitmap.width;
+    const bottom = top + piece.bitmap.height;
+    return right >= bounds.left && left <= bounds.right
+      && bottom >= bounds.top && top <= bounds.bottom;
+  }
+
   function buildDragStaticLayer(activeGroupId) {
     ensureDragStaticLayer();
     dragStaticCtx.setTransform(1, 0, 0, 1, 0, 0);
     dragStaticCtx.clearRect(0, 0, dragStaticCanvas.width, dragStaticCanvas.height);
     setCameraTransform(dragStaticCtx);
+    const bounds = visibleWorldBounds();
     for (const groupId of orderedGroupIds()) {
       if (groupId === activeGroupId) continue;
       for (const id of groups.get(groupId) || []) {
         const piece = pieces[id];
-        if (!piece?.bitmap) continue;
+        if (!pieceIsVisible(piece, bounds)) continue;
         dragStaticCtx.drawImage(piece.bitmap, piece.x - BITMAP_PAD, piece.y - BITMAP_PAD);
       }
     }
@@ -611,12 +634,14 @@
     // During a drag the stationary puzzle does not change. Reuse one cached
     // frame and redraw only the active group, matching Jigidi's cached-piece
     // rendering model while avoiding hundreds of drawImage calls per move.
+    const bounds = visibleWorldBounds();
+
     if (drag && dragStaticCanvas) {
       ctx.drawImage(dragStaticCanvas, 0, 0);
       setCameraTransform(ctx);
       for (const id of groups.get(drag.groupId) || []) {
         const piece = pieces[id];
-        if (!piece?.bitmap) continue;
+        if (!pieceIsVisible(piece, bounds, drag.dx, drag.dy)) continue;
         ctx.drawImage(
           piece.bitmap,
           piece.x + drag.dx - BITMAP_PAD,
@@ -630,7 +655,7 @@
     for (const groupId of orderedGroupIds()) {
       for (const id of groups.get(groupId) || []) {
         const piece = pieces[id];
-        if (!piece?.bitmap) continue;
+        if (!pieceIsVisible(piece, bounds)) continue;
         ctx.drawImage(piece.bitmap, piece.x - BITMAP_PAD, piece.y - BITMAP_PAD);
       }
     }

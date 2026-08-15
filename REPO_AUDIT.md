@@ -487,3 +487,52 @@ Only these files need to be copied into the test repository:
 - Slowly roll/scroll one or two increments and confirm zoom is precise and gradual.
 - Perform a faster wheel/trackpad gesture and confirm zoom accelerates noticeably without flinging the camera.
 - Confirm `+` / `-`, pan, Recenter, snapping, group stacking, pause, completion, and fullscreen remain unchanged.
+
+# Repo audit update — 2026-08-14 — Puzzle Maker Canvas high-zoom culling
+
+## Purpose
+
+- Followed up on the Canvas prototype after testing showed zoom and dragging were largely smooth, but zoom became progressively more latent at higher magnification.
+- Kept the Jigidi-style cached-piece Canvas architecture intact and made a narrow renderer-only optimization.
+
+## High-zoom rendering fix
+
+- Added viewport culling for cached piece bitmaps.
+- The renderer now computes the visible world rectangle from `viewX`, `viewY`, `zoom`, and the Canvas CSS dimensions once per frame.
+- Each cached piece bitmap is tested against that rectangle before `drawImage()` is called.
+- Fully offscreen pieces are skipped instead of being scaled by the current camera and clipped later by Canvas.
+- The same visibility test is used when building the stationary drag cache and when drawing the active dragged group.
+- Piece bitmap padding is included in the visibility bounds, so tabs and outlines close to the viewport edge are not incorrectly clipped.
+
+## Why this matters
+
+- Before this change, every render still issued `drawImage()` for every puzzle piece, even at high zoom when only a small portion of the puzzle was visible.
+- With a 400–600 piece puzzle, higher zoom therefore caused hundreds of increasingly magnified offscreen bitmap draws on every frame.
+- After culling, higher zoom should reduce the number of piece draws because fewer world-space pieces intersect the viewport.
+
+## Behavior intentionally unchanged
+
+- Variable/velocity-sensitive wheel zoom and cursor anchoring are unchanged.
+- `+` / `-` zoom controls are unchanged.
+- Cached per-piece Jigidi visuals are unchanged.
+- Drag stationary-frame caching is unchanged.
+- Piece hit testing, snapping, group ordering, panning, pause, completion, fullscreen, and menu behavior are unchanged.
+
+## Files changed
+
+- `public/games/puzzle-maker/game.js`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes.
+- Verified culling uses each bitmap's actual padded world-space rectangle.
+- Verified normal rendering, drag background generation, and active-group drawing all use the same visibility test.
+
+## Manual checks
+
+- Test a 400–600 piece puzzle from minimum zoom through maximum zoom and confirm scroll responsiveness does not progressively degrade as zoom increases.
+- Test slow and fast wheel gestures to confirm variable zoom still feels unchanged.
+- Test `+` / `-` at high zoom.
+- Drag a piece/group partly on and off each viewport edge and confirm tabs/outlines do not disappear prematurely.
+- Confirm Recenter, panning, snapping, group ordering, pause, completion, and fullscreen are unchanged.
