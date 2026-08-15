@@ -536,3 +536,45 @@ Only these files need to be copied into the test repository:
 - Test `+` / `-` at high zoom.
 - Drag a piece/group partly on and off each viewport edge and confirm tabs/outlines do not disappear prematurely.
 - Confirm Recenter, panning, snapping, group ordering, pause, completion, and fullscreen are unchanged.
+
+# Repo audit update — 2026-08-16 — Puzzle Maker persistence and theme polish
+
+## Changes
+
+- Changed the Puzzle Maker timer display from `MM:SS` to `HH:MM:SS` everywhere the elapsed time is shown, including the minimized clock and completion card.
+- Added a Matrix-specific completion-close style so the completion-card `X` remains visible against the Matrix theme and uses a font with a reliable close glyph.
+- Added a DOS-specific Puzzle Maker workspace color (`#000033`) so the puzzle canvas is visually distinct from the DOS page background (`#0000aa`).
+- Added local in-progress puzzle persistence.
+  - Puzzle progress state is stored in `localStorage` under a versioned key.
+  - Uploaded source images are stored in IndexedDB rather than `localStorage`, avoiding normal Web Storage size limits for image data.
+  - Built-in puzzles save the built-in image reference instead of copying image data.
+  - Saved state includes piece positions, connected-group membership/order, elapsed time, timer-started state, pause state, camera zoom, and camera position.
+  - Progress is saved on meaningful state changes and flushed on `pagehide`.
+  - Returning to Puzzle Maker automatically restores the saved in-progress puzzle.
+  - Completed puzzles and `New Puzzle` clear the saved in-progress state; uploaded image data is also removed when it is no longer needed.
+- Canvas v3 rendering, viewport culling, cached-piece bitmaps, velocity-sensitive wheel zoom, drag caching, snapping, and group ordering are unchanged.
+
+## Files changed
+
+- `public/games/puzzle-maker/game.js`
+- `public/games/puzzle-maker/game.css`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes.
+- Verified persistence serializes only logical puzzle state and does not attempt to serialize Canvas/Path2D objects.
+- Verified uploaded images use IndexedDB-backed Blob storage so reloads do not depend on expired object URLs.
+- Verified built-in images restore from their existing local repository path.
+- Verified completion and New Puzzle clear saved progress.
+
+## Manual checks
+
+- Start a built-in puzzle, move/connect several pieces, zoom/pan, leave the page, return, and confirm the exact puzzle state resumes.
+- Repeat with an uploaded JPG/PNG/WebP and confirm the uploaded image also restores after leaving/reloading.
+- Confirm a paused puzzle restores paused and a running puzzle resumes its timer from the saved elapsed time.
+- Complete a puzzle, leave/return, and confirm the completed puzzle is not restored as an in-progress puzzle.
+- Confirm `New Puzzle` clears the saved puzzle.
+- Confirm the timer displays `00:00:00` initially and correctly rolls through minutes/hours.
+- Confirm the completion `X` is clearly visible in Matrix.
+- Confirm the DOS workspace is visibly darker/distinct from the main DOS blue background.

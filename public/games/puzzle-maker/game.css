@@ -567,3 +567,23 @@
   color: var(--text);
   outline: none;
 }
+
+/* Puzzle Maker theme-specific finishing details. */
+html[data-site-theme="matrix"] .puzzle-complete-close {
+  color: #8dff9d !important;
+  opacity: 1 !important;
+  text-shadow: 0 0 .35rem rgba(56, 255, 98, .45);
+}
+
+html[data-site-theme="matrix"] .puzzle-complete-close:hover,
+html[data-site-theme="matrix"] .puzzle-complete-close:focus-visible {
+  color: #020704 !important;
+  background: #8dff9d !important;
+}
+
+html[data-site-theme="dos"] .puzzle-workspace {
+  background: #000033;
+}
+html[data-site-theme="matrix"] .puzzle-complete-close {
+  font-family: Arial, Helvetica, sans-serif !important;
+}

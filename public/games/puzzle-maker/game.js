@@ -7,6 +7,10 @@
   const BITMAP_PAD = Math.ceil(PIECE * .40);
   const SNAP_SCREEN_PX = 4;
   const MAX_PIECES = 600;
+  const PROGRESS_KEY = "repo-puzzle-progress-v1";
+  const PUZZLE_DB = "repo-puzzle-local-v1";
+  const PUZZLE_STORE = "assets";
+  const ACTIVE_UPLOAD_KEY = "active-upload";
 
   const setup = document.querySelector("#puzzle-setup");
   const game = document.querySelector("#puzzle-game");
@@ -93,6 +97,10 @@
   let dragStaticCanvas = null;
   let dragStaticCtx = null;
   let lastWheelAt = 0;
+  let sourceKind = null;
+  let sourceRef = null;
+  let saveTimer = 0;
+  let restoringProgress = false;
 
   const svgEl = (tag, attrs = {}) => {
     const element = document.createElementNS(NS, tag);
@@ -103,7 +111,119 @@
   };
 
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-  const formatTime = seconds => `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+  const formatTime = seconds => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  };
+
+  function openPuzzleDb() {
+    return new Promise((resolve, reject) => {
+      if (!window.indexedDB) return reject(new Error("IndexedDB unavailable"));
+      const request = indexedDB.open(PUZZLE_DB, 1);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        if (!db.objectStoreNames.contains(PUZZLE_STORE)) db.createObjectStore(PUZZLE_STORE);
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async function writeLocalAsset(key, value) {
+    const db = await openPuzzleDb();
+    try {
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(PUZZLE_STORE, "readwrite");
+        tx.objectStore(PUZZLE_STORE).put(value, key);
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error);
+      });
+    } finally {
+      db.close();
+    }
+  }
+
+  async function readLocalAsset(key) {
+    const db = await openPuzzleDb();
+    try {
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction(PUZZLE_STORE, "readonly");
+        const request = tx.objectStore(PUZZLE_STORE).get(key);
+        request.onsuccess = () => resolve(request.result || null);
+        request.onerror = () => reject(request.error);
+      });
+    } finally {
+      db.close();
+    }
+  }
+
+  async function deleteLocalAsset(key) {
+    try {
+      const db = await openPuzzleDb();
+      try {
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction(PUZZLE_STORE, "readwrite");
+          tx.objectStore(PUZZLE_STORE).delete(key);
+          tx.oncomplete = resolve;
+          tx.onerror = () => reject(tx.error);
+        });
+      } finally {
+        db.close();
+      }
+    } catch (_) {}
+  }
+
+  function progressSnapshot() {
+    if (!source || !pieces.length || complete || setup.hidden === false) return null;
+    return {
+      version: 1,
+      sourceKind,
+      sourceRef,
+      sourceTitle,
+      cols: currentCols,
+      rows: currentRows,
+      elapsed,
+      timerStarted,
+      paused,
+      zoom,
+      viewX,
+      viewY,
+      groupRecencyCounter,
+      groupRecency: [...groupRecency.entries()],
+      pieces: pieces.map(piece => ({
+        id: piece.id,
+        x: piece.x,
+        y: piece.y,
+        group: piece.group,
+      })),
+    };
+  }
+
+  function saveProgressNow() {
+    window.clearTimeout(saveTimer);
+    saveTimer = 0;
+    if (restoringProgress) return;
+    const snapshot = progressSnapshot();
+    if (!snapshot) return;
+    try {
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(snapshot));
+    } catch (_) {}
+  }
+
+  function scheduleProgressSave(delay = 180) {
+    if (restoringProgress || complete) return;
+    window.clearTimeout(saveTimer);
+    saveTimer = window.setTimeout(saveProgressNow, delay);
+  }
+
+  function clearSavedProgress({ clearUpload = false } = {}) {
+    window.clearTimeout(saveTimer);
+    saveTimer = 0;
+    localStorage.removeItem(PROGRESS_KEY);
+    if (clearUpload) deleteLocalAsset(ACTIVE_UPLOAD_KEY);
+  }
 
   function updateClock() {
     const value = formatTime(elapsed);
@@ -143,13 +263,13 @@
 
   document.querySelector("#default-image").addEventListener("change", event => {
     if (!event.target.value) return;
-    loadSource(`./images/${event.target.value}`, event.target.selectedOptions[0].textContent);
+    loadSource(`./images/${event.target.value}`, event.target.selectedOptions[0].textContent, { kind: "builtin", ref: event.target.value });
   });
 
   const uploadInput = document.querySelector("#image-upload");
   const uploadZone = document.querySelector("#upload-dropzone");
 
-  function acceptUpload(file) {
+  async function acceptUpload(file) {
     if (!file) return;
     if (!/^image\/(jpeg|png|webp)$/.test(file.type)) {
       alert("Choose a JPG, PNG, or WebP image.");
@@ -159,7 +279,8 @@
     if (uploadedObjectUrl) URL.revokeObjectURL(uploadedObjectUrl);
     uploadedObjectUrl = URL.createObjectURL(file);
     document.querySelector("#default-image").value = "";
-    loadSource(uploadedObjectUrl, file.name);
+    try { await writeLocalAsset(ACTIVE_UPLOAD_KEY, file); } catch (_) {}
+    loadSource(uploadedObjectUrl, file.name, { kind: "upload", ref: ACTIVE_UPLOAD_KEY });
   }
 
   uploadInput.addEventListener("change", event => acceptUpload(event.target.files?.[0]));
@@ -188,15 +309,18 @@
 
   uploadZone.addEventListener("drop", event => acceptUpload(event.dataTransfer?.files?.[0]));
 
-  function loadSource(url, title) {
+  function loadSource(url, title, meta = {}) {
     const image = new Image();
     image.onload = () => {
       source = url;
       sourceImage = image;
       sourceTitle = title;
+      sourceKind = meta.kind || sourceKind;
+      sourceRef = meta.ref || sourceRef;
       imgW = image.naturalWidth;
       imgH = image.naturalHeight;
       prepareOptions();
+      if (meta.restoreState) restorePuzzleFromState(meta.restoreState);
     };
     image.onerror = () => alert("The image could not be loaded.");
     image.src = url;
@@ -514,6 +638,7 @@
     requestAnimationFrame(() => {
       syncCanvasSize();
       scatterAllPieces();
+      scheduleProgressSave(0);
     });
   }
 
@@ -752,6 +877,7 @@
       position(piece);
     }
     reorderGroups();
+    scheduleProgressSave();
   }
 
   function startPieceDrag(event, piece) {
@@ -812,6 +938,7 @@
     canvas.style.cursor = "grab";
     trySnaps(groupId);
     requestRender();
+    scheduleProgressSave();
   }
 
   canvas.addEventListener("pointerup", finishDrag);
@@ -880,6 +1007,7 @@
     if (groups.size !== 1 || !pieces.length || complete) return;
     complete = true;
     stopTimer();
+    clearSavedProgress({ clearUpload: sourceKind === "upload" });
     fitCompletedPuzzle();
     workspace.classList.add("puzzle-complete-flash");
     setTimeout(() => workspace.classList.remove("puzzle-complete-flash"), 900);
@@ -947,6 +1075,7 @@
       if (!paused && !complete) {
         elapsed += 1;
         updateClock();
+        scheduleProgressSave(0);
       }
     }, 1000);
   }
@@ -970,6 +1099,7 @@
     if (paused) stopTimer();
     else if (timerStarted) startTimer();
     syncPauseIcons();
+    scheduleProgressSave(0);
   }
 
   pauseButton.addEventListener("click", () => setPaused(!paused));
@@ -1007,6 +1137,7 @@
     viewX = minX + contentWidth / 2 - workspace.clientWidth / zoom / 2;
     viewY = minY + contentHeight / 2 - workspace.clientHeight / zoom / 2;
     resizeView();
+    scheduleProgressSave();
   }
 
   function setZoom(next, centerX, centerY) {
@@ -1021,6 +1152,7 @@
     viewX = cx - newWidth / 2;
     viewY = cy - newHeight / 2;
     resizeView();
+    scheduleProgressSave();
   }
 
   document.querySelector("#zoom-in").addEventListener("click", () => {
@@ -1084,6 +1216,7 @@
     if (!pan || event.pointerId !== pan.pointerId) return;
     try { workspace.releasePointerCapture?.(event.pointerId); } catch (_) {}
     pan = null;
+    scheduleProgressSave();
   }
 
   workspace.addEventListener("pointerup", finishPan);
@@ -1124,7 +1257,91 @@
     viewX = anchorX - pointerX / zoom;
     viewY = anchorY - pointerY / zoom;
     resizeView();
+    scheduleProgressSave();
   }, { passive: false });
+
+  function restorePuzzleFromState(state) {
+    if (!state || state.version !== 1 || !state.cols || !state.rows) return;
+    restoringProgress = true;
+    createPuzzle(state.cols, state.rows);
+
+    requestAnimationFrame(() => {
+      const savedById = new Map((state.pieces || []).map(item => [item.id, item]));
+      groups.clear();
+
+      for (const piece of pieces) {
+        const saved = savedById.get(piece.id);
+        if (saved) {
+          piece.x = Number(saved.x) || 0;
+          piece.y = Number(saved.y) || 0;
+          piece.group = Number(saved.group);
+        }
+        if (!Number.isFinite(piece.group)) piece.group = piece.id;
+        if (!groups.has(piece.group)) groups.set(piece.group, new Set());
+        groups.get(piece.group).add(piece.id);
+      }
+
+      groupRecency = new Map(Array.isArray(state.groupRecency) ? state.groupRecency : []);
+      for (const groupId of groups.keys()) {
+        if (!groupRecency.has(groupId)) groupRecency.set(groupId, groupRecencyCounter++);
+      }
+      groupRecencyCounter = Math.max(Number(state.groupRecencyCounter) || 0, groupRecencyCounter);
+      groupOrderDirty = true;
+
+      elapsed = Math.max(0, Number(state.elapsed) || 0);
+      timerStarted = Boolean(state.timerStarted);
+      paused = Boolean(state.paused);
+      zoom = clamp(Number(state.zoom) || 1, .35, 3);
+      viewX = Number(state.viewX) || 0;
+      viewY = Number(state.viewY) || 0;
+      complete = false;
+      pauseOverlay.hidden = !paused;
+      completeOverlay.hidden = true;
+      syncPauseIcons();
+      updateClock();
+      requestRender();
+
+      restoringProgress = false;
+      if (timerStarted && !paused) startTimer();
+      saveProgressNow();
+    });
+  }
+
+  async function restoreSavedProgress() {
+    let state = null;
+    try { state = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "null"); } catch (_) {}
+    if (!state || state.version !== 1 || !state.cols || !state.rows) return;
+
+    try {
+      if (state.sourceKind === "builtin" && state.sourceRef) {
+        loadSource(`./images/${state.sourceRef}`, state.sourceTitle || state.sourceRef, {
+          kind: "builtin",
+          ref: state.sourceRef,
+          restoreState: state,
+        });
+        return;
+      }
+
+      if (state.sourceKind === "upload") {
+        const blob = await readLocalAsset(state.sourceRef || ACTIVE_UPLOAD_KEY);
+        if (!blob) throw new Error("Saved upload missing");
+        if (uploadedObjectUrl) URL.revokeObjectURL(uploadedObjectUrl);
+        uploadedObjectUrl = URL.createObjectURL(blob);
+        loadSource(uploadedObjectUrl, state.sourceTitle || "Saved puzzle", {
+          kind: "upload",
+          ref: state.sourceRef || ACTIVE_UPLOAD_KEY,
+          restoreState: state,
+        });
+        return;
+      }
+
+      throw new Error("Unsupported saved puzzle source");
+    } catch (_) {
+      clearSavedProgress();
+    }
+  }
+
+  window.addEventListener("pagehide", saveProgressNow);
 
   function restartCurrentPuzzle() {
     const currentEdges = edges;
@@ -1150,6 +1367,7 @@
   });
 
   function resetToSetup() {
+    clearSavedProgress({ clearUpload: sourceKind === "upload" });
     stopTimer();
     timerStarted = false;
     complete = false;
@@ -1171,6 +1389,8 @@
     sourceImage = null;
     scaledSourceCanvas = null;
     sourceTitle = "";
+    sourceKind = null;
+    sourceRef = null;
     imgW = 0;
     imgH = 0;
     grids = [];
@@ -1199,4 +1419,6 @@
 
   document.querySelector("#new-button").addEventListener("click", newPuzzle);
   document.querySelector("#complete-new-button").addEventListener("click", newPuzzle);
+
+  restoreSavedProgress();
 })();
