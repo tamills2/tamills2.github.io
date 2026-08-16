@@ -38,6 +38,10 @@
         </select>
       </div>
 
+      <figure class="puzzle-selection-preview" id="puzzle-selection-preview" hidden>
+        <img id="puzzle-selection-preview-image" alt="Selected puzzle image preview">
+      </figure>
+
       <div class="puzzle-options" id="puzzle-options" hidden>
         <div class="puzzle-source-details">
           <strong id="image-info"></strong>
@@ -66,7 +70,7 @@
         <svg id="puzzle-svg" aria-label="Jigsaw puzzle workspace"></svg>
 
         <div class="puzzle-canvas-toolbar" aria-label="Puzzle controls">
-          <span class="puzzle-mini-clock" id="puzzle-mini-clock" hidden>00:00</span>
+          <span class="puzzle-mini-clock" id="puzzle-mini-clock" hidden>00:00:00</span>
           <button class="puzzle-icon-button" id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in">+</button>
           <button class="puzzle-icon-button" id="recenter-button" type="button" aria-label="Recenter puzzle pieces" title="Recenter pieces">
             <svg class="recenter-icon" aria-hidden="true" viewBox="0 0 24 24">
@@ -97,7 +101,7 @@
                 <svg class="pause-icon" aria-hidden="true" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"></path></svg>
                 <svg class="resume-icon" aria-hidden="true" viewBox="0 0 24 24" hidden><path d="m8 5 11 7-11 7z"></path></svg>
               </button>
-              <span class="puzzle-settings-clock" id="puzzle-timer">00:00</span>
+              <span class="puzzle-settings-clock" id="puzzle-timer">00:00:00</span>
               <button class="puzzle-status-button" id="restart-button" type="button" aria-label="Restart puzzle" title="Restart">
                 <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M19.25 9.25A7.5 7.5 0 1 0 19.1 15"></path><path d="M19.5 3.75v4.5H15"></path></svg>
               </button>
@@ -136,7 +140,7 @@
           <section class="puzzle-complete-card" role="dialog" aria-modal="true" aria-labelledby="puzzle-complete-title">
             <button class="puzzle-complete-close" id="puzzle-complete-close" type="button" aria-label="Close completion message" title="View completed puzzle">×</button>
             <h2 id="puzzle-complete-title">Puzzle Completed</h2>
-            <div class="puzzle-complete-time" id="puzzle-complete-time">00:00</div>
+            <div class="puzzle-complete-time" id="puzzle-complete-time">00:00:00</div>
             <div class="puzzle-complete-name" id="puzzle-complete-name">Puzzle</div>
             <img class="puzzle-complete-preview" id="puzzle-complete-preview" alt="Completed puzzle">
             <div class="puzzle-complete-actions">

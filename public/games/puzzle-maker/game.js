@@ -42,6 +42,8 @@
   const pieceMax = document.querySelector("#piece-max");
   const imageInfo = document.querySelector("#image-info");
   const rangeInfo = document.querySelector("#piece-range");
+  const selectionPreview = document.querySelector("#puzzle-selection-preview");
+  const selectionPreviewImage = document.querySelector("#puzzle-selection-preview-image");
   const timerEl = document.querySelector("#puzzle-timer");
   const miniClock = document.querySelector("#puzzle-mini-clock");
   const settings = document.querySelector("#puzzle-settings");
@@ -319,6 +321,9 @@
       sourceRef = meta.ref || sourceRef;
       imgW = image.naturalWidth;
       imgH = image.naturalHeight;
+      selectionPreviewImage.src = url;
+      selectionPreviewImage.alt = `${title} preview`;
+      selectionPreview.hidden = false;
       prepareOptions();
       if (meta.restoreState) restorePuzzleFromState(meta.restoreState);
     };
@@ -1395,6 +1400,9 @@
     imgH = 0;
     grids = [];
     options.hidden = true;
+    selectionPreview.hidden = true;
+    selectionPreviewImage.removeAttribute("src");
+    selectionPreviewImage.alt = "Selected puzzle image preview";
     uploadInput.value = "";
     document.querySelector("#default-image").value = "";
     if (uploadedObjectUrl) {

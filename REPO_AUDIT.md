@@ -602,3 +602,39 @@ Only these files need to be copied into the test repository:
 - Root cause: the Matrix rain layering rule changed `.repo-theme-notice` from its global `position: fixed` to `position: relative`, which removed the normal bottom-right viewport anchoring.
 - Matrix now keeps the notice fixed at the shared `right: 1rem; bottom: 1rem` position while retaining `z-index: 1000` above the rain canvas.
 - This is a global theme CSS fix; Puzzle Maker no longer receives the notice in the left-middle of its game area.
+
+# Repo audit update — 2026-08-16 — Puzzle Maker selected-image preview
+
+## Changes
+
+- Added a compact selected-image preview to the Puzzle Maker setup screen.
+- The preview appears after either a built-in/default image or a local JPG/PNG/WebP upload loads successfully.
+- Switching image sources immediately updates the same preview.
+- Returning to a blank `New Puzzle` setup clears and hides the preview along with the other image-selection state.
+- The preview uses `object-fit: contain` with bounded dimensions so portrait, landscape, and square images remain fully visible without dominating the setup page.
+- Updated the static timer placeholders in Puzzle Maker markup to `00:00:00` so they match the existing `HH:MM:SS` JavaScript timer format before the first script-driven refresh.
+- Canvas rendering, persistence, zoom, drag caching/culling, snapping, completion, and theme behavior are unchanged.
+
+## Files changed
+
+- `public/games/puzzle-maker/index.html`
+- `public/games/puzzle-maker/game.js`
+- `public/games/puzzle-maker/game.css`
+- `REPO_AUDIT.md`
+
+## Validation performed
+
+- `node --check public/games/puzzle-maker/game.js` passes.
+- Verified the preview elements use unique IDs and are present before `game.js` queries them.
+- Verified successful `loadSource()` calls update the preview for both built-in paths and uploaded Blob URLs.
+- Verified `resetToSetup()` hides the preview and clears its image source.
+
+## Manual checks
+
+- Choose a built-in image and confirm its thumbnail appears before creating the puzzle.
+- Select a different built-in image and confirm the preview updates immediately.
+- Upload JPG, PNG, and WebP images and confirm each preview appears correctly without cropping.
+- Switch from an upload to a built-in image and confirm the preview changes to the built-in image.
+- Create a puzzle, choose `New Puzzle`, and confirm the setup returns blank with no stale preview.
+- Confirm portrait, landscape, and square previews stay centered and contained.
+
