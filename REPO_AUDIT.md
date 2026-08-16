@@ -638,3 +638,9 @@ Only these files need to be copied into the test repository:
 - Create a puzzle, choose `New Puzzle`, and confirm the setup returns blank with no stale preview.
 - Confirm portrait, landscape, and square previews stay centered and contained.
 
+
+
+### 2026-08-16 — Puzzle Maker selected-image preview polish
+- Moved the selected-image preview below the puzzle-size selector and **Create puzzle** button.
+- Removed the preview container border, background, padding, and minimum-height box so only the selected image itself is shown.
+- Changing the built-in image selector back to its blank option now fully clears the pending image source/options and hides/removes the preview rather than leaving the previous thumbnail visible.

@@ -264,7 +264,21 @@
     .catch(() => {});
 
   document.querySelector("#default-image").addEventListener("change", event => {
-    if (!event.target.value) return;
+    if (!event.target.value) {
+      source = null;
+      sourceImage = null;
+      sourceTitle = "";
+      sourceKind = null;
+      sourceRef = null;
+      imgW = 0;
+      imgH = 0;
+      grids = [];
+      options.hidden = true;
+      selectionPreview.hidden = true;
+      selectionPreviewImage.removeAttribute("src");
+      selectionPreviewImage.alt = "Selected puzzle image preview";
+      return;
+    }
     loadSource(`./images/${event.target.value}`, event.target.selectedOptions[0].textContent, { kind: "builtin", ref: event.target.value });
   });
 
