@@ -33,5 +33,15 @@
         "id": "grayscale_flowers",
         "title": "Grayscale Flowers",
         "file": "grayscale_flowers.jpg"
+    },
+    {
+        "id": "city_traffic",
+        "title": "City Traffic",
+        "file": "city_traffic.jpg"
+    },
+    {
+        "id": "rough_waves",
+        "title": "Rough Waves",
+        "file": "rough_waves.jpg"
     }
 ]
